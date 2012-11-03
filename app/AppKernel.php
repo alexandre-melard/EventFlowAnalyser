@@ -21,6 +21,7 @@ class AppKernel extends Kernel
             new JMS\SecurityExtraBundle\JMSSecurityExtraBundle(),
             new FOS\UserBundle\FOSUserBundle(),
             new Atos\Worldline\Fm\UserBundle\AtosWorldlineFmUserBundle(),
+            new Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyserBundle\UcsEventFlowAnalyserBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {

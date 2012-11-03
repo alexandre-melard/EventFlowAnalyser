@@ -1,0 +1,39 @@
+{% extends "::base.html.twig" %}
+
+{% block title "UCS Event Flow Analyser: All Events" %}
+
+{% block body %}
+
+<table border="1">
+    <tr>
+        <th colspan="2">{{ event|e }}</th>
+    </tr>
+    <tr>
+        <th>parents ({{ parents|length|e }})</th><th>children ({{ children|length|e }})</th>
+    </tr>
+    <tr>
+        <td>
+            <ul>
+                {% if parents|length > 0 %}
+                    {% for parent in parents %}
+                    <li><a href="/events/event/{{ parent.event.type|e }}">{{ parent.event.type|e }} ({{ parent.file|e }})</a></li>
+                    {% endfor %}
+                {% else %}
+                    none
+                {% endif %}
+            </ul>
+        </td>
+        <td>
+            <ul>
+                {% if children|length >0 %}
+                    {% for child in children %}
+                    <li><a href="/events/event/{{ child.event.type|e }}">{{ child.event.type|e }} ({{ child.file|e }})</a></li>
+                    {% endfor %}
+                {% else %}
+                    none
+                {% endif %}
+            </ul>
+        </td>
+    </tr>
+</table>
+{% endblock %}

@@ -1,3 +1,8 @@
+ucs_event_flow_analyser:
+    resource: "@UcsEventFlowAnalyserBundle/Controller/"
+    type:     annotation
+    prefix:   /
+
 atos_worldline_fm_user:
     resource: "@AtosWorldlineFmUserBundle/Controller/"
     type:     annotation
