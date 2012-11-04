@@ -1,11 +1,13 @@
-{% extends "::base.html.twig" %}
+{% extends "UcsEventFlowAnalyserBundle::layout.html.twig" %}
 
 {% block title "UCS Event Flow Analyser" %}
 
-{% block body %}
-    <h1>What do you want to do?</h1>
-    <ul>
-        <li><a href="/events/all">Display all events</a></li>
-        <li><a href="/files">Display all files</a></li>
-    </ul>
+{% block article %}
+    <article>
+        <h1>What do you want to do?</h1>
+        <ul>
+            <li><a href="/events/all">Display all events</a></li>
+            <li><a href="/files">Display all files</a></li>
+        </ul>
+    </article>
 {% endblock %}

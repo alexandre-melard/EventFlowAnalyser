@@ -1,14 +1,14 @@
-{% extends "::base.html.twig" %}
+{% extends "UcsEventFlowAnalyserBundle::layout.html.twig" %}
 
 {% block title "UCS Event Flow Analyser: All Events" %}
 
-{% block body %}
-    <nav>
-        <h1>All events</h1>
-        <ul>
-            {% for event in events %}
-                <li><a href="/events/event/{{ event|e }}">{{ event|e }}</a></li>
-            {% endfor %}
-        </ul>
-    </nav>
+{% block article %}
+<article>
+    <h1>All events</h1>
+    <ul>
+        {% for event in events %}
+            <li><a href="/events/event/{{ event|e }}">{{ event|e }}</a></li>
+        {% endfor %}
+    </ul>
+</article>
 {% endblock %}
