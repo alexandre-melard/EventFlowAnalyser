@@ -22,6 +22,7 @@ class AppKernel extends Kernel
             new FOS\UserBundle\FOSUserBundle(),
             new Atos\Worldline\Fm\UserBundle\AtosWorldlineFmUserBundle(),
             new Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyserBundle\UcsEventFlowAnalyserBundle(),
+            new Knp\Bundle\MenuBundle\KnpMenuBundle(),
         );
 
         if (in_array($this->getEnvironment(), array('dev', 'test'))) {
