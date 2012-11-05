@@ -1,5 +1,14 @@
 {% extends "::base.html.twig" %}
+{% block stylesheets %}
+    <link href="{{ asset('css/base.css') }}" rel="stylesheet" type="text/css" media="all" />
 
+    <!-- JQuery Menu-->
+    <link type="text/css" href="{{ asset('css/menu.css') }}" rel="stylesheet" />
+    <script type="text/javascript" src="{{ asset('js/jquery.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/menu.js') }}"></script>
+    <!-- End JQuery Menu-->
+
+{% endblock %}
 {% block body %}
     {% include "UcsEventFlowAnalyserBundle::header.html.twig" %}
     {% include "UcsEventFlowAnalyserBundle::nav.html.twig" %}
