@@ -54,6 +54,7 @@ class EventController extends Controller
         $eventFlow = new EventFlow($event, $parents, $children);
 
         return array(
+            "title" => "Display event",
             "event" => $eventFlow->event->type,
             "parents" => $eventFlow->parents,
             "children" => $eventFlow->children

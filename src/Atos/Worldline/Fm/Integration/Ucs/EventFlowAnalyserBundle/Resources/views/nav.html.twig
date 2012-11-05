@@ -1,3 +1,5 @@
-<nav xmlns="http://www.w3.org/1999/html">
-    <a href="/events/all">all events</a> - <a href="/events/">welcome events</a> - <a href="/register">register</a> - <a href="/login">login</a> - <a href="/logout">logout</a> - <a href="/profile">profile</a>
+<nav>
+    <div id="menu">
+        {{ knp_menu_render('UcsEventFlowAnalyserBundle:Builder:mainMenu', {'template': 'UcsEventFlowAnalyserBundle:Menu:knp_menu.html.twig'}) }}
+    </div>
 </nav>
