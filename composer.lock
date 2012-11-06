@@ -1,5 +1,5 @@
 {
-    "hash": "5f097baaf7afc11b0a3b4451f63985a1",
+    "hash": "f7e5f813a4f8641c94f48241071291c6",
     "packages": [
         {
             "name": "doctrine/common",
@@ -785,12 +785,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Seldaek/monolog",
-                "reference": "38bb472abb27db138536f845f7d259c1c47bbd3f"
+                "reference": "30b48f1231b041bfd363517a77a3a2ea02b1f576"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/Seldaek/monolog/zipball/38bb472abb27db138536f845f7d259c1c47bbd3f",
-                "reference": "38bb472abb27db138536f845f7d259c1c47bbd3f",
+                "url": "https://github.com/Seldaek/monolog/zipball/30b48f1231b041bfd363517a77a3a2ea02b1f576",
+                "reference": "30b48f1231b041bfd363517a77a3a2ea02b1f576",
                 "shasum": ""
             },
             "require": {
@@ -804,6 +804,7 @@
                 "ext-amqp": "Allow sending log messages to an AMQP server (1.0+ required)",
                 "ext-mongo": "Allow sending log messages to a MongoDB server"
             },
+            "time": "1352047076",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -832,8 +833,7 @@
             "keywords": [
                 "log",
                 "logging"
-            ],
-            "time": "1351084926"
+            ]
         },
         {
             "name": "pimple/pimple",
@@ -879,6 +879,66 @@
             "keywords": [
                 "dependency injection",
                 "container"
+            ]
+        },
+        {
+            "name": "punkave/symfony2-file-uploader-bundle",
+            "version": "dev-master",
+            "target-dir": "PunkAve/FileUploaderBundle",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/punkave/symfony2-file-uploader-bundle",
+                "reference": "455fb7f728f20015cfc76479a3797c9a4f722507"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://github.com/punkave/symfony2-file-uploader-bundle/zipball/455fb7f728f20015cfc76479a3797c9a4f722507",
+                "reference": "455fb7f728f20015cfc76479a3797c9a4f722507",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.2",
+                "symfony/framework-bundle": "2.*"
+            },
+            "time": "1348771750",
+            "type": "symfony-bundle",
+            "extra": {
+                "branch-alias": [
+
+                ]
+            },
+            "installation-source": "source",
+            "autoload": {
+                "psr-0": {
+                    "PunkAve\\FileUploaderBundle": ""
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Thomas Boutell",
+                    "email": "tom@punkave.com"
+                },
+                {
+                    "name": "Wes John-Alder",
+                    "email": "wes@punkave.com"
+                }
+            ],
+            "description": "Multiple file uploads for Symfony2 with the BlueImp uploader. Also scales uploaded images",
+            "homepage": "https://github.com/punkave/symfony2-file-uploader-bundle",
+            "keywords": [
+                "symfony",
+                "file",
+                "bundle",
+                "upload",
+                "Symfony Bundle",
+                "Image transform",
+                "uploader",
+                "multiple file upload",
+                "blueimp",
+                "punkave"
             ]
         },
         {
@@ -1390,18 +1450,18 @@
             "source": {
                 "type": "git",
                 "url": "git://github.com/fabpot/Twig.git",
-                "reference": "a009821dd31fa783269602507542cea978c9714a"
+                "reference": "abec35b833abfce5eb0ac7ce2bf2bf3462a5bebf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/fabpot/Twig/zipball/a009821dd31fa783269602507542cea978c9714a",
-                "reference": "a009821dd31fa783269602507542cea978c9714a",
+                "url": "https://github.com/fabpot/Twig/archive/abec35b833abfce5eb0ac7ce2bf2bf3462a5bebf.zip",
+                "reference": "abec35b833abfce5eb0ac7ce2bf2bf3462a5bebf",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.2.4"
             },
-            "time": "1351927661",
+            "time": "1352101924",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -1441,6 +1501,7 @@
     "minimum-stability": "dev",
     "stability-flags": {
         "knplabs/knp-menu-bundle": 20,
-        "pimple/pimple": 20
+        "pimple/pimple": 20,
+        "punkave/symfony2-file-uploader-bundle": 20
     }
 }
