@@ -50,9 +50,13 @@ class ParserService
     /**
      * @param $dir path to xml directory
      * @return Parser[]
+     * @throws \RuntimeException
      */
     public static function parseDir($dir)
     {
+        if (!is_dir($dir)) {
+            throw new \RuntimeException("Directory does not exists: [" . $dir . "]");
+        }
         /** @var $parsers Parser[] */
         $parsers = array();
         $files = scandir($dir);
