@@ -4,9 +4,9 @@
 
 {% block article %}
 <article>
-    <table border="1">
+    <table class="event">
         <tr>
-            <th colspan="2">{{ event|e }}</th>
+            <th colspan="2">{{ event|slice(14)|e }}</th>
         </tr>
         <tr>
             <th>parents ({{ parents|length|e }})</th><th>children ({{ children|length|e }})</th>
@@ -16,7 +16,7 @@
                 <ul>
                     {% if parents|length > 0 %}
                         {% for parent in parents %}
-                            <li><a href="/events/event/{{ parent.event.type|e }}">{{ parent.event.type|e }} ({{ parent.file|e }})</a></li>
+                            <li><a href="/events/event/{{ parent.event.type|e }}">{{ parent.event.type|slice(14)|e }} ({{ parent.file|e }})</a></li>
                         {% endfor %}
                     {% else %}
                         none
@@ -27,7 +27,7 @@
                 <ul>
                     {% if children|length >0 %}
                         {% for child in children %}
-                            <li><a href="/events/event/{{ child.event.type|e }}">{{ child.event.type|e }} ({{ child.file|e }})</a></li>
+                            <li><a href="/events/event/{{ child.event.type|e }}">{{ child.event.type|slice(14)|e }} ({{ child.file|e }})</a></li>
                         {% endfor %}
                     {% else %}
                         none
