@@ -1,0 +1,34 @@
+{% extends "UcsEventFlowAnalyserBundle::layout.html.twig" %}
+
+{% block title "UCS Event Flow Analyser: All Events" %}
+
+{% block article %}
+<article>
+    <h1>Private</h1>
+    <ul>
+        {% for  key,app in private %}
+            <li>{{ key|e }}</li>
+            <ul>
+                {% for  file in app %}
+                    <li>{{ file|e }}</li>
+                {% endfor %}
+            </ul>
+        {% endfor %}
+    </ul>
+    <h1>Public</h1>
+    <ul>
+        {% for  key,app in public %}
+            <li>{{ key|e }}</li>
+            <ul>
+                {% for  file in app %}
+                    <li>{{ file|e }}</li>
+                {% endfor %}
+            </ul>
+        {% endfor %}
+    </ul>
+    <p>
+        {# Underscore templates for the uploader #}
+        {% include "PunkAveFileUploaderBundle:Default:templates.html.twig" %}
+    </p>
+</article>
+{% endblock %}
