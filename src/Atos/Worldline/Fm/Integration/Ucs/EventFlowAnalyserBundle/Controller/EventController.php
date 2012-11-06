@@ -2,7 +2,6 @@
 
 namespace Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyserBundle\Controller;
 
-use Atos\Worldline\Fm\UserBundle\Entity\User;
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyserBundle\Entity\Event;
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyserBundle\Entity\EventFlow;
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyserBundle\Service\ParserService;
@@ -33,10 +32,9 @@ class EventController extends Controller
      */
     public function allAction()
     {
-        /** @var $user User */
-        $user = $this->getUser();
-        $dir = $user->getSalt();
-        $parsers = ParserService::parseDir(dirname(__FILE__) . "/../Resources/data/$dir/public/soft");
+        $dir = $this->getUser()->getSalt();
+        $path = $this->get('kernel')->locateResource('@UcsEventFlowAnalyserBundle/Resources/data/' . $dir . 'public/soft');
+        $parsers = ParserService::parseDir($path);
         $events = EventFlowService::uniqueEvents($parsers);
         return array(
             "title" => "Display All Events",
@@ -50,10 +48,10 @@ class EventController extends Controller
      */
     public function eventAction($id)
     {
-        /** @var $user User */
-        $user = $this->getUser();
-        $dir = $user->getSalt();
-        $parsers = ParserService::parseDir(dirname(__FILE__) . "/../Resources/data/$dir/public/soft");
+        $dir = $this->getUser()->getSalt();
+        $path = $this->get('kernel')->locateResource('@UcsEventFlowAnalyserBundle/Resources/data/' . $dir . 'public/soft');
+        $parsers = ParserService::parseDir($path);
+
         $event = new Event($id);
 
         $parents = EventFlowService::parents($parsers, $event);

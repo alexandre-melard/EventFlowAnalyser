@@ -2,7 +2,6 @@
 
 namespace Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyserBundle\Controller;
 
-use Atos\Worldline\Fm\UserBundle\Entity\User;
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyserBundle\Service\FileService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -28,10 +27,9 @@ class FileController extends Controller
      */
     public function allAction()
     {
-        /** @var $user User */
-        $user = $this->getUser();
-        $dir = $user->getSalt();
-        $files = FileService::scanDir(dirname(__FILE__) . "/../Resources/data/$dir");
+        $dir = $this->getUser()->getSalt();
+        $path = $this->get('kernel')->locateResource('@UcsEventFlowAnalyserBundle/Resources/data/'.$dir);
+        $files = FileService::scanDir($path);
         return array(
             "title" => "Display All Files",
             "private" => $files['private'],
