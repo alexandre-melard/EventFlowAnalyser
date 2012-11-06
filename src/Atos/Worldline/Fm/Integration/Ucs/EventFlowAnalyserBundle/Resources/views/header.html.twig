@@ -1,4 +1,10 @@
 <header>
 <img src="http://atos.net/general/images/Atos_Olympic_Games_Logo.gif"/>
-<h1 class="header">{{  title }}</h1>
+<h1 class="header">
+    {% if title is defined %}
+        {{  title }}
+    {% else %}
+        {{ path(app.request.attributes.get('_route'), app.request.attributes.get('_route_params'))|slice(1) }}
+    {% endif %}
+</h1>
 </header>
