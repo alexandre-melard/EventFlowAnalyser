@@ -11,37 +11,65 @@ namespace Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyserBundle\Menu;
 use Knp\Menu\FactoryInterface;
 use Knp\Menu\ItemInterface;
 use Symfony\Component\DependencyInjection\ContainerAware;
-use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyserBundle\Entity\Parser;
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyserBundle\Service\ParserService;
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyserBundle\Service\EventFlowService;
+use Atos\Worldline\Fm\UserBundle\Entity\User;
+use Symfony\Component\Security\Core\SecurityContext;
+use Monolog\Logger;
 
 class Builder extends ContainerAware
 {
     public function mainMenu(FactoryInterface $factory, array $options)
     {
+        /** @var $logger Logger */
+        $logger = $this->container->get('logger');
+
         $menu = $factory->createItem('root');
-        $menu->setChildrenAttributes(array('class' => 'menu'));
+        $menu->setChildrenAttributes(array('class' => 'jd_menu'));
         $menu->addChild('Home', array('uri' => '/events'));
 
-        $menu->addChild('Profile', array('class' => 'parent', 'uri' => '/profile'));
-        $menu['Profile']->addChild('Login', array('uri' => '/login'));
-        $menu['Profile']->addChild('Logout', array('uri' => '/logout'));
-        $menu['Profile']->addChild('Register', array('uri' => '/register'));
+        // Build profile menu
+        $profile = $menu->addChild('Profile', array());
 
-        $menu->addChild('Events', array('uri' => '/events'));
-        $menu['Events']->addChild('Home', array('uri' => '/events'));
-        $menu['Events']->addChild('All', array('uri' => '/events/all'));
-        $menu['Events']->addChild('Types');
-        $parser = new Parser(dirname(__FILE__) . "/../Resources/data/alex/public/soft/dbu.xml");
-        ParserService::parse($parser);
-        $parsers = ParserService::parseDir(dirname(__FILE__) . "/../Resources/data/alex/public/soft");
-        $events = EventFlowService::uniqueEvents($parsers);
-        foreach ($events as $event) {
-            /** @var $item ItemInterface */
-            $item = $menu['Events']['Types']->addChild($event, array('uri' => '/events/event/' . $event));
-            $item->setLabelAttribute("class", "test");
+        // Get user info
+        /** @var $securityContext SecurityContext */
+        $securityContext = $this->container->get('security.context');
+        $user = $securityContext->getToken()->getUser();
+
+        /** @var $user User */
+        if (!is_object($user)) {
+                $profile->addChild('Login', array('uri' => '/login'));
+                $profile->addChild('Register', array('uri' => '/register'));
+                return $menu;
         }
-        // ... add more children
+        $dir = $user->getSalt();
+        $profile->addChild('Logout', array('uri' => '/logout'));
+        $profile->addChild('Profile', array('uri' => '/profile'));
+
+
+        // Analyse menu
+        $analyse = $menu->addChild('Analyse');
+        $analyse->addChild('Home', array('uri' => '/events'));
+        $analyse->addChild('All', array('uri' => '/events/all'));
+
+        $analyseFiles = $analyse->addChild('Files');
+        $analyseFiles->addChild('All', array('uri' => '/files'));
+        $analyseFiles->addChild('Privates', array('uri' => '/files/private'));
+        $analyseFiles->addChild('Public', array('uri' => '/files/public'));
+
+        // Retrieve file types
+        try {
+            $parsers = ParserService::parseDir(dirname(__FILE__) . "/../Resources/data/$dir/public/soft");
+            $events = EventFlowService::uniqueEvents($parsers);
+            if (count($events) > 0) {
+                $analyseEventTypes = $analyse->addChild('Events');
+                foreach ($events as $event) {
+                    $analyseEventTypes->addChild(str_replace("CORE_MSG_TYPE_", "", $event), array('uri' => '/events/event/' . $event));
+                }
+            }
+        } catch (\RuntimeException $e) {
+            $logger->info("UcsEventFlowAnalyserBundle::MenuBuilder::no directory yet to exploit to build events list");
+        }
 
         return $menu;
     }

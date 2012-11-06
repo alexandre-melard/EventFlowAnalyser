@@ -2,7 +2,7 @@
 
 namespace Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyserBundle\Controller;
 
-use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyserBundle\Entity\Parser;
+use Atos\Worldline\Fm\UserBundle\Entity\User;
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyserBundle\Entity\Event;
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyserBundle\Entity\EventFlow;
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyserBundle\Service\ParserService;
@@ -22,7 +22,9 @@ class EventController extends Controller
      */
     public function indexAction()
     {
-        return array();
+        return array(
+            "title" => "Events",
+        );
     }
 
     /**
@@ -31,11 +33,15 @@ class EventController extends Controller
      */
     public function allAction()
     {
-        $parser = new Parser(dirname(__FILE__) . "/../Resources/data/alex/public/soft/dbu.xml");
-        ParserService::parse($parser);
-        $parsers = ParserService::parseDir(dirname(__FILE__) . "/../Resources/data/alex/public/soft");
+        /** @var $user User */
+        $user = $this->getUser();
+        $dir = $user->getSalt();
+        $parsers = ParserService::parseDir(dirname(__FILE__) . "/../Resources/data/$dir/public/soft");
         $events = EventFlowService::uniqueEvents($parsers);
-        return array("events" => $events);
+        return array(
+            "title" => "Display All Events",
+            "events" => $events
+        );
     }
 
     /**
@@ -44,9 +50,10 @@ class EventController extends Controller
      */
     public function eventAction($id)
     {
-        $parser = new Parser(dirname(__FILE__) . "/../Resources/data/alex/public/soft/dbu.xml");
-        ParserService::parse($parser);
-        $parsers = ParserService::parseDir(dirname(__FILE__) . "/../Resources/data/alex/public/soft");
+        /** @var $user User */
+        $user = $this->getUser();
+        $dir = $user->getSalt();
+        $parsers = ParserService::parseDir(dirname(__FILE__) . "/../Resources/data/$dir/public/soft");
         $event = new Event($id);
 
         $parents = EventFlowService::parents($parsers, $event);
@@ -54,7 +61,7 @@ class EventController extends Controller
         $eventFlow = new EventFlow($event, $parents, $children);
 
         return array(
-            "title" => "Display event",
+            "title" => "Display Event",
             "event" => $eventFlow->event->type,
             "parents" => $eventFlow->parents,
             "children" => $eventFlow->children

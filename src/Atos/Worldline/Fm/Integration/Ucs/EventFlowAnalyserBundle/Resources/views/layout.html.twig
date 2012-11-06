@@ -1,5 +1,18 @@
 {% extends "::base.html.twig" %}
 
+{% block stylesheets %}
+    <link href="{{ asset('css/base.css') }}" rel="stylesheet" type="text/css" media="all" />
+
+    <!-- JQuery Menu-->
+    <script type="text/javascript" src="{{ asset('js/jquery.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/jquery.dimensions.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/jquery.positionBy.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/jquery.bgiframe.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('js/jquery.jdMenu.js') }}"></script>
+    <link rel="stylesheet" href="{{ asset('css/jquery.jdMenu.css') }}" type="text/css" />
+    <!-- End JQuery Menu-->
+{% endblock %}
+
 {% block body %}
     {% include "UcsEventFlowAnalyserBundle::header.html.twig" %}
     {% include "UcsEventFlowAnalyserBundle::nav.html.twig" %}

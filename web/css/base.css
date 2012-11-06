@@ -1,3 +1,76 @@
+body {
+    font-family: 'Trebuchet MS',Tahoma;
+}
+footer {
+    margin-top: 20px;
+    margin-left: auto;
+    margin-right: auto;
+    min-width: 80%;
+    border-top: 1px solid gray;
+    text-align: center;
+}
+
 h1.header {
     float: right;
+}
+
+table.event {
+    border: 2px solid #FFF;
+    margin-left: auto;
+    margin-right: auto;
+    min-width: 60%;
+}
+
+table.event tr {
+    background-color: #777;
+}
+
+table.event th,
+table.event td {
+    padding:5px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+table.event ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+table.event a {
+    color: #000;
+    text-decoration: none;
+}
+
+table.event a:hover,
+table.event a:active {
+    color: #EEE;
+}
+
+div.login {
+    margin-left: auto;
+    margin-right: auto;
+    width: 60%;
+}
+
+div.login input {
+    border: 1px solid #006;
+    background: #ffc;
+}
+div.login input:hover {
+    border: 1px solid #f00;
+    background: #ff6;
+}
+
+div.login label {
+    width: 150px;
+    margin: 2px 4px 6px 4px;
+    text-align: right;
+}
+
+div.login p {
+    background-color: #777;
+    margin: 1px;
+    padding:5px;
 }
