@@ -100,4 +100,10 @@ class EventFlowService
         }
         return $resParsers;
     }
+
+    public static function getShortEvent($event)
+    {
+        return str_replace("CORE_MSG_TYPE_", "", $event);
+    }
+
 }

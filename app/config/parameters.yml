@@ -12,4 +12,16 @@ parameters:
     mailer_password:   ~
 
     locale:            en
-    secret:            ThisTokenIsNotSoSecretChangeIt
+    secret:            AZD1RFZ4F
+
+    # Assetic
+    ruby.bin: D:\utils\Ruby\Ruby193\bin\ruby.exe
+    sass.bin: D:\utils\Ruby\Ruby193\bin\sass.bat
+    scss.bin: D:\utils\Ruby\Ruby193\bin\scss.bat
+    compass.bin: D:\utils\Ruby\Ruby193\bin\compass
+    less.node.bin: D:\utils\nodejs\node.exe
+    less.node.path: D:\utils\nodejs\node_modules\npm\node_modules
+
+    assetic.filter.compass.images_dir: %kernel.root_dir%/../web/images
+    assetic.filter.compass.http_path:  /images
+

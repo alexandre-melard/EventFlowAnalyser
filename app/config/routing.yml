@@ -1,3 +1,10 @@
+MopaBootstrapSandbox:
+    resource: "@MopaBootstrapSandboxBundle/Resources/config/routing.yml"
+
+liip_theme:
+    resource: "@LiipThemeBundle/Resources/config/routing.xml"
+    prefix: /theme
+
 ucs_event_flow_analyser:
     resource: "@UcsEventFlowAnalyserBundle/Controller/"
     type:     annotation

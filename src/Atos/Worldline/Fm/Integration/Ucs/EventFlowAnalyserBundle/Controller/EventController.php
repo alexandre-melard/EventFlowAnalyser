@@ -16,7 +16,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 class EventController extends Controller
 {
     /**
-     * @Route("/")
+     * @Route("/", name="events_default")
      * @Template
      */
     public function indexAction()
@@ -27,10 +27,10 @@ class EventController extends Controller
     }
 
     /**
-     * @Route("/all")
+     * @Route("/{soft}/all", name="events_all", requirements={"soft" = ".+"})
      * @Template
      */
-    public function allAction()
+    public function allAction($soft)
     {
         $dir = $this->getUser()->getSalt();
         $path = $this->get('kernel')->locateResource('@UcsEventFlowAnalyserBundle/Resources/data/' . $dir . 'public/soft');
@@ -43,13 +43,14 @@ class EventController extends Controller
     }
 
     /**
-     * @Route("/event/{id}")
+     * @Route("/event/{use}/{soft}/{id}", name="events_event")
      * @Template
      */
-    public function eventAction($id)
+    public function eventAction($use, $soft, $id)
     {
         $dir = $this->getUser()->getSalt();
-        $path = $this->get('kernel')->locateResource('@UcsEventFlowAnalyserBundle/Resources/data/' . $dir . 'public/soft');
+        $path = $this->get('kernel')->locateResource('@UcsEventFlowAnalyserBundle/Resources/data/'
+            . $dir . DIRECTORY_SEPARATOR . $use . DIRECTORY_SEPARATOR . $soft);
         $parsers = ParserService::parseDir($path);
 
         $event = new Event($id);
@@ -59,7 +60,9 @@ class EventController extends Controller
         $eventFlow = new EventFlow($event, $parents, $children);
 
         return array(
-            "title" => "Display Event",
+            "title" => EventFlowService::getShortEvent($event->type),
+            "use" => $use,
+            "soft" => $soft,
             "event" => $eventFlow->event->type,
             "parents" => $eventFlow->parents,
             "children" => $eventFlow->children

@@ -3,38 +3,40 @@
 {% block title "UCS Event Flow Analyser: All Events" %}
 
 {% block article %}
-<article>
-    <table class="event">
-        <tr>
-            <th colspan="2">{{ event|slice(14)|e }}</th>
-        </tr>
-        <tr>
-            <th>parents ({{ parents|length|e }})</th><th>children ({{ children|length|e }})</th>
-        </tr>
-        <tr>
-            <td>
-                <ul>
-                    {% if parents|length > 0 %}
-                        {% for parent in parents %}
-                            <li><a href="/events/event/{{ parent.event.type|e }}">{{ parent.event.type|slice(14)|e }} ({{ parent.file|e }})</a></li>
-                        {% endfor %}
-                    {% else %}
-                        none
-                    {% endif %}
-                </ul>
-            </td>
-            <td>
-                <ul>
-                    {% if children|length >0 %}
-                        {% for child in children %}
-                            <li><a href="/events/event/{{ child.event.type|e }}">{{ child.event.type|slice(14)|e }} ({{ child.file|e }})</a></li>
-                        {% endfor %}
-                    {% else %}
-                        none
-                    {% endif %}
-                </ul>
-            </td>
-        </tr>
-    </table>
-</article>
+    <article>
+        <div class="grid">
+            <div class="col-1-2">
+                <div class="module">
+                    <h3>parents ({{ parents|length|e }})</h3>
+                    <ul>
+                        {% if parents|length > 0 %}
+                            {% for parent in parents %}
+                                <li>
+                                    <a href="{{ asset('/events/event/' ~ use ~ '/' ~ soft ~ '/' ~ parent.event.type) }}">{{ parent.event.type|slice(14)|e }}
+                                        ({{ parent.file|e }})</a></li>
+                            {% endfor %}
+                        {% else %}
+                            none
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+            <div class="col-1-2">
+                <div class="module">
+                    <h3>children ({{ children|length|e }})</h3>
+                    <ul>
+                        {% if children|length >0 %}
+                            {% for child in children %}
+                                <li>
+                                    <a href="{{ asset('/events/event/' ~ use ~ '/' ~ soft ~ '/' ~ child.event.type) }}">{{ child.event.type|slice(14)|e }}
+                                        ({{ child.file|e }})</a></li>
+                            {% endfor %}
+                        {% else %}
+                            none
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </article>
 {% endblock %}
