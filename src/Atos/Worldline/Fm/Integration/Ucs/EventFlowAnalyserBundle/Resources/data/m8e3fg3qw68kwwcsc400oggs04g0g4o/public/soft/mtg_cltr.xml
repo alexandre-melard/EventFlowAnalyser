@@ -3,6 +3,7 @@
     <header>
         <date></date>
         <generator></generator>
+        <process>mtg</process>
     </header>
     <events>
         <in>

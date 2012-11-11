@@ -3,6 +3,7 @@
     <header>
         <date></date>
         <generator></generator>
+        <process>opm</process>
     </header>
     <events>
         <in>

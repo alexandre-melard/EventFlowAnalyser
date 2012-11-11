@@ -11,6 +11,7 @@ namespace Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyserBundle\Entity;
 class Parser
 {
     public $file;
+    public $xsd;
 
     /* @var $eventIns EventIn[] */
     public $eventIns;
@@ -18,9 +19,10 @@ class Parser
     /**
      * @param $file xml parser result file path.
      */
-    public function __construct($file)
+    public function __construct($file, $xsd)
     {
         $this->file = $file;
+        $this->xsd = $xsd;
         $this->eventIns = array();
     }
 
@@ -30,7 +32,7 @@ class Parser
     public function addEventIn(EventIn $event)
     {
         if (!empty($event)) {
-            array_push($this->eventIns,$event);
+            array_push($this->eventIns, $event);
         }
     }
 

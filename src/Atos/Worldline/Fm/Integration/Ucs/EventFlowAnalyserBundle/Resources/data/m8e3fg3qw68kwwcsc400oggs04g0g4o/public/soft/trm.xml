@@ -3,6 +3,7 @@
     <header>
         <date></date>
         <generator></generator>
+        <process>trm</process>
     </header>
     <events>
         <in>

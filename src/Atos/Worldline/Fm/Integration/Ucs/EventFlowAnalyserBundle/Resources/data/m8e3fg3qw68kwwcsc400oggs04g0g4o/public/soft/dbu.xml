@@ -3,15 +3,14 @@
     <header>
         <date></date>
         <generator></generator>
+        <process>dbu</process>
     </header>
     <events>
         <in>
             <event>CORE_MSG_TYPE_OperationOnTradeCreation</event>
-            <out/>
         </in>
         <in>
             <event>CORE_MSG_TYPE_OperationOnTradeLegAndPostingCancellation</event>
-            <out/>
         </in>
         <in>
             <event>CORE_MSG_TYPE_RequestForTradeLegAndPostingModification</event>

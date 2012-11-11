@@ -3,6 +3,7 @@
     <header>
         <date></date>
         <generator></generator>
+        <process>inj</process>
     </header>
     <events>
         <in>
