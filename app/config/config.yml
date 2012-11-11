@@ -36,41 +36,50 @@ twig:
 
 # Assetic Configuration
 assetic:
-    debug:          "%kernel.debug%"
+    debug:          false
     use_controller: false
-    #bundles:        [ ]
-    #java: /usr/bin/java
+    write_to:         %kernel.root_dir%/../web
+    #bundles: []
     filters:
-        lessphp:
-            file: %kernel.root_dir%/../vendor/leafo/lessphp/lessc.inc.php
-            apply_to: "\.less$"
-        sass:
-            bin: %sass.bin%
-            apply_to: "\.sass$"
-        scss:
-            bin: %scss.bin%
-            apply_to: "\.scss$"
-        compass:
-            bin: %compass.bin%
-            apply_to: "\.[scss|sass]$"
         yui_js:
             jar: %kernel.root_dir%/Resources/java/yuicompressor-2.4.6.jar
         yui_css:
             jar: %kernel.root_dir%/Resources/java/yuicompressor-2.4.6.jar
     assets:
+        all:
+            inputs:
+                - @MopaBootstrapBundle/Resources/public/less/mopabootstrapbundle.css
+                - @MopaBootstrapSandboxBundle/Resources/public/less/mopabootstrapsandboxbundle.css
+                - @MopaBootstrapSandboxBundle/Resources/public/css/prettify.css
+                - @UcsEventFlowAnalyserBundle/Resources/assets/compass/stylesheets/base.css
+
+            filters:
+                - yui_css
         bootstrap:
             inputs:
-                - @MopaBootstrapBundle/Resources/public/less/mopabootstrapbundle.less
+                - @UcsEventFlowAnalyserBundle/Resources/assets/js/jquery-1.7.1.min.js
+                - @MopaBootstrapBundle/Resources/bootstrap/js/bootstrap-transition.js
+                - @MopaBootstrapBundle/Resources/bootstrap/js/bootstrap-modal.js
+                - @MopaBootstrapBundle/Resources/bootstrap/js/bootstrap-dropdown.js
+                - @MopaBootstrapBundle/Resources/bootstrap/js/bootstrap-scrollspy.js
+                - @MopaBootstrapBundle/Resources/bootstrap/js/bootstrap-tab.js
+                - @MopaBootstrapBundle/Resources/bootstrap/js/bootstrap-tooltip.js
+                - @MopaBootstrapBundle/Resources/bootstrap/js/bootstrap-popover.js
+                - @MopaBootstrapBundle/Resources/bootstrap/js/bootstrap-alert.js
+                - @MopaBootstrapBundle/Resources/bootstrap/js/bootstrap-button.js
+                - @MopaBootstrapBundle/Resources/bootstrap/js/bootstrap-collapse.js
+                - @MopaBootstrapBundle/Resources/bootstrap/js/bootstrap-carousel.js
+                - @MopaBootstrapBundle/Resources/bootstrap/js/bootstrap-typeahead.js
+                - @MopaBootstrapBundle/Resources/public/js/mopabootstrap-collection.js
+                - @MopaBootstrapBundle/Resources/public/js/mopabootstrap-subnav.js
+
             filters:
-                - lessphp
+                - yui_js
 
 #        cssrewrite: ~
 #        cssembed:
 #            jar: %kernel.root_dir%/Resources/java/cssembed-0.4.5.jar
 #            apply_to: "\.css$|\.less$"
-#        yui_css:
-#            jar: %kernel.root_dir%/Resources/java/yuicompressor-2.4.6.jar
-#            apply_to: "\.css$"
         #closure:
         #    jar: "%kernel.root_dir%/Resources/java/compiler.jar"
 

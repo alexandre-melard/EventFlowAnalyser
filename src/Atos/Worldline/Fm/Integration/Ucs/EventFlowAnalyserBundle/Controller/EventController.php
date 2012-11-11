@@ -27,13 +27,13 @@ class EventController extends Controller
     }
 
     /**
-     * @Route("/{soft}/all", name="events_all", requirements={"soft" = ".+"})
+     * @Route("/{use}/{soft}/all", name="events_all")
      * @Template
      */
-    public function allAction($soft)
+    public function allAction($use, $soft)
     {
         $dir = $this->getUser()->getSalt();
-        $path = $this->get('kernel')->locateResource('@UcsEventFlowAnalyserBundle/Resources/data/' . $dir . 'public/soft');
+        $path = $this->get('kernel')->locateResource("@UcsEventFlowAnalyserBundle/Resources/data/$dir/$use/$soft");
         $parsers = ParserService::parseDir($path);
         $events = EventFlowService::uniqueEvents($parsers);
         return array(
@@ -49,8 +49,7 @@ class EventController extends Controller
     public function eventAction($use, $soft, $id)
     {
         $dir = $this->getUser()->getSalt();
-        $path = $this->get('kernel')->locateResource('@UcsEventFlowAnalyserBundle/Resources/data/'
-            . $dir . DIRECTORY_SEPARATOR . $use . DIRECTORY_SEPARATOR . $soft);
+        $path = $this->get('kernel')->locateResource("@UcsEventFlowAnalyserBundle/Resources/data/$dir/$use/$soft");
         $parsers = ParserService::parseDir($path);
 
         $event = new Event($id);
