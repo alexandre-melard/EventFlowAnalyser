@@ -24,26 +24,16 @@ class ParserService
     public static function parse(Parser $parser)
     {
         ParserService::validate($parser->file, $parser->xsd);
-
         $xml = simplexml_load_file($parser->file);
         if (null != $xml->events->in) {
             foreach ($xml->events->in as $in) {
-                if (null != $xml->events->in->children()) {
-                    foreach ($in->children() as $inChild) {
-                        if ($inChild->getName() === "event") {
-                            $eventIn = new EventIn((string)$inChild);
-                        } elseif ($inChild->getName() === "out") {
-                            if (null != $inChild->children()) {
-                                foreach ($inChild->children() as $outChild) {
-                                    if ($outChild->getName() === "event") {
-                                        $eventIn->addEventOut(new EventOut((string)$outChild));
-                                    }
-                                }
-                            }
-                            $parser->addEventIn($eventIn);
-                        }
+                $eventIn = new EventIn((string)$in->event);
+                if (null !== $in->out->event) {
+                    foreach ($in->out->event as $event) {
+                        $eventIn->addEventOut(new EventOut((string)$event));
                     }
                 }
+                $parser->addEventIn($eventIn);
             }
         }
         return $parser;
