@@ -1,42 +1,60 @@
 {% extends "UcsEventFlowAnalyserBundle::layout.html.twig" %}
 
+{% macro display_events(events, title, use, soft) %}
+    <div class="span6">
+        <h3 class="center">{{ title }} ({{ events|length|e }})</h3>
+        <ul class="unstyled">
+            {% if events|length > 0 %}
+                {% for event in events %}
+                    <li>
+                        <a href="{{ asset('/events/event/' ~ use ~ '/' ~ soft ~ '/' ~ event.event.type) }}">
+                            <i class="icon-chevron-right">
+                                {{ event.event.type|slice(14)|e }}
+                            </i>
+                        </a>
+                    </li>
+                {% endfor %}
+            {% else %}
+                none
+            {% endif %}
+        </ul>
+    </div>
+{% endmacro display_events %}
+
 {% block title "UCS Event Flow Analyser: All Events" %}
 
 {% block article %}
-    <article>
-        <div class="grid">
-            <div class="col-1-2">
-                <div class="module">
-                    <h3>parents ({{ parents|length|e }})</h3>
-                    <ul>
-                        {% if parents|length > 0 %}
-                            {% for parent in parents %}
-                                <li>
-                                    <a href="{{ asset('/events/event/' ~ use ~ '/' ~ soft ~ '/' ~ parent.event.type) }}">{{ parent.event.type|slice(14)|e }}
-                                        ({{ parent.file|e }})</a></li>
-                            {% endfor %}
-                        {% else %}
-                            none
+    <article xmlns="http://www.w3.org/1999/html">
+        <div>
+            {{ _self.display_events(parents, "parent", use, soft) }}
+            {{ _self.display_events(children, "children", use, soft) }}
+        </div>
+        <div>
+            <div class="span6">
+                <h3 class="center">input</h3>
+                <ul class="unstyled">
+                    {% for file in files %}
+                        {% if ( "in" == file.direction ) %}
+                            <li>
+                                <i class="icon-chevron-right">{{ file.name|e }}</i>
+                            </li>
                         {% endif %}
-                    </ul>
-                </div>
+                    {% endfor %}
+                </ul>
             </div>
-            <div class="col-1-2">
-                <div class="module">
-                    <h3>children ({{ children|length|e }})</h3>
-                    <ul>
-                        {% if children|length >0 %}
-                            {% for child in children %}
-                                <li>
-                                    <a href="{{ asset('/events/event/' ~ use ~ '/' ~ soft ~ '/' ~ child.event.type) }}">{{ child.event.type|slice(14)|e }}
-                                        ({{ child.file|e }})</a></li>
-                            {% endfor %}
-                        {% else %}
-                            none
+            <div class="span6">
+                <h3 class="center">output</h3>
+                <ul class="unstyled">
+                    {% for file in files %}
+                        {% if ( "out" == file.direction ) %}
+                            <li>
+                                <i class="icon-chevron-right">{{ file.name|e }}</i>
+                            </li>
                         {% endif %}
-                    </ul>
-                </div>
+                    {% endfor %}
+                </ul>
             </div>
         </div>
+
     </article>
 {% endblock %}

@@ -25,9 +25,7 @@ class EventFlowService
         $parents = array();
         foreach ($parsers as $parser) {
             foreach ($parser->eventIns as $eventIn) {
-                /** @var $eventIn EventIn */
                 foreach ($eventIn->eventOuts as $eventOut) {
-                    /** @var $eventOut EventOut */
                     if ($eventOut->type === $event->type) {
                         array_push($parents, ["event" => $eventIn, "file" => basename($parser->file, '.xml')]);
                     }
@@ -55,6 +53,29 @@ class EventFlowService
             }
         }
         return $children;
+    }
+
+    /**
+     * @param $parsers Parser[]
+     * @param $event Event
+     * @return array
+     */
+    public static function files($parsers, $event)
+    {
+        $files = array();
+        foreach ($parsers as $parser) {
+            foreach ($parser->eventIns as $eventIn) {
+                if ($eventIn->type === $event->type) {
+                    array_push($files, ["direction" => "in", "name" => basename($parser->file, '.xml')]);
+                }
+                foreach ($eventIn->eventOuts as $eventOut) {
+                    if ($eventOut->type === $event->type) {
+                        array_push($files, ["direction" => "out", "name" => basename($parser->file, '.xml')]);
+                    }
+                }
+            }
+        }
+        return $files;
     }
 
     /**

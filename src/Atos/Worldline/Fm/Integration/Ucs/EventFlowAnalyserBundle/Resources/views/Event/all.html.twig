@@ -2,21 +2,25 @@
 
 {% block title "UCS Event Flow Analyser: All Events" %}
 
+{% macro display_events(events, use, soft, start, end) %}
+    <div class="span6">
+        <ul class="unstyled">
+            {% for event in events|slice(start,end) %}
+                <li>
+                    <a href="{{ asset('/events/event/' ~ use ~ '/' ~ soft ~ '/' ~ event) }}">
+                        <i class="icon-chevron-right">{{ event|slice(14)|e }}</i>
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endmacro display_events %}
+
 {% block article %}
     <article>
-        <div class="col-1-2">
-            <ul>
-                {% for event in events|slice(0,(events|length)/2) %}
-                    <li><a href="/events/event/{{ event|e }}">{{ event|e }}</a></li>
-                {% endfor %}
-            </ul>
-        </div>
-        <div class="col-1-2">
-            <ul>
-                {% for event in events|slice((events|length)/2) %}
-                    <li><a href="/events/event/{{ event|e }}">{{ event|e }}</a></li>
-                {% endfor %}
-            </ul>
-        </div>
+        {{ _self.display_events(events, use, soft, 0,(events|length)/2) }}
+        {% if ((events|length) >= 2) %}
+            {{ _self.display_events(events, use, soft, (events|length)/2, events|length) }}
+        {% endif %}
     </article>
 {% endblock %}
