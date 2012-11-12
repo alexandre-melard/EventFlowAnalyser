@@ -1,7 +1,7 @@
 services:
     ucs_event_flow_analyser.examplemenu_builder:
         class: Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyserBundle\Menu\MenuBuilder
-        arguments: ["@knp_menu.factory", "@logger", '@security.context', '@kernel']
+        arguments: ["@knp_menu.factory", "@logger", '@security.context', '@kernel', '@cache']
         tags:
             - { name: monolog.logger, channel: app }
 

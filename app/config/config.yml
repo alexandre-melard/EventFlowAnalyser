@@ -111,3 +111,6 @@ fos_user:
     firewall_name: main
     user_class: Atos\Worldline\Fm\UserBundle\Entity\User
 
+services:
+    cache:
+        class: Doctrine\Common\Cache\ApcCache

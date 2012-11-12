@@ -1,8 +1,8 @@
 {% extends "UcsEventFlowAnalyserBundle::layout.html.twig" %}
 
 {% macro display_events(events, title, use, soft) %}
-    <div class="span6">
-        <h3 class="center">{{ title }} ({{ events|length|e }})</h3>
+    <div class="span5 offset1">
+        <h4 class="center">{{ title }} ({{ events|length|e }})</h4>
         <ul class="unstyled">
             {% if events|length > 0 %}
                 {% for event in events %}
@@ -30,8 +30,8 @@
             {{ _self.display_events(children, "children", use, soft) }}
         </div>
         <div>
-            <div class="span6">
-                <h3 class="center">input</h3>
+            <div class="span5 offset1">
+                <h4 class="center">input</h4>
                 <ul class="unstyled">
                     {% for file in files %}
                         {% if ( "in" == file.direction ) %}
@@ -42,8 +42,8 @@
                     {% endfor %}
                 </ul>
             </div>
-            <div class="span6">
-                <h3 class="center">output</h3>
+            <div class="span5 offset1">
+                <h4 class="center">output</h4>
                 <ul class="unstyled">
                     {% for file in files %}
                         {% if ( "out" == file.direction ) %}

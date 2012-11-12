@@ -1,24 +1,38 @@
-{% extends "MopaBootstrapSandboxBundle::base.html.twig" %}
+{% extends 'MopaBootstrapBundle::base' ~ theme_type|default('')~ '.html.twig' %}
+
 {% block head_style %}
     {% include "UcsEventFlowAnalyserBundle::stylesheets.html.twig" %}
 {% endblock head_style %}
-{% block page_header %}
-    {% include "UcsEventFlowAnalyserBundle::header.html.twig" %}
-{% endblock page_header %}
 
-{% block fork_me %}
-{% endblock fork_me %}
+{% block container_class %}container{% endblock container_class %}
 
 {% block navbar %}
     {{ mopa_bootstrap_navbar('frontendNavbar') }}
 {% endblock navbar %}
+
+{% block page_header %}
+    {% include "UcsEventFlowAnalyserBundle::header.html.twig" %}
+{% endblock page_header %}
+
+
 {% block content %}
     {% block article %}{% endblock %}
 {% endblock content %}
+
 {% block footer %}
     {% include "UcsEventFlowAnalyserBundle::footer.html.twig" %}
 {% endblock footer %}
 {% block foot_script %}
     {% include "UcsEventFlowAnalyserBundle::javascripts.html.twig" %}
 {% endblock foot_script %}
+
+
+
+
+
+
+
+
+
+
 

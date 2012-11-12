@@ -12,6 +12,7 @@ use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyserBundle\Service\ParserServ
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyserBundle\Service\EventFlowService;
 use Atos\Worldline\Fm\UserBundle\Entity\User;
 use Monolog\Logger;
+use Doctrine\Common\Cache\Cache;
 
 /**
  * An example howto inject a default KnpMenu to the Navbar
@@ -33,8 +34,11 @@ class MenuBuilder extends AbstractNavbarMenuBuilder
     /** @var Logger */
     protected $logger;
 
+    /** @var Cache */
+    protected $cache;
+
     public function __construct(FactoryInterface $factory, Logger $logger, SecurityContextInterface $securityContext,
-                                Kernel $kernel)
+                                Kernel $kernel, Cache $cache)
     {
         parent::__construct($factory);
 
@@ -42,6 +46,7 @@ class MenuBuilder extends AbstractNavbarMenuBuilder
         $this->isLoggedIn = $securityContext->isGranted('IS_AUTHENTICATED_FULLY');
         $this->user = $securityContext->getToken()->getUser();
         $this->kernel = $kernel;
+        $this->cache = $cache;
     }
 
 
@@ -79,8 +84,9 @@ class MenuBuilder extends AbstractNavbarMenuBuilder
         // Retrieve file types
         try {
             $path = $this->kernel->locateResource('@UcsEventFlowAnalyserBundle/Resources/data/' . $dir . '/public/soft');
-            $parsers = ParserService::parseDir($path);
-            $events = EventFlowService::uniqueEvents($parsers);
+            $parsers = (new ParserService($this->cache))->parseDir($path);
+            $EventFlowService = new EventFlowService($this->cache);
+            $events = $EventFlowService->uniqueEvents($parsers);
             if (count($events) > 0) {
                 $this->logger->debug('UcsEventFlowAnalyserBundle::MenuBuilder:: number of events = ' . count($events));
                 // Build files menu
@@ -94,7 +100,7 @@ class MenuBuilder extends AbstractNavbarMenuBuilder
                     ));
                 foreach ($events as $event) {
                     $this->logger->debug("UcsEventFlowAnalyserBundle::MenuBuilder::created event = $event");
-                    $eventsMenu->addChild(EventFlowService::getShortEvent($event),
+                    $eventsMenu->addChild($EventFlowService->getShortEvent($event),
                         array(
                             'route' => 'events_event',
                             'routeParameters' => array(

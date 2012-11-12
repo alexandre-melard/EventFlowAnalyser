@@ -8,11 +8,12 @@
  */
 namespace Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyserBundle\Service;
 
+use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyserBundle\DependencyInjection\CacheAware;
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyserBundle\Entity\Parser;
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyserBundle\Entity\EventIn;
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyserBundle\Entity\EventOut;
 
-class ParserService
+class ParserService extends CacheAware
 {
     /**
      * Parse xml file to return Parser array type.
@@ -21,20 +22,25 @@ class ParserService
      * @param Parser $parser
      * @return Parser
      */
-    public static function parse(Parser $parser)
+    public function parse(Parser $parser)
     {
-        ParserService::validate($parser->file, $parser->xsd);
-        $xml = simplexml_load_file($parser->file);
-        if (null != $xml->events->in) {
-            foreach ($xml->events->in as $in) {
-                $eventIn = new EventIn((string)$in->event);
-                if (null !== $in->out->event) {
-                    foreach ($in->out->event as $event) {
-                        $eventIn->addEventOut(new EventOut((string)$event));
+        if ($parserString = $this->cache->fetch('parse' . $parser->file)) {
+            $parser = unserialize($parserString);
+        } else {
+            $this->validate($parser->file, $parser->xsd);
+            $xml = simplexml_load_file($parser->file);
+            if (null != $xml->events->in) {
+                foreach ($xml->events->in as $in) {
+                    $eventIn = new EventIn((string)$in->event);
+                    if (null !== $in->out->event) {
+                        foreach ($in->out->event as $event) {
+                            $eventIn->addEventOut(new EventOut((string)$event));
+                        }
                     }
+                    $parser->addEventIn($eventIn);
                 }
-                $parser->addEventIn($eventIn);
             }
+            $this->cache->save('parse' . $parser->file, serialize($parser));
         }
         return $parser;
     }
@@ -44,18 +50,23 @@ class ParserService
      * @return Parser[]
      * @throws \RuntimeException
      */
-    public static function parseDir($dir)
+    public function parseDir($dir)
     {
         if (!is_dir($dir)) {
             throw new \RuntimeException("Directory does not exists: [" . $dir . "]");
         }
-        /** @var $parsers Parser[] */
-        $parsers = array();
-        $files = scandir($dir);
-        foreach ($files as $file) {
-            if (substr($file, -3, 3) === "xml") {
-                array_push($parsers, ParserService::parse(new Parser($dir . DIRECTORY_SEPARATOR . $file, $dir . "/../../../../validation/xsd/eventflow.xsd")));
+        if ($parsersString = $this->cache->fetch('parseDir' . $dir)) {
+            $parsers = unserialize($parsersString);
+        } else {
+            /** @var $parsers Parser[] */
+            $parsers = array();
+            $files = scandir($dir);
+            foreach ($files as $file) {
+                if (substr($file, -3, 3) === "xml") {
+                    array_push($parsers, $this->parse(new Parser($dir . DIRECTORY_SEPARATOR . $file, $dir . "/../../../../validation/xsd/eventflow.xsd")));
+                }
             }
+            $this->cache->save('parseDir' . $dir, serialize($parsers));
         }
         return $parsers;
     }
@@ -105,7 +116,7 @@ class ParserService
      * @return bool
      * @throws Exception
      */
-    public static function validate($file, $schema)
+    public function validate($file, $schema)
     {
         $result = false;
 // Activer "user error handling"

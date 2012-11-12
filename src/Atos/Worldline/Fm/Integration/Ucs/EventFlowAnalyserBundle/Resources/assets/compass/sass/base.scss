@@ -1,15 +1,20 @@
 @import "compass/css3/shared";
 @import "compass/css3/box-sizing";
 
+.bottom-divider {
+  border-bottom-style: solid;
+  border-bottom-width: 2px;
+  border-bottom-color: #0066A1;
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+
 .page-header {
   background-image: url("http://fr.atos.net/general/images/atos_logo.gif");
   background-position: left top;
   background-repeat: no-repeat;
   background-size: 150px;
   text-align: right;
-  border-bottom-style: solid;
-  border-bottom-width: 2px;
-  border-bottom-color: #0066A1;
   height: 50px;
   h1 {
     color: #231F20;
