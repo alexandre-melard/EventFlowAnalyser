@@ -1,16 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="1eac6fe5-c00e-4236-a057-2c305cdae0c5" name="Default" comment="">
-      <change type="DELETED" beforePath="D:\utils\xampp-portable\htdocs\php\EventFlowAnalyserBundle\src\Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyserBundle\Resources\data\m8e3fg3qw68kwwcsc400oggs04g0g4o\public\soft\dbu.xml" afterPath="" />
-      <change type="DELETED" beforePath="D:\utils\xampp-portable\htdocs\php\EventFlowAnalyserBundle\src\Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyserBundle\Resources\data\m8e3fg3qw68kwwcsc400oggs04g0g4o\public\soft\inj.xml" afterPath="" />
-      <change type="DELETED" beforePath="D:\utils\xampp-portable\htdocs\php\EventFlowAnalyserBundle\src\Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyserBundle\Resources\data\m8e3fg3qw68kwwcsc400oggs04g0g4o\public\soft\mtg_cltr.xml" afterPath="" />
-      <change type="DELETED" beforePath="D:\utils\xampp-portable\htdocs\php\EventFlowAnalyserBundle\src\Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyserBundle\Resources\data\m8e3fg3qw68kwwcsc400oggs04g0g4o\public\soft\opm.xml" afterPath="" />
-      <change type="DELETED" beforePath="D:\utils\xampp-portable\htdocs\php\EventFlowAnalyserBundle\src\Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyserBundle\Resources\data\m8e3fg3qw68kwwcsc400oggs04g0g4o\public\soft\pom.xml" afterPath="" />
-      <change type="DELETED" beforePath="D:\utils\xampp-portable\htdocs\php\EventFlowAnalyserBundle\src\Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyserBundle\Resources\data\m8e3fg3qw68kwwcsc400oggs04g0g4o\public\soft\trm.xml" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/EventFlowAnalyserBundle.iml" afterPath="$PROJECT_DIR$/.idea/EventFlowAnalyserBundle.iml" />
+    <list default="true" id="1eac6fe5-c00e-4236-a057-2c305cdae0c5" name="Default" comment="icons">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/web/img/glyphicons-halflings-white.png" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/web/img/glyphicons-halflings.png" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/Atos/Worldline/Fm/Integration/Ucs/EventFlowAnalyserBundle/Resources/assets/js/jquery-1.7.1.min.js" afterPath="$PROJECT_DIR$/src/Atos/Worldline/Fm/Integration/Ucs/EventFlowAnalyserBundle/Resources/assets/js/jquery-1.7.1.min.js" />
     </list>
     <ignored path="EventFlowAnalyserBundle.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -981,7 +975,11 @@
       <created>1352740921589</created>
       <updated>1352740921589</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="icons">
+      <created>1352741399669</created>
+      <updated>1352741399669</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TodoView">
@@ -1035,7 +1033,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <option name="OFFER_MOVE_TO_ANOTHER_CHANGELIST_ON_PARTIAL_COMMIT" value="true" />
-    <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="true" />
+    <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_NEW_TODO" value="true" />
     <option name="myTodoPanelSettings">
       <value>
@@ -1065,7 +1063,7 @@
     <option name="SHOW_VCS_ERROR_NOTIFICATIONS" value="true" />
     <option name="FORCE_NON_EMPTY_COMMENT" value="false" />
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="false" />
-    <option name="LAST_COMMIT_MESSAGE" value="added file support" />
+    <option name="LAST_COMMIT_MESSAGE" value="icons" />
     <option name="MAKE_NEW_CHANGELIST_ACTIVE" value="false" />
     <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="false" />
     <option name="CHECK_FILES_UP_TO_DATE_BEFORE_COMMIT" value="false" />
@@ -1089,6 +1087,7 @@
     <MESSAGE value="correction de l'overlap entre les icons et le texte" />
     <MESSAGE value="correction et simplification du parsing" />
     <MESSAGE value="added file support" />
+    <MESSAGE value="icons" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
