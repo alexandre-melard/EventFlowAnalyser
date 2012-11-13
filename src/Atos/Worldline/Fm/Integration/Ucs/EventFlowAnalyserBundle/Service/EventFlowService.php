@@ -11,8 +11,6 @@ namespace Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyserBundle\Service;
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyserBundle\DependencyInjection\CacheAware;
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyserBundle\Entity\Parser;
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyserBundle\Entity\Event;
-use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyserBundle\Entity\EventIn;
-use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyserBundle\Entity\EventOut;
 
 class EventFlowService extends CacheAware
 {
@@ -23,7 +21,7 @@ class EventFlowService extends CacheAware
      */
     public function parents($parsers, $event)
     {
-        if ($buf = $this->cache->fetch('parents' . md5(serialize($parsers)) . $event->type)) {
+        if ($buf = $this->cache->fetch('parents' . $event->type)) {
             $parents = unserialize($buf);
         } else {
             $parents = array();
@@ -36,7 +34,7 @@ class EventFlowService extends CacheAware
                     }
                 }
             }
-            $this->cache->save('parents' . md5(serialize($parsers)) . $event->type, serialize($parents));
+            $this->cache->save('parents' . $event->type, serialize($parents));
         }
         return $parents;
     }
@@ -48,7 +46,7 @@ class EventFlowService extends CacheAware
      */
     public function children($parsers, $event)
     {
-        if ($buf = $this->cache->fetch('children' . md5(serialize($parsers)) . $event->type)) {
+        if ($buf = $this->cache->fetch('children' . $event->type)) {
             $children = unserialize($buf);
         } else {
             $children = array();
@@ -61,7 +59,7 @@ class EventFlowService extends CacheAware
                     }
                 }
             }
-            $this->cache->save('children' . md5(serialize($parsers)) . $event->type, serialize($children));
+            $this->cache->save('children' . $event->type, serialize($children));
         }
         return $children;
     }
@@ -73,7 +71,7 @@ class EventFlowService extends CacheAware
      */
     public function files($parsers, $event)
     {
-        if ($buf = $this->cache->fetch('files' . md5(serialize($parsers)) . $event->type)) {
+        if ($buf = $this->cache->fetch('files' . $event->type)) {
             $files = unserialize($buf);
         } else {
             $files = array();
@@ -89,18 +87,20 @@ class EventFlowService extends CacheAware
                     }
                 }
             }
-            $this->cache->save('files' . md5(serialize($parsers)) . $event->type, serialize($files));
+            $this->cache->save('files' . $event->type, serialize($files));
         }
         return $files;
     }
 
     /**
+     * @param $soft
      * @param $parsers Parser[]
      * @return Event[]
+     * @return array|mixed
      */
-    public function uniqueEvents($parsers)
+    public function uniqueEvents($soft, $parsers)
     {
-        if ($buf = $this->cache->fetch('uniqueEvents' . md5(serialize($parsers)))) {
+        if ($buf = $this->cache->fetch('uniqueEvents' . $soft)) {
             $events = unserialize($buf);
         } else {
             $events = array();
@@ -114,7 +114,7 @@ class EventFlowService extends CacheAware
             }
             $events = array_unique($events);
             asort($events);
-            $this->cache->save('uniqueEvents' . md5(serialize($parsers)), serialize($events));
+            $this->cache->save('uniqueEvents' . $soft, serialize($events));
         }
         return $events;
     }
@@ -126,7 +126,7 @@ class EventFlowService extends CacheAware
      */
     public function eventParsers($parsers, $event)
     {
-        if ($buf = $this->cache->fetch('eventParsers' . md5(serialize($parsers)) . $event->type)) {
+        if ($buf = $this->cache->fetch('eventParsers' . $event->type)) {
             $resParsers = unserialize($buf);
         } else {
             /** @var $resParsers Parser[] */
@@ -143,7 +143,7 @@ class EventFlowService extends CacheAware
                     }
                 }
             }
-            $this->cache->save('eventParsers' . md5(serialize($parsers)) . $event->type, serialize($resParsers));
+            $this->cache->save('eventParsers' . $event->type, serialize($resParsers));
         }
         return $resParsers;
     }

@@ -68,25 +68,33 @@ class MenuBuilder extends AbstractNavbarMenuBuilder
         $profile->addChild('Logout', array('route' => 'fos_user_security_logout'));
         $profile->addChild('Profile', array('route' => 'fos_user_profile_show'));
 
+        $use = 'public';
+        $soft = 'soft';
 
         // Build files menu
         $files = $this->createDropdownMenuItem($menu, "Files", false, array('icon' => 'caret'));
         $files->addChild('All', array(
-            'route' => 'file_all',
+            'route' => 'files_all',
             'routeParameters' => array(
-                'use' => 'public',
-                'soft' => 'soft',
+                'use' => $use,
+                'soft' => $soft,
             )
         ));
-        $files->addChild('Privates', array('route' => 'file_all'));
-        $files->addChild('Public', array('route' => 'file_all'));
+        $files->addChild('Privates', array(
+            'route' => 'files_edit',
+            'routeParameters' => array('use' => 'private')
+        ));
+        $files->addChild('Public', array(
+            'route' => 'files_edit',
+            'routeParameters' => array('use' => 'public')
+        ));
 
         // Retrieve file types
         try {
-            $path = $this->kernel->locateResource('@UcsEventFlowAnalyserBundle/Resources/data/' . $dir . '/public/soft');
+            $path = $this->kernel->locateResource("@UcsEventFlowAnalyserBundle/Resources/data/$dir/$use/$soft");
             $parsers = (new ParserService($this->cache))->parseDir($path);
             $EventFlowService = new EventFlowService($this->cache);
-            $events = $EventFlowService->uniqueEvents($parsers);
+            $events = $EventFlowService->uniqueEvents($soft, $parsers);
             if (count($events) > 0) {
                 $this->logger->debug('UcsEventFlowAnalyserBundle::MenuBuilder:: number of events = ' . count($events));
                 // Build files menu
@@ -95,8 +103,8 @@ class MenuBuilder extends AbstractNavbarMenuBuilder
                     array(
                         'route' => 'events_all',
                         'routeParameters' => array(
-                            'use' => 'public',
-                            'soft' => 'soft')
+                            'use' => $use,
+                            'soft' => $soft)
                     ));
                 foreach ($events as $event) {
                     $this->logger->debug("UcsEventFlowAnalyserBundle::MenuBuilder::created event = $event");
@@ -104,8 +112,8 @@ class MenuBuilder extends AbstractNavbarMenuBuilder
                         array(
                             'route' => 'events_event',
                             'routeParameters' => array(
-                                'use' => 'public',
-                                'soft' => 'soft',
+                                'use' => $use,
+                                'soft' => $soft,
                                 'id' => $event)
                         ));
                 }

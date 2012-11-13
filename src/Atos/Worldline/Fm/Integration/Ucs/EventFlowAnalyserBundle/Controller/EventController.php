@@ -35,7 +35,7 @@ class EventController extends Controller
         $dir = $this->getUser()->getSalt();
         $path = $this->get('kernel')->locateResource("@UcsEventFlowAnalyserBundle/Resources/data/$dir/$use/$soft");
         $parsers = (new ParserService($this->get('cache')))->parseDir($path);
-        $events = (new EventFlowService($this->get('cache')))->uniqueEvents($parsers);
+        $events = (new EventFlowService($this->get('cache')))->uniqueEvents($soft, $parsers);
         return array(
             'title' => 'Display All Events',
             'use' => $use,

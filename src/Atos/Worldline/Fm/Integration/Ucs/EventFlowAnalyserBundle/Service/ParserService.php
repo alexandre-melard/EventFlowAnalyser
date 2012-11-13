@@ -71,7 +71,7 @@ class ParserService extends CacheAware
         return $parsers;
     }
 
-    public static function libxml_display_error($error)
+    public function libxml_display_error($error)
     {
         $return = "\n";
         switch ($error->level) {
@@ -94,15 +94,15 @@ class ParserService extends CacheAware
         return $return;
     }
 
-    public static function libxml_display_errors($display_errors = true)
+    public function libxml_display_errors($display_errors = true)
     {
         $errors = libxml_get_errors();
         $chain_errors = "";
 
         foreach ($errors as $error) {
-            $chain_errors .= preg_replace('/( in\ \/(.*))/', '', strip_tags(ParserService::libxml_display_error($error))) . "\n";
+            $chain_errors .= preg_replace('/( in\ \/(.*))/', '', strip_tags($this->libxml_display_error($error))) . "\n";
             if ($display_errors) {
-                trigger_error(ParserService::libxml_display_error($error), E_USER_WARNING);
+                trigger_error($this->libxml_display_error($error), E_USER_WARNING);
             }
         }
         libxml_clear_errors();
@@ -119,23 +119,14 @@ class ParserService extends CacheAware
     public function validate($file, $schema)
     {
         $result = false;
-// Activer "user error handling"
         libxml_use_internal_errors(true);
-
-// Instanciation d'un DOMDocument
         $dom = new \DOMDocument("1.0");
-
-// Charge du XML depuis un fichier
         $dom->load($file);
-
-// Validation du document XML
         $validate = $dom->schemaValidate($schema);
-
-// Affichage du résultat
         if ($validate) {
             $result = true;
         } else {
-            $error = ParserService::libxml_display_errors();
+            $error = $this->libxml_display_errors();
             libxml_use_internal_errors(false);
             throw new Exception("DOMDocument::schemaValidate() Generated Errors : $error");
         }
