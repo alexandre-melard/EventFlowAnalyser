@@ -1,0 +1,32 @@
+{% extends "UcsEventFlowAnalyserBundle::layout.html.twig" %}
+
+{# Underscore templates for the uploader #}
+{% block article %}
+    {# Underscore templates for the uploader #}
+    {% include "PunkAveFileUploaderBundle:Default:templates.html.twig" %}
+
+    <form class="edit-form" action="{{ path('files_edit', { id: posting.id, editId: editId }) }}"
+          method="post" {{ form_enctype(form) }}>
+        {{ form_widget(form) }}
+
+        {# Hydrated by javascript #}
+        <div class="file-uploader"></div>
+
+        <button class="btn btn-primary" type="submit">{{ isNew ? "Save New Listing" : "Save Changes" }}</button>
+        <a class="btn" href="{{ path('files_cancel', { editId: editId  } ) }}">Cancel</a>
+        {% if not isNew %}
+            <a class="btn btn-danger" href="{{ path('files_delete', { id: posting.id } ) }}">Delete</a>
+        {% endif %}
+
+    </form>
+
+{% endblock article %}
+
+
+{#<h1>Upload File</h1>#}
+
+{#<form action="#" method="post" {{ form_enctype(form) }}>#}
+{#{{ form_widget(form) }}#}
+
+{#<input type="submit" value="Upload Document" />#}
+{#</form>#}
