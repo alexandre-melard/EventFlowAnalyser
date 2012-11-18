@@ -4,9 +4,10 @@ imports:
     - { resource: @MopaBootstrapSandboxBundle/Resources/config/themes.yml }
     - { resource: @UcsEventFlowAnalyserBundle/Resources/config/menu.yml }
     - { resource: @UcsEventFlowAnalyserBundle/Resources/config/navbar.yml }
+    - { resource: @UcsEventFlowAnalyserBundle/Resources/config/upload.yml }
+    - { resource: @JQueryFileUploadBundle/Resources/config/assetic.yml }
     - { resource: @MopaBootstrapSandboxBundle/Resources/config/examples/example_menu.yml }
     - { resource: @MopaBootstrapSandboxBundle/Resources/config/examples/example_navbar.yml }
-    - { resource: @PunkAveFileUploaderBundle/Resources/config/services.yml }
 
 mopa_bootstrap:
     navbar: ~
@@ -46,14 +47,41 @@ assetic:
             jar: %kernel.root_dir%/Resources/java/yuicompressor-2.4.6.jar
         yui_css:
             jar: %kernel.root_dir%/Resources/java/yuicompressor-2.4.6.jar
+        lessphp:
+            file: %kernel.root_dir%/../vendor/leafo/lessphp/lessc.inc.php
     assets:
-        all:
+        bootstrap_css:
             inputs:
-                - @MopaBootstrapBundle/Resources/public/less/mopabootstrapbundle.css
-                - @MopaBootstrapSandboxBundle/Resources/public/less/mopabootstrapsandboxbundle.css
+                - @MopaBootstrapBundle/Resources/bootstrap/less/bootstrap.less
+            output: css/bootstrap.min.css
+            filters:
+                - lessphp
+                - yui_css
+        bootstrap_js:
+            inputs:
+                - @MopaBootstrapBundle/Resources/bootstrap/js/*.js
+            output: js/bootstrap.min.js
+            filters:
+                - yui_js
+        prettify:
+            inputs:
                 - @MopaBootstrapSandboxBundle/Resources/public/css/prettify.css
+            output: css/prettify.min.css
+            filters:
+                - yui_css
+        UcsEventFlowAnalyserBundle_css:
+            inputs:
                 - @UcsEventFlowAnalyserBundle/Resources/assets/compass/stylesheets/base.css
                 - @UcsEventFlowAnalyserBundle/Resources/assets/compass/stylesheets/jquery-ui-1.9.1.custom.min.css
+            output: css/UcsEventFlowAnalyserBundle.min.css
+            filters:
+                - yui_css
+        all:
+            inputs:
+                - @bootstrap_css
+                - @prettify
+                - @UcsEventFlowAnalyserBundle_css
+            output: css/all.min.css
             filters:
                 - yui_css
         bootstrap:
@@ -61,33 +89,12 @@ assetic:
                 - @UcsEventFlowAnalyserBundle/Resources/assets/js/jquery-1.7.2.min.js
                 - @UcsEventFlowAnalyserBundle/Resources/assets/js/jquery-ui-1.8.22.min.js
                 - @UcsEventFlowAnalyserBundle/Resources/assets/js/underscore-min.js
-                - @MopaBootstrapBundle/Resources/bootstrap/js/bootstrap-transition.js
-                - @MopaBootstrapBundle/Resources/bootstrap/js/bootstrap-modal.js
-                - @MopaBootstrapBundle/Resources/bootstrap/js/bootstrap-dropdown.js
-                - @MopaBootstrapBundle/Resources/bootstrap/js/bootstrap-scrollspy.js
-                - @MopaBootstrapBundle/Resources/bootstrap/js/bootstrap-tab.js
-                - @MopaBootstrapBundle/Resources/bootstrap/js/bootstrap-tooltip.js
-                - @MopaBootstrapBundle/Resources/bootstrap/js/bootstrap-popover.js
-                - @MopaBootstrapBundle/Resources/bootstrap/js/bootstrap-alert.js
-                - @MopaBootstrapBundle/Resources/bootstrap/js/bootstrap-button.js
-                - @MopaBootstrapBundle/Resources/bootstrap/js/bootstrap-collapse.js
-                - @MopaBootstrapBundle/Resources/bootstrap/js/bootstrap-carousel.js
-                - @MopaBootstrapBundle/Resources/bootstrap/js/bootstrap-typeahead.js
                 - @MopaBootstrapBundle/Resources/public/js/mopabootstrap-collection.js
                 - @MopaBootstrapBundle/Resources/public/js/mopabootstrap-subnav.js
-                - @PunkAveFileUploaderBundle/Resources/public/js/jquery.fileupload.js
-                - @PunkAveFileUploaderBundle/Resources/public/js/FileUploader.js
-#                - @UcsEventFlowAnalyserBundle/Resources/assets/js/jquery-1.7.1.min.js
-
+                - @JQueryFileUploadBundle/Resources/public/js/jquery/jquery.fileupload.js
+            output: js/bootstrap.min.js
             filters:
                 - yui_js
-
-#        cssrewrite: ~
-#        cssembed:
-#            jar: %kernel.root_dir%/Resources/java/cssembed-0.4.5.jar
-#            apply_to: "\.css$|\.less$"
-        #closure:
-        #    jar: "%kernel.root_dir%/Resources/java/compiler.jar"
 
 # Doctrine Configuration
 doctrine:

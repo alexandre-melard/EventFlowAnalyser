@@ -23,7 +23,7 @@ class AppKernel extends Kernel
             new Atos\Worldline\Fm\UserBundle\AtosWorldlineFmUserBundle(),
             new Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyserBundle\UcsEventFlowAnalyserBundle(),
             new Knp\Bundle\MenuBundle\KnpMenuBundle(),
-            new PunkAve\FileUploaderBundle\PunkAveFileUploaderBundle(),
+            new Mylen\JQueryFileUploadBundle\JQueryFileUploadBundle(),
             new Mopa\Bundle\BootstrapBundle\MopaBootstrapBundle(),
             new Mopa\Bundle\BootstrapSandboxBundle\MopaBootstrapSandboxBundle(),
             new Knp\Bundle\PaginatorBundle\KnpPaginatorBundle(),

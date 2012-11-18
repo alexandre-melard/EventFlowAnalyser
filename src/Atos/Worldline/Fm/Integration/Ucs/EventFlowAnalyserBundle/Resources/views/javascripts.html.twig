@@ -1,19 +1,4 @@
-<script type="text/javascript" src="{{ asset('assetic/bootstrap.js') }}"></script>
-
-{% if editId is defined %}
-    <script type="text/javascript">
-
-        // Enable the file uploader
-        $(function () {
-            new PunkAveFileUploader({
-                'uploadUrl': {{ path('files_upload', { editId: editId }) | json_encode | raw }},
-                'viewUrl': {{ '/uploads/tmp/attachments/' | json_encode | raw }},
-                'el':'.file-uploader',
-                'delaySubmitWhileUploading':'.edit-form'
-            });
-        });
-    </script>
-{% endif %}
+<script type="text/javascript" src="{{ asset('js/bootstrap.min.js') }}"></script>
 
 <script type="text/javascript">
     $(document).ready(function () {

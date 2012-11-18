@@ -38,9 +38,9 @@ class Document
 
     /**
      * @var UploadedFile
-     * @Assert\File(maxSize="6000000")
+     * @Assert\File[](maxSize="6000000")
      */
-    public $file;
+    public $files;
 
     public $uploadDir;
     public $webDir;

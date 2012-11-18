@@ -1,6 +1,53 @@
 {
-    "hash": "e76a9a1de3a3774865a796832778e724",
+    "hash": "8394a6bde9bf31d44cc52e2b52cc32c8",
     "packages": [
+        {
+            "name": "blueimp/jquery-file-upload",
+            "version": "1.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/amelard/jQuery-File-Upload",
+                "reference": "1.1.0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://github.com/amelard/jQuery-File-Upload/archive/1.1.0.zip",
+                "reference": "1.1.0",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.0"
+            },
+            "time": "2012-11-17 22:10:33",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-0": {
+                    "UploadHandler": "server/php"
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Sebastian Tschan",
+                    "email": "mail@blueimp.net",
+                    "homepage": "https://blueimp.net/",
+                    "role": "Developer"
+                }
+            ],
+            "description": "library to upload files and automaticaly resize images using jquery ajax api",
+            "homepage": "https://github.com/blueimp/jQuery-File-Upload",
+            "keywords": [
+                "php",
+                "jquery",
+                "JS",
+                "upload",
+                "ajax",
+                "Node.js"
+            ]
+        },
         {
             "name": "craue/formflow-bundle",
             "version": "dev-master",
@@ -12,7 +59,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/craue/CraueFormFlowBundle/zipball/961a181c116085a3baa67c4270428e448ad15b94",
+                "url": "https://github.com/craue/CraueFormFlowBundle/archive/961a181c116085a3baa67c4270428e448ad15b94.zip",
                 "reference": "961a181c116085a3baa67c4270428e448ad15b94",
                 "shasum": ""
             },
@@ -59,13 +106,14 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/doctrine/common/zipball/bb0aebbf234db52df476a2b473d434745b34221c",
+                "url": "https://github.com/doctrine/common/archive/bb0aebbf234db52df476a2b473d434745b34221c.zip",
                 "reference": "bb0aebbf234db52df476a2b473d434745b34221c",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.2"
             },
+            "time": "1348120518",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -89,7 +137,8 @@
                 },
                 {
                     "name": "Guilherme Blanco",
-                    "email": "guilhermeblanco@gmail.com"
+                    "email": "guilhermeblanco@gmail.com",
+                    "homepage": "http://www.instaclick.com"
                 },
                 {
                     "name": "Roman Borschel",
@@ -114,8 +163,7 @@
                 "eventmanager",
                 "annotations",
                 "persistence"
-            ],
-            "time": "1348120518"
+            ]
         },
         {
             "name": "doctrine/dbal",
@@ -123,19 +171,19 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/dbal",
-                "reference": "9395ca33971c0ff875d71a0271e6c0d5b0f01508"
+                "reference": "292d5edd17e0a9b9a7ee9eb20d6ae1033059153f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/doctrine/dbal/zipball/9395ca33971c0ff875d71a0271e6c0d5b0f01508",
-                "reference": "9395ca33971c0ff875d71a0271e6c0d5b0f01508",
+                "url": "https://github.com/doctrine/dbal/archive/292d5edd17e0a9b9a7ee9eb20d6ae1033059153f.zip",
+                "reference": "292d5edd17e0a9b9a7ee9eb20d6ae1033059153f",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.2",
                 "doctrine/common": "2.3.*"
             },
-            "time": "1350419590",
+            "time": "1352716871",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -187,19 +235,20 @@
             "source": {
                 "type": "git",
                 "url": "git://github.com/doctrine/DoctrineBundle.git",
-                "reference": "1cfd5691283f4b32cfea87e8c8e28d502902c825"
+                "reference": "47df202dfb4ad38e15d6aed8a53e722b30c9f9fd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/doctrine/DoctrineBundle/archive/1cfd5691283f4b32cfea87e8c8e28d502902c825.zip",
-                "reference": "1cfd5691283f4b32cfea87e8c8e28d502902c825",
+                "url": "https://github.com/doctrine/DoctrineBundle/archive/47df202dfb4ad38e15d6aed8a53e722b30c9f9fd.zip",
+                "reference": "47df202dfb4ad38e15d6aed8a53e722b30c9f9fd",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.2",
                 "doctrine/dbal": ">=2.2,<2.4-dev",
                 "symfony/framework-bundle": ">=2.1,<2.3-dev",
-                "symfony/doctrine-bridge": ">=2.1,<2.3-dev"
+                "symfony/doctrine-bridge": ">=2.1,<2.3-dev",
+                "jdorn/sql-formatter": "v1.0.1"
             },
             "require-dev": {
                 "doctrine/orm": ">=2.2,<2.4-dev",
@@ -209,7 +258,7 @@
             "suggest": {
                 "doctrine/orm": "The Doctrine ORM integration is optional in the bundle."
             },
-            "time": "1352365569",
+            "time": "1353074073",
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
@@ -254,12 +303,12 @@
             "source": {
                 "type": "git",
                 "url": "git://github.com/doctrine/doctrine2.git",
-                "reference": "6bad0109599348c5216df35f62b80a20ba16c507"
+                "reference": "77d060ab74212919f1eaace72842ea43bf420f43"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/doctrine/doctrine2/zipball/6bad0109599348c5216df35f62b80a20ba16c507",
-                "reference": "6bad0109599348c5216df35f62b80a20ba16c507",
+                "url": "https://github.com/doctrine/doctrine2/archive/77d060ab74212919f1eaace72842ea43bf420f43.zip",
+                "reference": "77d060ab74212919f1eaace72842ea43bf420f43",
                 "shasum": ""
             },
             "require": {
@@ -271,6 +320,7 @@
             "suggest": {
                 "symfony/yaml": "If you want to use YAML Metadata Mapping Driver"
             },
+            "time": "1352731781",
             "bin": [
                 "bin/doctrine",
                 "bin/doctrine.php"
@@ -315,8 +365,7 @@
             "keywords": [
                 "database",
                 "orm"
-            ],
-            "time": "1350071385"
+            ]
         },
         {
             "name": "friendsofsymfony/user-bundle",
@@ -325,12 +374,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/FriendsOfSymfony/FOSUserBundle",
-                "reference": "a197484ad0b53a056e07a13b639ed69466c06c95"
+                "reference": "809734e26fa68023f27e3752d370092fb1160e59"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/FriendsOfSymfony/FOSUserBundle/zipball/a197484ad0b53a056e07a13b639ed69466c06c95",
-                "reference": "a197484ad0b53a056e07a13b639ed69466c06c95",
+                "url": "https://github.com/FriendsOfSymfony/FOSUserBundle/archive/809734e26fa68023f27e3752d370092fb1160e59.zip",
+                "reference": "809734e26fa68023f27e3752d370092fb1160e59",
                 "shasum": ""
             },
             "require": {
@@ -351,7 +400,7 @@
                 "doctrine/doctrine-bundle": "*",
                 "doctrine/mongodb-odm-bundle": "*"
             },
-            "time": "1351955784",
+            "time": "1352986811",
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
@@ -386,6 +435,53 @@
             "homepage": "http://friendsofsymfony.github.com",
             "keywords": [
                 "User management"
+            ]
+        },
+        {
+            "name": "jdorn/sql-formatter",
+            "version": "v1.0.1",
+            "source": {
+                "type": "git",
+                "url": "git://github.com/jdorn/sql-formatter.git",
+                "reference": "v1.0.1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://github.com/jdorn/sql-formatter/archive/v1.0.1.zip",
+                "reference": "v1.0.1",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.2.4"
+            },
+            "time": "2012-10-04 22:10:16",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0.x-dev"
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "classmap": [
+                    "lib"
+                ]
+            },
+            "license": [
+                "LGPL"
+            ],
+            "authors": [
+                {
+                    "name": "Jeremy Dorn",
+                    "email": "jeremy@jeremydorn.com",
+                    "homepage": "http://jeremydorn.com/"
+                }
+            ],
+            "description": "a PHP SQL highlighting library",
+            "homepage": "https://github.com/jdorn/sql-formatter/",
+            "keywords": [
+                "sql",
+                "highlight"
             ]
         },
         {
@@ -449,7 +545,7 @@
             "require": {
                 "php": ">=5.3.0"
             },
-            "time": "2012-01-02 20:40:52",
+            "time": "2012-01-02 12:40:52",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -484,7 +580,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/schmittjoh/JMSDiExtraBundle/zipball/1.1.1",
+                "url": "https://github.com/schmittjoh/JMSDiExtraBundle/archive/1.1.1.zip",
                 "reference": "1.1.1",
                 "shasum": ""
             },
@@ -508,6 +604,7 @@
                 "doctrine/doctrine-bundle": "*",
                 "doctrine/orm": "*"
             },
+            "time": "1348217792",
             "type": "symfony-bundle",
             "installation-source": "source",
             "autoload": {
@@ -522,7 +619,7 @@
                 {
                     "name": "Johannes M. Schmitt",
                     "email": "schmittjoh@gmail.com",
-                    "homepage": "http://jmsyst.com",
+                    "homepage": "https://github.com/schmittjoh",
                     "role": "Developer of wrapped JMSSerializerBundle"
                 }
             ],
@@ -531,8 +628,7 @@
             "keywords": [
                 "dependency injection",
                 "annotations"
-            ],
-            "time": "1348217792"
+            ]
         },
         {
             "name": "jms/metadata",
@@ -551,7 +647,7 @@
             "require": {
                 "php": ">=5.3.0"
             },
-            "time": "2012-01-02 21:32:49",
+            "time": "2012-01-02 13:32:49",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -566,7 +662,7 @@
                 {
                     "name": "Johannes M. Schmitt",
                     "email": "schmittjoh@gmail.com",
-                    "homepage": "http://jmsyst.com",
+                    "homepage": "https://github.com/schmittjoh",
                     "role": "Developer of wrapped JMSSerializerBundle"
                 }
             ],
@@ -589,7 +685,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/schmittjoh/JMSSecurityExtraBundle/zipball/9ab6aceda50fc7a2b07d741ba4b3f0695508afcb",
+                "url": "https://github.com/schmittjoh/JMSSecurityExtraBundle/archive/9ab6aceda50fc7a2b07d741ba4b3f0695508afcb.zip",
                 "reference": "9ab6aceda50fc7a2b07d741ba4b3f0695508afcb",
                 "shasum": ""
             },
@@ -614,6 +710,7 @@
                 "symfony/form": "*",
                 "symfony/validator": "*"
             },
+            "time": "1346947943",
             "type": "symfony-bundle",
             "installation-source": "source",
             "autoload": {
@@ -628,7 +725,7 @@
                 {
                     "name": "Johannes M. Schmitt",
                     "email": "schmittjoh@gmail.com",
-                    "homepage": "http://jmsyst.com",
+                    "homepage": "https://github.com/schmittjoh",
                     "role": "Developer of wrapped JMSSerializerBundle"
                 }
             ],
@@ -640,8 +737,7 @@
                 "security",
                 "secure",
                 "expression"
-            ],
-            "time": "1346947943"
+            ]
         },
         {
             "name": "knplabs/knp-components",
@@ -649,19 +745,24 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/KnpLabs/knp-components",
-                "reference": "99ea408dc2a7c3616e688ffe67e3248ece69ff0e"
+                "reference": "1.1.2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/KnpLabs/knp-components/zipball/99ea408dc2a7c3616e688ffe67e3248ece69ff0e",
-                "reference": "99ea408dc2a7c3616e688ffe67e3248ece69ff0e",
+                "url": "https://github.com/KnpLabs/knp-components/archive/1.1.2.zip",
+                "reference": "1.1.2",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.0"
+                "php": ">=5.3.2"
             },
-            "time": "1339767068",
+            "time": "1353057734",
             "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.2.x-dev"
+                }
+            },
             "installation-source": "source",
             "autoload": {
                 "psr-0": {
@@ -697,12 +798,12 @@
             "source": {
                 "type": "git",
                 "url": "http://github.com/KnpLabs/KnpMenu.git",
-                "reference": "5c33817281456f9d5298a277890e2e025f7f50c7"
+                "reference": "8dd8c07f20f19f50174dc487baa7b14f26e6bb8a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/KnpLabs/KnpMenu/zipball/5c33817281456f9d5298a277890e2e025f7f50c7",
-                "reference": "5c33817281456f9d5298a277890e2e025f7f50c7",
+                "url": "https://github.com/KnpLabs/KnpMenu/archive/8dd8c07f20f19f50174dc487baa7b14f26e6bb8a.zip",
+                "reference": "8dd8c07f20f19f50174dc487baa7b14f26e6bb8a",
                 "shasum": ""
             },
             "require": {
@@ -718,7 +819,7 @@
                 "silex/silex": "for the integration with your silex application",
                 "twig/twig": "for the TwigRenderer and the integration with your templates"
             },
-            "time": "1350747764",
+            "time": "1353000731",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -766,7 +867,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/KnpLabs/KnpMenuBundle/zipball/471ad25ea4fcc469f901a85bc5ca530b0bc68624",
+                "url": "https://github.com/KnpLabs/KnpMenuBundle/archive/471ad25ea4fcc469f901a85bc5ca530b0bc68624.zip",
                 "reference": "471ad25ea4fcc469f901a85bc5ca530b0bc68624",
                 "shasum": ""
             },
@@ -816,21 +917,21 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/KnpLabs/KnpPaginatorBundle",
-                "reference": "8aa5964b4f5845466b9623aacc22b9acbbef19e0"
+                "reference": "0d719a9bd6973bde1b10587fc2c85cf04c5e0e9d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/KnpLabs/KnpPaginatorBundle/archive/8aa5964b4f5845466b9623aacc22b9acbbef19e0.zip",
-                "reference": "8aa5964b4f5845466b9623aacc22b9acbbef19e0",
+                "url": "https://github.com/KnpLabs/KnpPaginatorBundle/archive/0d719a9bd6973bde1b10587fc2c85cf04c5e0e9d.zip",
+                "reference": "0d719a9bd6973bde1b10587fc2c85cf04c5e0e9d",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.2",
-                "symfony/framework-bundle": "2.*,<2.2",
                 "knplabs/knp-components": ">=1.1",
-                "twig/twig": ">=1.5"
+                "twig/twig": ">=1.5",
+                "symfony/framework-bundle": "2.*,<2.3"
             },
-            "time": "1352115261",
+            "time": "1353061581",
             "type": "symfony-bundle",
             "installation-source": "source",
             "autoload": {
@@ -939,7 +1040,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/leafo/lessphp/zipball/da15f54506ce5023eaeb9ad9cae83470ffe018a1",
+                "url": "https://github.com/leafo/lessphp/archive/da15f54506ce5023eaeb9ad9cae83470ffe018a1.zip",
                 "reference": "da15f54506ce5023eaeb9ad9cae83470ffe018a1",
                 "shasum": ""
             },
@@ -976,7 +1077,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/liip/LiipThemeBundle/zipball/d2c4cdd1590a33938d7c6e9bc18a296d6b0ed92d",
+                "url": "https://github.com/liip/LiipThemeBundle/archive/d2c4cdd1590a33938d7c6e9bc18a296d6b0ed92d.zip",
                 "reference": "d2c4cdd1590a33938d7c6e9bc18a296d6b0ed92d",
                 "shasum": ""
             },
@@ -1020,12 +1121,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Seldaek/monolog",
-                "reference": "30b48f1231b041bfd363517a77a3a2ea02b1f576"
+                "reference": "b23cfd3d6ce0b6c050dda723040b83a1a6d7637e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/Seldaek/monolog/zipball/30b48f1231b041bfd363517a77a3a2ea02b1f576",
-                "reference": "30b48f1231b041bfd363517a77a3a2ea02b1f576",
+                "url": "https://github.com/Seldaek/monolog/archive/b23cfd3d6ce0b6c050dda723040b83a1a6d7637e.zip",
+                "reference": "b23cfd3d6ce0b6c050dda723040b83a1a6d7637e",
                 "shasum": ""
             },
             "require": {
@@ -1039,7 +1140,7 @@
                 "ext-amqp": "Allow sending log messages to an AMQP server (1.0+ required)",
                 "ext-mongo": "Allow sending log messages to a MongoDB server"
             },
-            "time": "1352047076",
+            "time": "1352907970",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -1230,23 +1331,89 @@
             ]
         },
         {
+            "name": "mylen/jquery-file-upload-bundle",
+            "version": "dev-master",
+            "target-dir": "Mylen/JQueryFileUploadBundle",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mylen/jquery-file-upload-bundle",
+                "reference": "0.0.7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://github.com/mylen/jquery-file-upload-bundle/archive/0.0.7.zip",
+                "reference": "0.0.7",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.2",
+                "symfony/framework-bundle": "2.*",
+                "symfony/finder": "2.*",
+                "blueimp/jquery-file-upload": "1.1.*",
+                "symfony/dependency-injection": "2.*",
+                "symfony/http-kernel": "2.*"
+            },
+            "time": "1353224566",
+            "type": "symfony-bundle",
+            "installation-source": "source",
+            "autoload": {
+                "psr-0": {
+                    "Mylen\\JQueryFileUploadBundle": ""
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Thomas Boutell",
+                    "email": "tom@punkave.com"
+                },
+                {
+                    "name": "Wes John-Alder",
+                    "email": "wes@punkave.com"
+                },
+                {
+                    "name": "Alexandre Melard",
+                    "email": "alexandre@melard.fr",
+                    "homepage": "http://blog.melard.fr/",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Multiple file uploads for Symfony2 with the BlueImp uploader. Also scales uploaded images",
+            "homepage": "https://github.com/amelard/jquery-file-upload-bundle",
+            "keywords": [
+                "symfony",
+                "file",
+                "bundle",
+                "upload",
+                "Symfony Bundle",
+                "Image transform",
+                "uploader",
+                "multiple file upload",
+                "blueimp",
+                "symfony-2.0",
+                "symfony-2.1"
+            ]
+        },
+        {
             "name": "pimple/pimple",
             "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "git://github.com/fabpot/Pimple.git",
-                "reference": "b9f27b8dc18c08f00627dec02359b46a24791dc3"
+                "reference": "86df0604a10c5faf20b466ae6a0b762cc6ed0a35"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/fabpot/Pimple/zipball/b9f27b8dc18c08f00627dec02359b46a24791dc3",
-                "reference": "b9f27b8dc18c08f00627dec02359b46a24791dc3",
+                "url": "https://github.com/fabpot/Pimple/archive/86df0604a10c5faf20b466ae6a0b762cc6ed0a35.zip",
+                "reference": "86df0604a10c5faf20b466ae6a0b762cc6ed0a35",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.0"
             },
-            "time": "1347278988",
+            "time": "1352622754",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -1276,66 +1443,6 @@
             ]
         },
         {
-            "name": "punkave/symfony2-file-uploader-bundle",
-            "version": "dev-master",
-            "target-dir": "PunkAve/FileUploaderBundle",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/punkave/symfony2-file-uploader-bundle",
-                "reference": "455fb7f728f20015cfc76479a3797c9a4f722507"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://github.com/punkave/symfony2-file-uploader-bundle/zipball/455fb7f728f20015cfc76479a3797c9a4f722507",
-                "reference": "455fb7f728f20015cfc76479a3797c9a4f722507",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.2",
-                "symfony/framework-bundle": "2.*"
-            },
-            "time": "1348771750",
-            "type": "symfony-bundle",
-            "extra": {
-                "branch-alias": [
-
-                ]
-            },
-            "installation-source": "source",
-            "autoload": {
-                "psr-0": {
-                    "PunkAve\\FileUploaderBundle": ""
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Thomas Boutell",
-                    "email": "tom@punkave.com"
-                },
-                {
-                    "name": "Wes John-Alder",
-                    "email": "wes@punkave.com"
-                }
-            ],
-            "description": "Multiple file uploads for Symfony2 with the BlueImp uploader. Also scales uploaded images",
-            "homepage": "https://github.com/punkave/symfony2-file-uploader-bundle",
-            "keywords": [
-                "symfony",
-                "file",
-                "bundle",
-                "upload",
-                "Symfony Bundle",
-                "Image transform",
-                "uploader",
-                "multiple file upload",
-                "blueimp",
-                "punkave"
-            ]
-        },
-        {
             "name": "sensio/distribution-bundle",
             "version": "2.1.x-dev",
             "target-dir": "Sensio/Bundle/DistributionBundle",
@@ -1346,13 +1453,14 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/sensio/SensioDistributionBundle/zipball/v2.1.3",
+                "url": "https://github.com/sensio/SensioDistributionBundle/archive/v2.1.3.zip",
                 "reference": "v2.1.3",
                 "shasum": ""
             },
             "require": {
                 "symfony/framework-bundle": "2.1.*"
             },
+            "time": "1347340208",
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
@@ -1378,8 +1486,7 @@
             "keywords": [
                 "distribution",
                 "configuration"
-            ],
-            "time": "1347340208"
+            ]
         },
         {
             "name": "sensio/framework-extra-bundle",
@@ -1392,7 +1499,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/sensio/SensioFrameworkExtraBundle/zipball/v2.1.3",
+                "url": "https://github.com/sensio/SensioFrameworkExtraBundle/archive/v2.1.3.zip",
                 "reference": "v2.1.3",
                 "shasum": ""
             },
@@ -1599,7 +1706,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/symfony/MonologBundle/zipball/51517152a608926ee6b40ed8cfbba1a708f0a14f",
+                "url": "https://github.com/symfony/MonologBundle/archive/51517152a608926ee6b40ed8cfbba1a708f0a14f.zip",
                 "reference": "51517152a608926ee6b40ed8cfbba1a708f0a14f",
                 "shasum": ""
             },
@@ -1614,6 +1721,7 @@
                 "symfony/yaml": ">=2.1.0,<2.3-dev",
                 "symfony/config": ">=2.1.0,<2.3-dev"
             },
+            "time": "1348137624",
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
@@ -1640,8 +1748,7 @@
                 }
             ],
             "description": "Symfony MonologBundle",
-            "homepage": "http://symfony.com",
-            "time": "1348137624"
+            "homepage": "http://symfony.com"
         },
         {
             "name": "symfony/swiftmailer-bundle",
@@ -1654,7 +1761,7 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/symfony/SwiftmailerBundle/zipball/2393ba6d4f1b544349123e24a16bbc749bef9e55",
+                "url": "https://github.com/symfony/SwiftmailerBundle/archive/2393ba6d4f1b544349123e24a16bbc749bef9e55.zip",
                 "reference": "2393ba6d4f1b544349123e24a16bbc749bef9e55",
                 "shasum": ""
             },
@@ -1704,12 +1811,12 @@
             "source": {
                 "type": "git",
                 "url": "git://github.com/symfony/symfony.git",
-                "reference": "a30383d12cf5ac7c05190081a1e7587b698fe3bf"
+                "reference": "461db28d3305b74a2514c7a88373398db7d5e71e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/symfony/symfony/archive/a30383d12cf5ac7c05190081a1e7587b698fe3bf.zip",
-                "reference": "a30383d12cf5ac7c05190081a1e7587b698fe3bf",
+                "url": "https://github.com/symfony/symfony/archive/461db28d3305b74a2514c7a88373398db7d5e71e.zip",
+                "reference": "461db28d3305b74a2514c7a88373398db7d5e71e",
                 "shasum": ""
             },
             "require": {
@@ -1758,7 +1865,7 @@
                 "propel/propel1": "dev-master",
                 "monolog/monolog": "1.*"
             },
-            "time": "1352465740",
+            "time": "1353172006",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -1807,7 +1914,7 @@
             },
             "type": "library",
             "installation-source": "source",
-            "time": "1351694647"
+            "time": "1353158633"
         },
         {
             "name": "twig/extensions",
@@ -1819,13 +1926,14 @@
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/fabpot/Twig-extensions/zipball/dcdff02fbac1282e6b8f4d0558cc7e9580105688",
+                "url": "https://github.com/fabpot/Twig-extensions/archive/dcdff02fbac1282e6b8f4d0558cc7e9580105688.zip",
                 "reference": "dcdff02fbac1282e6b8f4d0558cc7e9580105688",
                 "shasum": ""
             },
             "require": {
                 "twig/twig": "1.*"
             },
+            "time": "1349889206",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -1853,8 +1961,7 @@
                 "debug",
                 "i18n",
                 "text"
-            ],
-            "time": "1349889206"
+            ]
         },
         {
             "name": "twig/twig",
@@ -1862,22 +1969,22 @@
             "source": {
                 "type": "git",
                 "url": "git://github.com/fabpot/Twig.git",
-                "reference": "1a10ea2fbb2291142b4ee03665591c0762315204"
+                "reference": "11368e7e08bc1c9626317fe28e3fdd1855e17198"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/fabpot/Twig/archive/1a10ea2fbb2291142b4ee03665591c0762315204.zip",
-                "reference": "1a10ea2fbb2291142b4ee03665591c0762315204",
+                "url": "https://github.com/fabpot/Twig/archive/11368e7e08bc1c9626317fe28e3fdd1855e17198.zip",
+                "reference": "11368e7e08bc1c9626317fe28e3fdd1855e17198",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.2.4"
             },
-            "time": "1352366711",
+            "time": "1353099404",
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "1.11-dev"
+                    "dev-master": "1.12-dev"
                 }
             },
             "installation-source": "source",
@@ -1934,7 +2041,7 @@
         "knplabs/knp-paginator-bundle": 20,
         "craue/formflow-bundle": 20,
         "pimple/pimple": 20,
-        "punkave/symfony2-file-uploader-bundle": 20,
+        "mylen/jquery-file-upload-bundle": 20,
         "mopa/bootstrap-bundle": 20,
         "mopa/bootstrap-sandbox-bundle": 20,
         "twitter/bootstrap": 20,

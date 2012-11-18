@@ -8,6 +8,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyserBundle\Entity\Document;
 use Symfony\Component\Config\Definition\Exception\Exception;
+use Mylen\JQueryFileUploadBundle\Services\FileUploader;
 
 /**
  * @Route("/files")
@@ -29,20 +30,23 @@ class FileController extends Controller
      */
     public function editAction()
     {
+        /** @var FileUploader */
+        $uploader = $this->get('punk_ave.file_uploader');
         $webDir = $this->get('kernel')->getRootDir() . '/../web';
         $posting = new Document($webDir);
 
         $form = $this->createFormBuilder($posting)
             ->add('name')
-            ->add('file')
             ->getForm();
+
 
         $request = $this->getRequest();
         $editId = $request->get('editId');
         if (!preg_match('/^\d+$/', $editId)) {
             $editId = sprintf('%09d', mt_rand(0, 1999999999));
+
             if ($posting->id) {
-                $this->get('punk_ave.file_uploader')->syncFiles(
+                $uploader->syncFiles(
                     array('from_folder' => 'attachments/' . $posting->id,
                         'to_folder' => 'tmp/attachments/' . $editId,
                         'create_to_folder' => true));
@@ -74,17 +78,21 @@ class FileController extends Controller
 
     /**
      *
-     * @Route("/upload", name="files_upload")
+     * @Route("/upload/{editId}", name="files_upload")
      * @Template()
      */
-    public function uploadAction()
+    public function uploadAction($editId)
     {
-        $editId = $this->getRequest()->get('editId');
+        /** @var FileUploader */
+        $uploader = $this->get('punk_ave.file_uploader');
         if (!preg_match('/^\d+$/', $editId)) {
             throw new \Exception("Bad edit id");
         }
+        /** @var $res \Mylen\JQueryFileUploadBundle\Services\IResponseContainer */
+        $res = $uploader->handleFileUpload('tmp/attachments/' . $editId);
 
-        $this->get('punk_ave.file_uploader')->handleFileUpload(array('folder' => 'tmp/attachments/' . $editId));
+        return new \Symfony\Component\HttpFoundation\Response($res->getBody(), $res->getType(), $res->getHeader());
+
     }
 
     /**
@@ -94,12 +102,15 @@ class FileController extends Controller
      */
     public function cancelAction()
     {
+        /** @var FileUploader */
+        $uploader = $this->get('punk_ave.file_uploader');
         $editId = $this->getRequest()->get('editId');
         if (!preg_match('/^\d+$/', $editId)) {
             throw new \Exception("Bad edit id");
         }
+
         try {
-            $this->get('punk_ave.file_uploader')->removeFiles(array('folder' => 'tmp/attachments/' . $editId));
+            $uploader->removeFiles(array('folder' => 'tmp/attachments/' . $editId));
             $this->get('session')->getFlashBag()->add('notice', 'File upload as been cancelled!');
         } catch (Exception $e) {
             $this->get('session')->getFlashBag()->add('error', 'could not remove file: system error: ' . $e);
@@ -114,10 +125,12 @@ class FileController extends Controller
      */
     public function deleteAction()
     {
+        /** @var FileUploader */
+        $uploader = $this->get('punk_ave.file_uploader');
         $posting = $this->getRequest()->get('posting');
 
         try {
-            $this->get('punk_ave.file_uploader')->removeFiles(array('folder' => 'attachments/' . $posting->getId()));
+            $uploader->removeFiles(array('folder' => 'attachments/' . $posting->getId()));
             $this->get('session')->getFlashBag()->add('notice', 'File upload as been cancelled!');
         } catch (Exception $e) {
             $this->get('session')->getFlashBag()->add('error', 'could not remove file: system error: ' . $e);
@@ -129,9 +142,10 @@ class FileController extends Controller
      * @Route("/all", name="files_all")
      * @Template
      */
-    public
-    function allAction()
+    public function allAction()
     {
+        /** @var FileUploader */
+        $uploader = $this->get('punk_ave.file_uploader');
         $dir = $this->getUser()->getSalt();
         $path = $this->get('kernel')->locateResource('@UcsEventFlowAnalyserBundle/Resources/data/' . $dir);
         $files = FileService::scanDir($path);
