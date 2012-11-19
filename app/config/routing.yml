@@ -6,7 +6,7 @@ liip_theme:
     prefix: /theme
 
 ucs_event_flow_analyser:
-    resource: "@UcsEventFlowAnalyserBundle/Controller/"
+    resource: "@UcsEventFlowAnalyser/Controller/"
     type:     annotation
     prefix:   /
 

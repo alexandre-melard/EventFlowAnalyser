@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<parser>
+    <header>
+        <date></date>
+        <generator></generator>
+        <process>pom</process>
+    </header>
+    <events>
+        <in>
+            <event>CORE_MSG_TYPE_RequestForTradeLegAndPostingCancellation</event>
+            <out>
+                <event>CORE_MSG_TYPE_OperationOnTradeLegAndPostingCancellation</event>
+            </out>
+        </in>
+    </events>
+</parser>

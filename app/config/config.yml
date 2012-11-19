@@ -2,9 +2,9 @@ imports:
     - { resource: parameters.yml }
     - { resource: security.yml }
     - { resource: @MopaBootstrapSandboxBundle/Resources/config/themes.yml }
-    - { resource: @UcsEventFlowAnalyserBundle/Resources/config/menu.yml }
-    - { resource: @UcsEventFlowAnalyserBundle/Resources/config/navbar.yml }
-    - { resource: @UcsEventFlowAnalyserBundle/Resources/config/upload.yml }
+    - { resource: @UcsEventFlowAnalyser/Resources/config/menu.yml }
+    - { resource: @UcsEventFlowAnalyser/Resources/config/navbar.yml }
+    - { resource: @UcsEventFlowAnalyser/Resources/config/upload.yml }
     - { resource: @JQueryFileUploadBundle/Resources/config/assetic.yml }
     - { resource: @MopaBootstrapSandboxBundle/Resources/config/examples/example_menu.yml }
     - { resource: @MopaBootstrapSandboxBundle/Resources/config/examples/example_navbar.yml }
@@ -69,26 +69,26 @@ assetic:
             output: css/prettify.min.css
             filters:
                 - yui_css
-        UcsEventFlowAnalyserBundle_css:
+        UcsEventFlowAnalyser_css:
             inputs:
-                - @UcsEventFlowAnalyserBundle/Resources/assets/compass/stylesheets/base.css
-                - @UcsEventFlowAnalyserBundle/Resources/assets/compass/stylesheets/jquery-ui-1.9.1.custom.min.css
-            output: css/UcsEventFlowAnalyserBundle.min.css
+                - @UcsEventFlowAnalyser/Resources/assets/compass/stylesheets/base.css
+                - @UcsEventFlowAnalyser/Resources/assets/compass/stylesheets/jquery-ui-1.9.1.custom.min.css
+            output: css/UcsEventFlowAnalyser.min.css
             filters:
                 - yui_css
         all:
             inputs:
                 - @bootstrap_css
                 - @prettify
-                - @UcsEventFlowAnalyserBundle_css
+                - @UcsEventFlowAnalyser_css
             output: css/all.min.css
             filters:
                 - yui_css
         bootstrap:
             inputs:
-                - @UcsEventFlowAnalyserBundle/Resources/assets/js/jquery-1.7.2.min.js
-                - @UcsEventFlowAnalyserBundle/Resources/assets/js/jquery-ui-1.8.22.min.js
-                - @UcsEventFlowAnalyserBundle/Resources/assets/js/underscore-min.js
+                - @UcsEventFlowAnalyser/Resources/assets/js/jquery-1.7.2.min.js
+                - @UcsEventFlowAnalyser/Resources/assets/js/jquery-ui-1.8.22.min.js
+                - @UcsEventFlowAnalyser/Resources/assets/js/underscore-min.js
                 - @MopaBootstrapBundle/Resources/public/js/mopabootstrap-collection.js
                 - @MopaBootstrapBundle/Resources/public/js/mopabootstrap-subnav.js
                 - @JQueryFileUploadBundle/Resources/public/js/jquery/jquery.fileupload.js

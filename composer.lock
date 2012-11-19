@@ -1,53 +1,6 @@
 {
-    "hash": "8394a6bde9bf31d44cc52e2b52cc32c8",
+    "hash": "6e5d9e292c565ae4449fee14b1dfc89d",
     "packages": [
-        {
-            "name": "blueimp/jquery-file-upload",
-            "version": "1.1.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/amelard/jQuery-File-Upload",
-                "reference": "1.1.0"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://github.com/amelard/jQuery-File-Upload/archive/1.1.0.zip",
-                "reference": "1.1.0",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.0"
-            },
-            "time": "2012-11-17 22:10:33",
-            "type": "library",
-            "installation-source": "dist",
-            "autoload": {
-                "psr-0": {
-                    "UploadHandler": "server/php"
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Sebastian Tschan",
-                    "email": "mail@blueimp.net",
-                    "homepage": "https://blueimp.net/",
-                    "role": "Developer"
-                }
-            ],
-            "description": "library to upload files and automaticaly resize images using jquery ajax api",
-            "homepage": "https://github.com/blueimp/jQuery-File-Upload",
-            "keywords": [
-                "php",
-                "jquery",
-                "JS",
-                "upload",
-                "ajax",
-                "Node.js"
-            ]
-        },
         {
             "name": "craue/formflow-bundle",
             "version": "dev-master",
@@ -374,12 +327,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/FriendsOfSymfony/FOSUserBundle",
-                "reference": "809734e26fa68023f27e3752d370092fb1160e59"
+                "reference": "30dfe0b2bdea9cc54750092ebe19d05423d662fb"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/FriendsOfSymfony/FOSUserBundle/archive/809734e26fa68023f27e3752d370092fb1160e59.zip",
-                "reference": "809734e26fa68023f27e3752d370092fb1160e59",
+                "url": "https://github.com/FriendsOfSymfony/FOSUserBundle/archive/30dfe0b2bdea9cc54750092ebe19d05423d662fb.zip",
+                "reference": "30dfe0b2bdea9cc54750092ebe19d05423d662fb",
                 "shasum": ""
             },
             "require": {
@@ -400,7 +353,7 @@
                 "doctrine/doctrine-bundle": "*",
                 "doctrine/mongodb-odm-bundle": "*"
             },
-            "time": "1352986811",
+            "time": "1353269280",
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
@@ -1331,31 +1284,54 @@
             ]
         },
         {
-            "name": "mylen/jquery-file-upload-bundle",
+            "name": "myblueimp/jquery-file-upload",
             "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/blueimp/jQuery-File-Upload.git",
+                "reference": "master"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://github.com/blueimp/jQuery-File-Upload/zipball/master",
+                "reference": null,
+                "shasum": null
+            },
+            "type": "library",
+            "installation-source": "source",
+            "autoload": {
+                "psr-0": {
+                    "UploadHandler": "server/php"
+                }
+            },
+            "time": "1353187732"
+        },
+        {
+            "name": "mylen/jquery-file-upload-bundle",
+            "version": "1.1.5",
             "target-dir": "Mylen/JQueryFileUploadBundle",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mylen/jquery-file-upload-bundle",
-                "reference": "0.0.7"
+                "reference": "1.1.5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/mylen/jquery-file-upload-bundle/archive/0.0.7.zip",
-                "reference": "0.0.7",
+                "url": "https://github.com/mylen/jquery-file-upload-bundle/archive/1.1.5.zip",
+                "reference": "1.1.5",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.2",
                 "symfony/framework-bundle": "2.*",
                 "symfony/finder": "2.*",
-                "blueimp/jquery-file-upload": "1.1.*",
                 "symfony/dependency-injection": "2.*",
-                "symfony/http-kernel": "2.*"
+                "symfony/http-kernel": "2.*",
+                "myblueimp/jquery-file-upload": "dev-master"
             },
-            "time": "1353224566",
+            "time": "2012-11-18 23:04:51",
             "type": "symfony-bundle",
-            "installation-source": "source",
+            "installation-source": "dist",
             "autoload": {
                 "psr-0": {
                     "Mylen\\JQueryFileUploadBundle": ""
@@ -1381,7 +1357,7 @@
                 }
             ],
             "description": "Multiple file uploads for Symfony2 with the BlueImp uploader. Also scales uploaded images",
-            "homepage": "https://github.com/amelard/jquery-file-upload-bundle",
+            "homepage": "https://github.com/mylen/jquery-file-upload-bundle",
             "keywords": [
                 "symfony",
                 "file",
@@ -1914,7 +1890,7 @@
             },
             "type": "library",
             "installation-source": "source",
-            "time": "1353158633"
+            "time": "1353262220"
         },
         {
             "name": "twig/extensions",
@@ -1969,18 +1945,18 @@
             "source": {
                 "type": "git",
                 "url": "git://github.com/fabpot/Twig.git",
-                "reference": "11368e7e08bc1c9626317fe28e3fdd1855e17198"
+                "reference": "ca97c2feff731b8acb79138b520abc61a6ddcb1f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/fabpot/Twig/archive/11368e7e08bc1c9626317fe28e3fdd1855e17198.zip",
-                "reference": "11368e7e08bc1c9626317fe28e3fdd1855e17198",
+                "url": "https://github.com/fabpot/Twig/archive/ca97c2feff731b8acb79138b520abc61a6ddcb1f.zip",
+                "reference": "ca97c2feff731b8acb79138b520abc61a6ddcb1f",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.2.4"
             },
-            "time": "1353099404",
+            "time": "1353232191",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -2041,7 +2017,6 @@
         "knplabs/knp-paginator-bundle": 20,
         "craue/formflow-bundle": 20,
         "pimple/pimple": 20,
-        "mylen/jquery-file-upload-bundle": 20,
         "mopa/bootstrap-bundle": 20,
         "mopa/bootstrap-sandbox-bundle": 20,
         "twitter/bootstrap": 20,

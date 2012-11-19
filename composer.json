@@ -25,13 +25,13 @@
         "knplabs/knp-paginator-bundle":"dev-master",
         "craue/formflow-bundle":"dev-master",
         "pimple/pimple":"dev-master",
-        "mylen/jquery-file-upload-bundle":"dev-master",
         "mopa/bootstrap-bundle":"dev-master",
         "mopa/bootstrap-sandbox-bundle":"dev-master",
         "twitter/bootstrap":"master-dev",
         "thomas-mcdonald/bootstrap-sass":"dev-master",
         "leafo/lessphp":"dev-master",
-        "liip/theme-bundle":"dev-master"
+        "liip/theme-bundle":"dev-master",
+        "mylen/jquery-file-upload-bundle":"1.1.5"
     },
     "scripts":{
         "post-install-cmd":[
@@ -57,6 +57,27 @@
         "symfony-web-dir":"web"
     },
     "repositories":[
+        {
+            "type":"package",
+            "package":{
+                "version":"dev-master",
+                "name":"myblueimp/jquery-file-upload",
+                "autoload": {
+                    "psr-0": {
+                        "UploadHandler": "server/php"
+                    }
+                },
+                "source":{
+                    "url":"https://github.com/blueimp/jQuery-File-Upload.git",
+                    "type":"git",
+                    "reference":"master"
+                },
+                "dist":{
+                    "url":"https://github.com/blueimp/jQuery-File-Upload/zipball/master",
+                    "type":"zip"
+                }
+            }
+        },
         {
             "type":"package",
             "package":{

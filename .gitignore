@@ -6,3 +6,9 @@ build/
 vendor
 composer.phar
 */.sass-cache/*
+.idea
+.metadata
+.settings
+.buildpath
+.project
+composer.lock

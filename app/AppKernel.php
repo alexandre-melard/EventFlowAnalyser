@@ -21,7 +21,7 @@ class AppKernel extends Kernel
             new JMS\SecurityExtraBundle\JMSSecurityExtraBundle(),
             new FOS\UserBundle\FOSUserBundle(),
             new Atos\Worldline\Fm\UserBundle\AtosWorldlineFmUserBundle(),
-            new Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyserBundle\UcsEventFlowAnalyserBundle(),
+            new Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\UcsEventFlowAnalyser(),
             new Knp\Bundle\MenuBundle\KnpMenuBundle(),
             new Mylen\JQueryFileUploadBundle\JQueryFileUploadBundle(),
             new Mopa\Bundle\BootstrapBundle\MopaBootstrapBundle(),

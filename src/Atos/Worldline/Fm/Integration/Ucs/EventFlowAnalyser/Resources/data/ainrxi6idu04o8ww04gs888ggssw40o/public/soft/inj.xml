@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<parser>
+    <header>
+        <date></date>
+        <generator></generator>
+        <process>inj</process>
+    </header>
+    <events>
+        <in>
+            <event>CORE_MSG_TYPE_M1</event>
+            <out>
+                <event>CORE_MSG_TYPE_RequestForTradeCreation</event>
+            </out>
+        </in>
+    </events>
+</parser>
+
