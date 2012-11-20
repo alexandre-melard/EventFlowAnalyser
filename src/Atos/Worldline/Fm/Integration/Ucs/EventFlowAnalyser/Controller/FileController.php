@@ -2,7 +2,6 @@
 
 namespace Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Controller;
 
-
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -11,6 +10,7 @@ use Symfony\Component\Config\Definition\Exception\Exception;
 use Mylen\JQueryFileUploadBundle\Services\FileUploader;
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Service\FileService;
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Document;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * @Route("/files")
@@ -37,10 +37,7 @@ class FileController extends Controller
         $webDir = $this->get('kernel')->getRootDir() . '/../web';
         $posting = new Document($webDir);
 
-        $form = $this->createFormBuilder($posting)
-            ->add('name')
-            ->getForm();
-
+        $form = $this->createFormBuilder($posting)->add('name')->getForm();
 
         $request = $this->getRequest();
         $editId = $request->get('editId');
@@ -48,58 +45,97 @@ class FileController extends Controller
             $editId = sprintf('%09d', mt_rand(0, 1999999999));
 
             if ($posting->id) {
-                $uploader->syncFiles(
-                    array('from_folder' => 'attachments/' . $posting->id,
-                        'to_folder' => 'tmp/attachments/' . $editId,
-                        'create_to_folder' => true));
+                $uploader
+                        ->syncFiles(
+                                array('from_folder' => 'attachments/' . $posting->id, 'to_folder' => 'tmp/attachments/' . $editId, 'create_to_folder' => true));
             } else {
                 $isNew = TRUE;
                 $posting->id = 10;
             }
         }
 
-//        if ($this->getRequest()->isMethod('POST')) {
-//            $form->bind($this->getRequest());
-//            if ($form->isValid()) {
-//                $em = $this->getDoctrine()->getManager();
-//
-//                $em->persist($posting);
-//                $em->flush();
-//
-//                $this->redirect($this->generateUrl('files_uploaded'));
-//            }
-//        }
+        //        if ($this->getRequest()->isMethod('POST')) {
+        //            $form->bind($this->getRequest());
+        //            if ($form->isValid()) {
+        //                $em = $this->getDoctrine()->getManager();
+        //
+        //                $em->persist($posting);
+        //                $em->flush();
+        //
+        //                $this->redirect($this->generateUrl('files_uploaded'));
+        //            }
+        //        }
 
-        return array(
-            'form' => $form->createView(),
-            'editId' => $editId,
-            'posting' => $posting,
-            'isNew' => $isNew
-        );
+        return array('form' => $form->createView(), 'editId' => $editId, 'posting' => $posting, 'isNew' => $isNew);
     }
 
     /**
-     *
-     * @Route("/upload/{editId}", name="files_upload")
-     * @Method({"POST", "GET", "GET", "DELETE", "HEAD", "OPTIONS"})
-     * @Template()
+     * 
+     * @param string $editId
+     * @throws \Exception
+     * @return \Mylen\JQueryFileUploadBundle\Services\IResponseContainer
      */
-    public function uploadAction($editId)
+    protected function handleRequest($editId)
     {
         /** @var FileUploader */
         $uploader = $this->get('mylen.file_uploader');
         if (!preg_match('/^\d+$/', $editId)) {
             throw new \Exception("Bad edit id");
         }
-        /** 
-         * @var \Mylen\JQueryFileUploadBundle\Services\IResponseContainer 
-         * */
-        $res = $uploader->handleFileUpload('tmp/attachments/' . $editId);
-
-        return new \Symfony\Component\HttpFoundation\Response($res->getBody(), $res->getType(), $res->getHeader());
-
+        //TODO Flashbag
+        // $this->get('session')->getFlashBag()->add('notice', 'File upload as been cancelled!');
+        
+        return $uploader->handleFileUpload('tmp/attachments/' . $editId);
+    }
+    
+    /**
+     *
+     * @Route("/upload/{editId}", name="files_put")
+     * @Method({"PATCH", "POST", "PUT"})
+     */
+    public function putAction($editId)
+    {
+        $upload = $this->handleRequest($editId);
+        $upload->post();
+        return new Response($upload->getBody(), $upload->getType(), $upload->getHeader());
+    }
+    
+    /**
+     *
+     * @Route("/upload/{editId}", name="files_head")
+     * @Method("HEAD")
+     */
+    public function headAction($editId)
+    {
+        $uploader = $this->handleRequest($editId);
+        $uploader->head();
+        return new Response($uploader->getBody(), $uploader->getType(), $uploader->getHeader());
     }
 
+    /**
+     *
+     * @Route("/upload/{editId}", name="files_get")
+     * @Method("GET")
+     */
+    public function getAction($editId)
+    {
+        $upload = $this->handleRequest($editId);
+        $upload->get();
+        return new Response($upload->getBody(), $upload->getType(), $res->getHeader());
+    }
+
+    /**
+     *
+     * @Route("/upload/{editId}", name="files_delete")
+     * @Method("DELETE")
+     */
+    public function deleteAction($editId)
+    {
+        $upload = $this->handleRequest($editId);
+        $upload->delete();
+        return new Response($upload->getBody(), $upload->getType(), $res->getHeader());
+    }
+    
     /**
      *
      * @Route("/cancel", name="files_cancel")
@@ -124,26 +160,6 @@ class FileController extends Controller
     }
 
     /**
-     *
-     * @Route("/delete", name="files_delete")
-     * @Template()
-     */
-    public function deleteAction()
-    {
-        /** @var FileUploader */
-        $uploader = $this->get('mylen.file_uploader');
-        $posting = $this->getRequest()->get('posting');
-
-        try {
-            $uploader->removeFiles(array('folder' => 'attachments/' . $posting->getId()));
-            $this->get('session')->getFlashBag()->add('notice', 'File upload as been cancelled!');
-        } catch (Exception $e) {
-            $this->get('session')->getFlashBag()->add('error', 'could not remove file: system error: ' . $e);
-        }
-        return $this->redirect($this->generateUrl('default'));
-    }
-
-    /**
      * @Route("/all", name="files_all")
      * @Template
      */
@@ -153,11 +169,7 @@ class FileController extends Controller
         $uploader = $this->get('mylen.file_uploader');
         $dir = $this->getUser()->getSalt();
         $path = $this->get('kernel')->locateResource('@UcsEventFlowAnalyser/Resources/data/' . $dir);
-        $files = FileService::scanDir($path);
-        return array(
-            "title" => "Display All Files",
-            "private" => $files['private'],
-            "public" => $files['public']
-        );
+        $files = $this->get('app.file')->scanDir($path);
+        return array("title" => "Display All Files", "private" => $files['private'], "public" => $files['public']);
     }
 }
