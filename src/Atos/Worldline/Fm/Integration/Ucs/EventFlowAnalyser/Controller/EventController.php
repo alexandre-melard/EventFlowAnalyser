@@ -33,9 +33,9 @@ class EventController extends Controller
     public function allAction($use, $soft)
     {
         $dir = $this->getUser()->getSalt();
-        $path = $this->get('kernel')->locateResource("@UcsEventFlowAnalyser/Resources/data/$dir/$use/$soft");
-        $parsers = (new ParserService($this->get('cache')))->parseDir($path);
-        $events = (new EventFlowService($this->get('cache')))->uniqueEvents($soft, $parsers);
+        $path = $this->container->getParameter('app.data_dir')."/$dir/$use/$soft";
+        $parsers = $this->get('app.parser')->parseDir($path);
+        $events = $this->get('app.event_flow')->uniqueEvents($soft, $parsers);
         return array(
             'title' => 'Display All Events',
             'use' => $use,
@@ -52,16 +52,15 @@ class EventController extends Controller
     {
         $logger = $this->get('logger');
         $dir = $this->getUser()->getSalt();
-        $path = $this->get('kernel')->locateResource("@UcsEventFlowAnalyser/Resources/data/$dir/$use/$soft");
-        $parsers = (new ParserService($this->get('cache')))->parseDir($path);
+        $path = $this->container->getParameter('app.data_dir')."/$dir/$use/$soft";
+        $parsers = $this->get('app.parser')->parseDir($path);
 
         $event = new Event($id);
-        $eventFlowService = new EventFlowService($this->get('cache'));
+        $eventFlowService = $this->get('app.event_flow');
         $parents = $eventFlowService->parents($parsers, $event);
         $children = $eventFlowService->children($parsers, $event);
         $eventFlow = new EventFlow($event, $parents, $children);
         $files = $eventFlowService->files($parsers, $event);
-        ;
 
         return array(
             'title' => $eventFlowService->getShortEvent($event->type),

@@ -2,13 +2,15 @@
 
 namespace Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Controller;
 
-use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Service\FileService;
+
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Document;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\Config\Definition\Exception\Exception;
 use Mylen\JQueryFileUploadBundle\Services\FileUploader;
+use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Service\FileService;
+use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Document;
 
 /**
  * @Route("/files")
@@ -31,7 +33,7 @@ class FileController extends Controller
     public function editAction()
     {
         /** @var FileUploader */
-        $uploader = $this->get('punk_ave.file_uploader');
+        $uploader = $this->get('mylen.file_uploader');
         $webDir = $this->get('kernel')->getRootDir() . '/../web';
         $posting = new Document($webDir);
 
@@ -79,12 +81,13 @@ class FileController extends Controller
     /**
      *
      * @Route("/upload/{editId}", name="files_upload")
+     * @Method({"POST", "GET", "GET", "DELETE", "HEAD", "OPTIONS"})
      * @Template()
      */
     public function uploadAction($editId)
     {
         /** @var FileUploader */
-        $uploader = $this->get('punk_ave.file_uploader');
+        $uploader = $this->get('mylen.file_uploader');
         if (!preg_match('/^\d+$/', $editId)) {
             throw new \Exception("Bad edit id");
         }
@@ -105,7 +108,7 @@ class FileController extends Controller
     public function cancelAction()
     {
         /** @var FileUploader */
-        $uploader = $this->get('punk_ave.file_uploader');
+        $uploader = $this->get('mylen.file_uploader');
         $editId = $this->getRequest()->get('editId');
         if (!preg_match('/^\d+$/', $editId)) {
             throw new \Exception("Bad edit id");
@@ -128,7 +131,7 @@ class FileController extends Controller
     public function deleteAction()
     {
         /** @var FileUploader */
-        $uploader = $this->get('punk_ave.file_uploader');
+        $uploader = $this->get('mylen.file_uploader');
         $posting = $this->getRequest()->get('posting');
 
         try {
@@ -147,7 +150,7 @@ class FileController extends Controller
     public function allAction()
     {
         /** @var FileUploader */
-        $uploader = $this->get('punk_ave.file_uploader');
+        $uploader = $this->get('mylen.file_uploader');
         $dir = $this->getUser()->getSalt();
         $path = $this->get('kernel')->locateResource('@UcsEventFlowAnalyser/Resources/data/' . $dir);
         $files = FileService::scanDir($path);

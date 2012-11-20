@@ -12,9 +12,26 @@ use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\DependencyInjection\Cach
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Parser;
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\EventIn;
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\EventOut;
+use Monolog\Logger;
 
 class ParserService extends CacheAware
 {
+    /**
+     * @var Logger
+     */
+    protected $logger;
+    protected $xsd;
+    
+    /**
+     * @param Cache $c
+     */
+    public function __construct($c, $l, $x)
+    {
+        parent::__construct($c);
+        $this->logger = $l; 
+        $this->xsd = $x;
+    }
+
     /**
      * Parse xml file to return Parser array type.
      * events -> in -> event
@@ -31,10 +48,10 @@ class ParserService extends CacheAware
             $xml = simplexml_load_file($parser->file);
             if (null != $xml->events->in) {
                 foreach ($xml->events->in as $in) {
-                    $eventIn = new EventIn((string)$in->event);
+                    $eventIn = new EventIn((string) $in->event);
                     if (null !== $in->out->event) {
                         foreach ($in->out->event as $event) {
-                            $eventIn->addEventOut(new EventOut((string)$event));
+                            $eventIn->addEventOut(new EventOut((string) $event));
                         }
                     }
                     $parser->addEventIn($eventIn);
@@ -63,7 +80,7 @@ class ParserService extends CacheAware
             $files = scandir($dir);
             foreach ($files as $file) {
                 if (substr($file, -3, 3) === "xml") {
-                    array_push($parsers, $this->parse(new Parser($dir . DIRECTORY_SEPARATOR . $file, $dir . "/../../../../validation/xsd/eventflow.xsd")));
+                    array_push($parsers, $this->parse(new Parser($dir . DIRECTORY_SEPARATOR . $file, $this->xsd)));
                 }
             }
             $this->cache->save('parseDir' . $dir, serialize($parsers));
@@ -75,15 +92,15 @@ class ParserService extends CacheAware
     {
         $return = "\n";
         switch ($error->level) {
-            case LIBXML_ERR_WARNING:
-                $return .= "Warning $error->code: ";
-                break;
-            case LIBXML_ERR_ERROR:
-                $return .= "Error $error->code: ";
-                break;
-            case LIBXML_ERR_FATAL:
-                $return .= "Fatal Error $error->code: ";
-                break;
+        case LIBXML_ERR_WARNING:
+            $return .= "Warning $error->code: ";
+            break;
+        case LIBXML_ERR_ERROR:
+            $return .= "Error $error->code: ";
+            break;
+        case LIBXML_ERR_FATAL:
+            $return .= "Fatal Error $error->code: ";
+            break;
         }
         $return .= trim($error->message);
         if ($error->file) {

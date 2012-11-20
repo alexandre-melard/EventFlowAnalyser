@@ -8,12 +8,27 @@
  */
 namespace Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Service;
 
+use Monolog\Logger;
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\DependencyInjection\CacheAware;
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Parser;
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Event;
 
 class EventFlowService extends CacheAware
 {
+    /**
+     * @var Logger
+     */
+    protected $logger;
+    
+    /**
+     * @param Cache $c
+     */
+    public function __construct($c, $l)
+    {
+        parent::__construct($c);
+        $this->logger = $l;
+    }
+    
     /**
      * @param $parsers Parser[]
      * @param $event Event

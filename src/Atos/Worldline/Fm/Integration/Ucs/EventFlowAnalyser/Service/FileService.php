@@ -8,9 +8,26 @@
  */
 namespace Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Service;
 
-class FileService
+use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\DependencyInjection\CacheAware;
+use Monolog\Logger;
+
+class FileService extends CacheAware
 {
-    public static function scanDirIterator(\DirectoryIterator $entries) {
+    /**
+     * @var Logger
+     */
+    protected $logger;
+    
+    /**
+     * @param Cache $c
+     */
+    public function __construct($c, $l)
+    {
+        parent::__construct($c);
+        $this->logger = $l;
+    }
+    
+    public function scanDirIterator(\DirectoryIterator $entries) {
 
         // returned array
         $result = array();
@@ -37,7 +54,7 @@ class FileService
      * @return array
      * @throws \RuntimeException
      */
-    public static function scanDir($dir)
+    public function scanDir($dir)
     {
         if (!is_dir($dir)) {
             throw new \RuntimeException('Directory does not exists: [' . $dir . ']');

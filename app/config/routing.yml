@@ -5,7 +5,7 @@ liip_theme:
     resource: "@LiipThemeBundle/Resources/config/routing.xml"
     prefix: /theme
 
-ucs_event_flow_analyser:
+event_flow_analyser:
     resource: "@UcsEventFlowAnalyser/Controller/"
     type:     annotation
     prefix:   /

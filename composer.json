@@ -30,8 +30,9 @@
         "twitter/bootstrap":"master-dev",
         "thomas-mcdonald/bootstrap-sass":"dev-master",
         "leafo/lessphp":"dev-master",
+        "leafo/scssphp":"dev-master",
         "liip/theme-bundle":"dev-master",
-        "mylen/jquery-file-upload-bundle":"1.1.5"
+        "mylen/jquery-file-upload-bundle":"*"
     },
     "scripts":{
         "post-install-cmd":[

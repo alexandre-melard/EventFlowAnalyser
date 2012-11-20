@@ -1,13 +1,15 @@
 imports:
-    - { resource: parameters.yml }
-    - { resource: security.yml }
-    - { resource: @MopaBootstrapSandboxBundle/Resources/config/themes.yml }
-    - { resource: @UcsEventFlowAnalyser/Resources/config/menu.yml }
-    - { resource: @UcsEventFlowAnalyser/Resources/config/navbar.yml }
-    - { resource: @UcsEventFlowAnalyser/Resources/config/upload.yml }
-    - { resource: @JQueryFileUploadBundle/Resources/config/assetic.yml }
-    - { resource: @MopaBootstrapSandboxBundle/Resources/config/examples/example_menu.yml }
-    - { resource: @MopaBootstrapSandboxBundle/Resources/config/examples/example_navbar.yml }
+    - { resource: 'parameters.yml' }
+    - { resource: 'services.yml' }
+    - { resource: 'security.yml' }
+    - { resource: 'menu.yml' }
+    - { resource: 'navbar.yml' }
+    - { resource: '@JQueryFileUploadBundle/Resources/config/services.yml' }
+    - { resource: '@JQueryFileUploadBundle/Resources/config/filters.yml' }
+    - { resource: '@JQueryFileUploadBundle/Resources/config/assetic.yml' }
+    - { resource: '@MopaBootstrapSandboxBundle/Resources/config/themes.yml' }
+    - { resource: '@MopaBootstrapSandboxBundle/Resources/config/examples/example_menu.yml' }
+    - { resource: '@MopaBootstrapSandboxBundle/Resources/config/examples/example_navbar.yml' }
 
 mopa_bootstrap:
     navbar: ~
@@ -49,50 +51,76 @@ assetic:
             jar: %kernel.root_dir%/Resources/java/yuicompressor-2.4.6.jar
         lessphp:
             file: %kernel.root_dir%/../vendor/leafo/lessphp/lessc.inc.php
+        scssphp:
+            file: %kernel.root_dir%/../vendor/leafo/scssphp/scss.inc.php
+        cssrewrite: ~
+        
     assets:
+# CSS
         bootstrap_css:
             inputs:
-                - @MopaBootstrapBundle/Resources/bootstrap/less/bootstrap.less
+                - '@MopaBootstrapBundle/Resources/bootstrap/less/bootstrap.less'
             output: css/bootstrap.min.css
             filters:
                 - lessphp
                 - yui_css
-        bootstrap_js:
-            inputs:
-                - @MopaBootstrapBundle/Resources/bootstrap/js/*.js
-            output: js/bootstrap.min.js
-            filters:
-                - yui_js
         prettify:
             inputs:
-                - @MopaBootstrapSandboxBundle/Resources/public/css/prettify.css
+                - '@MopaBootstrapSandboxBundle/Resources/public/css/prettify.css'
             output: css/prettify.min.css
             filters:
                 - yui_css
+        base_scss:
+            inputs:
+                - '@UcsEventFlowAnalyser/Resources/assets/compass/sass/base.scss'
+            output: css/base.min.css
+            filters:
+                - scssphp
+                - yui_css
         UcsEventFlowAnalyser_css:
             inputs:
-                - @UcsEventFlowAnalyser/Resources/assets/compass/stylesheets/base.css
-                - @UcsEventFlowAnalyser/Resources/assets/compass/stylesheets/jquery-ui-1.9.1.custom.min.css
+                - '@base_scss'
+                - '@UcsEventFlowAnalyser/Resources/assets/compass/stylesheets/jquery-ui-1.9.1.custom.min.css'
             output: css/UcsEventFlowAnalyser.min.css
             filters:
                 - yui_css
         all:
             inputs:
-                - @bootstrap_css
-                - @prettify
-                - @UcsEventFlowAnalyser_css
+                - '@bootstrap_css'
+                - '@prettify'
+                - '@UcsEventFlowAnalyser_css'
             output: css/all.min.css
             filters:
+                - cssrewrite
                 - yui_css
-        bootstrap:
+# JS                
+        bootstrap_js:
             inputs:
-                - @UcsEventFlowAnalyser/Resources/assets/js/jquery-1.7.2.min.js
-                - @UcsEventFlowAnalyser/Resources/assets/js/jquery-ui-1.8.22.min.js
-                - @UcsEventFlowAnalyser/Resources/assets/js/underscore-min.js
-                - @MopaBootstrapBundle/Resources/public/js/mopabootstrap-collection.js
-                - @MopaBootstrapBundle/Resources/public/js/mopabootstrap-subnav.js
-                - @JQueryFileUploadBundle/Resources/public/js/jquery/jquery.fileupload.js
+                - '@MopaBootstrapBundle/Resources/bootstrap/js/bootstrap-affix.js'
+                - '@MopaBootstrapBundle/Resources/bootstrap/js/bootstrap-alert.js'
+                - '@MopaBootstrapBundle/Resources/bootstrap/js/bootstrap-button.js'
+                - '@MopaBootstrapBundle/Resources/bootstrap/js/bootstrap-carousel.js'
+                - '@MopaBootstrapBundle/Resources/bootstrap/js/bootstrap-collapse.js'
+                - '@MopaBootstrapBundle/Resources/bootstrap/js/bootstrap-dropdown.js'
+                - '@MopaBootstrapBundle/Resources/bootstrap/js/bootstrap-modal.js'
+                - '@MopaBootstrapBundle/Resources/bootstrap/js/bootstrap-tooltip.js'
+                - '@MopaBootstrapBundle/Resources/bootstrap/js/bootstrap-popover.js'
+                - '@MopaBootstrapBundle/Resources/bootstrap/js/bootstrap-scrollspy.js'
+                - '@MopaBootstrapBundle/Resources/bootstrap/js/bootstrap-tab.js'
+                - '@MopaBootstrapBundle/Resources/bootstrap/js/bootstrap-transition.js'
+                - '@MopaBootstrapBundle/Resources/bootstrap/js/bootstrap-typeahead.js'
             output: js/bootstrap.min.js
+            filters:
+                - yui_js
+        monabootstrap:
+            inputs:
+                - '@UcsEventFlowAnalyser/Resources/assets/js/jquery-1.7.2.min.js'
+                - '@UcsEventFlowAnalyser/Resources/assets/js/jquery-ui-1.8.22.min.js'
+                - '@UcsEventFlowAnalyser/Resources/assets/js/underscore-min.js'
+                - '@bootstrap_js'
+                - '@MopaBootstrapBundle/Resources/public/js/mopabootstrap-collection.js'
+                - '@MopaBootstrapBundle/Resources/public/js/mopabootstrap-subnav.js'
+            output: js/monabootstrap.min.js
             filters:
                 - yui_js
 

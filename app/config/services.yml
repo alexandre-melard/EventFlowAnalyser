@@ -1,0 +1,11 @@
+services:
+  app.parser:
+    class: Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Service\ParserService
+    arguments: ['@cache', '@logger', '%app.event_xsd%']
+  app.file:
+    class: Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Service\FileService
+    arguments: ['@cache', '@logger']
+  app.event_flow:
+    class: Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Service\EventFlowService
+    arguments: ['@cache', '@logger']
+    

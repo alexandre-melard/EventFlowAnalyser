@@ -26,27 +26,37 @@ class MenuBuilder extends AbstractNavbarMenuBuilder
     /** @var User */
     protected $user;
 
-    /** @var Kernel */
-    protected $kernel;
-
     protected $isLoggedIn;
 
     /** @var Logger */
     protected $logger;
+    
+    protected $data_dir;
 
-    /** @var Cache */
-    protected $cache;
-
-    public function __construct(FactoryInterface $factory, Logger $logger, SecurityContextInterface $securityContext,
-                                Kernel $kernel, Cache $cache)
+    protected $file;
+    protected $parser;
+    protected $evenFlow;
+    
+    public function __construct(
+            FactoryInterface $factory, 
+            Logger $logger, 
+            SecurityContextInterface $securityContext,
+            $data_dir,
+            $file,
+            $parser,
+            $evenFlow            
+            )
     {
         parent::__construct($factory);
 
         $this->logger = $logger;
         $this->isLoggedIn = $securityContext->isGranted('IS_AUTHENTICATED_FULLY');
         $this->user = $securityContext->getToken()->getUser();
-        $this->kernel = $kernel;
-        $this->cache = $cache;
+        // TODO add parser file and even_flow services...
+        $this->data_dir = $data_dir;
+        $this->file = $file;
+        $this->parser = $parser;
+        $this->evenFlow = $evenFlow;        
     }
 
 
@@ -91,9 +101,9 @@ class MenuBuilder extends AbstractNavbarMenuBuilder
 
         // Retrieve file types
         try {
-            $path = $this->kernel->locateResource("@UcsEventFlowAnalyser/Resources/data/$dir/$use/$soft");
-            $parsers = (new ParserService($this->cache))->parseDir($path);
-            $EventFlowService = new EventFlowService($this->cache);
+            $path = $this->data_dir ."/$dir/$use/$soft";
+            $parsers = $this->parser->parseDir($path);
+            $EventFlowService = $this->evenFlow;
             $events = $EventFlowService->uniqueEvents($soft, $parsers);
             if (count($events) > 0) {
                 $this->logger->debug('UcsEventFlowAnalyser::MenuBuilder:: number of events = ' . count($events));
