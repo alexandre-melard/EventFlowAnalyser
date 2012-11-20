@@ -1,5 +1,5 @@
 {
-    "hash": "6e5d9e292c565ae4449fee14b1dfc89d",
+    "hash": "4837c85f741b7e6f88168b7fd7becba4",
     "packages": [
         {
             "name": "craue/formflow-bundle",
@@ -1020,6 +1020,48 @@
             "homepage": "http://leafo.net/lessphp/"
         },
         {
+            "name": "leafo/scssphp",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/leafo/scssphp",
+                "reference": "c843c25581a9fdf41a1a2b62c60c9a4383988583"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://github.com/leafo/scssphp/archive/c843c25581a9fdf41a1a2b62c60c9a4383988583.zip",
+                "reference": "c843c25581a9fdf41a1a2b62c60c9a4383988583",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.2.0"
+            },
+            "require-dev": {
+                "php": ">=5.3.0"
+            },
+            "time": "1352312389",
+            "type": "library",
+            "installation-source": "source",
+            "autoload": {
+                "classmap": [
+                    "scss.inc.php"
+                ]
+            },
+            "license": [
+                "MIT",
+                "GPL-3.0"
+            ],
+            "authors": [
+                {
+                    "name": "Leaf Corcoran",
+                    "email": "leafot@gmail.com",
+                    "homepage": "http://leafo.net"
+                }
+            ],
+            "description": "scssphp is a compiler for SCSS written in PHP.",
+            "homepage": "http://leafo.net/scssphp/"
+        },
+        {
             "name": "liip/theme-bundle",
             "version": "dev-master",
             "target-dir": "Liip/ThemeBundle",
@@ -1304,21 +1346,21 @@
                     "UploadHandler": "server/php"
                 }
             },
-            "time": "1353187732"
+            "time": "1353342139"
         },
         {
             "name": "mylen/jquery-file-upload-bundle",
-            "version": "1.1.5",
+            "version": "dev-master",
             "target-dir": "Mylen/JQueryFileUploadBundle",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mylen/jquery-file-upload-bundle",
-                "reference": "1.1.5"
+                "reference": "643702e5f25d2e6ae4f6d49fe7636a6836cdf6f0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/mylen/jquery-file-upload-bundle/archive/1.1.5.zip",
-                "reference": "1.1.5",
+                "url": "https://github.com/mylen/jquery-file-upload-bundle/archive/643702e5f25d2e6ae4f6d49fe7636a6836cdf6f0.zip",
+                "reference": "643702e5f25d2e6ae4f6d49fe7636a6836cdf6f0",
                 "shasum": ""
             },
             "require": {
@@ -1329,9 +1371,9 @@
                 "symfony/http-kernel": "2.*",
                 "myblueimp/jquery-file-upload": "dev-master"
             },
-            "time": "2012-11-18 23:04:51",
+            "time": "1353347017",
             "type": "symfony-bundle",
-            "installation-source": "dist",
+            "installation-source": "source",
             "autoload": {
                 "psr-0": {
                     "Mylen\\JQueryFileUploadBundle": ""
@@ -1425,18 +1467,18 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sensio/SensioDistributionBundle",
-                "reference": "v2.1.3"
+                "reference": "25dcc74a7f31eaacf53a407f024183345c6c4804"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/sensio/SensioDistributionBundle/archive/v2.1.3.zip",
-                "reference": "v2.1.3",
+                "url": "https://github.com/sensio/SensioDistributionBundle/archive/25dcc74a7f31eaacf53a407f024183345c6c4804.zip",
+                "reference": "25dcc74a7f31eaacf53a407f024183345c6c4804",
                 "shasum": ""
             },
             "require": {
                 "symfony/framework-bundle": "2.1.*"
             },
-            "time": "1347340208",
+            "time": "1353323932",
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
@@ -1518,12 +1560,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/sensio/SensioGeneratorBundle",
-                "reference": "56c2029d1f3f41b39dd0df40009cb448df010bf1"
+                "reference": "7efe50d35818a2ba72a7a05e40155b4789e5c3d9"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/sensio/SensioGeneratorBundle/archive/56c2029d1f3f41b39dd0df40009cb448df010bf1.zip",
-                "reference": "56c2029d1f3f41b39dd0df40009cb448df010bf1",
+                "url": "https://github.com/sensio/SensioGeneratorBundle/archive/7efe50d35818a2ba72a7a05e40155b4789e5c3d9.zip",
+                "reference": "7efe50d35818a2ba72a7a05e40155b4789e5c3d9",
                 "shasum": ""
             },
             "require": {
@@ -1535,7 +1577,7 @@
                 "doctrine/orm": ">=2.1,<2.4-dev",
                 "twig/twig": ">=1.8,<2.0-dev"
             },
-            "time": "1352464423",
+            "time": "1353341457",
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
@@ -1787,12 +1829,12 @@
             "source": {
                 "type": "git",
                 "url": "git://github.com/symfony/symfony.git",
-                "reference": "461db28d3305b74a2514c7a88373398db7d5e71e"
+                "reference": "8f33f2ea86cf4ecf2fb959ca80bd6fe0b5a71694"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/symfony/symfony/archive/461db28d3305b74a2514c7a88373398db7d5e71e.zip",
-                "reference": "461db28d3305b74a2514c7a88373398db7d5e71e",
+                "url": "https://github.com/symfony/symfony/archive/8f33f2ea86cf4ecf2fb959ca80bd6fe0b5a71694.zip",
+                "reference": "8f33f2ea86cf4ecf2fb959ca80bd6fe0b5a71694",
                 "shasum": ""
             },
             "require": {
@@ -1841,7 +1883,7 @@
                 "propel/propel1": "dev-master",
                 "monolog/monolog": "1.*"
             },
-            "time": "1353172006",
+            "time": "1353321329",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -1890,7 +1932,7 @@
             },
             "type": "library",
             "installation-source": "source",
-            "time": "1353262220"
+            "time": "1353279370"
         },
         {
             "name": "twig/extensions",
@@ -1945,18 +1987,18 @@
             "source": {
                 "type": "git",
                 "url": "git://github.com/fabpot/Twig.git",
-                "reference": "ca97c2feff731b8acb79138b520abc61a6ddcb1f"
+                "reference": "9b75e2c7ae51b66fd4bb2ffbf1d2f28a8604e8f6"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/fabpot/Twig/archive/ca97c2feff731b8acb79138b520abc61a6ddcb1f.zip",
-                "reference": "ca97c2feff731b8acb79138b520abc61a6ddcb1f",
+                "url": "https://github.com/fabpot/Twig/archive/9b75e2c7ae51b66fd4bb2ffbf1d2f28a8604e8f6.zip",
+                "reference": "9b75e2c7ae51b66fd4bb2ffbf1d2f28a8604e8f6",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.2.4"
             },
-            "time": "1353232191",
+            "time": "1353308798",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -2022,6 +2064,7 @@
         "twitter/bootstrap": 20,
         "thomas-mcdonald/bootstrap-sass": 20,
         "leafo/lessphp": 20,
+        "leafo/scssphp": 20,
         "liip/theme-bundle": 20
     }
 }
