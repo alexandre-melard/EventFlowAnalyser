@@ -1,6 +1,29 @@
 {
-    "hash": "4837c85f741b7e6f88168b7fd7becba4",
+    "hash": "bdeec9a48fddb96abac239573c14d4c8",
     "packages": [
+        {
+            "name": "blueimp/jquery-file-upload",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/blueimp/jQuery-File-Upload.git",
+                "reference": "master"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://github.com/blueimp/jQuery-File-Upload/zipball/master",
+                "reference": null,
+                "shasum": null
+            },
+            "type": "library",
+            "installation-source": "source",
+            "autoload": {
+                "psr-0": {
+                    "UploadHandler": "server/php"
+                }
+            },
+            "time": "1353342139"
+        },
         {
             "name": "craue/formflow-bundle",
             "version": "dev-master",
@@ -1326,41 +1349,18 @@
             ]
         },
         {
-            "name": "myblueimp/jquery-file-upload",
-            "version": "dev-master",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/blueimp/jQuery-File-Upload.git",
-                "reference": "master"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://github.com/blueimp/jQuery-File-Upload/zipball/master",
-                "reference": null,
-                "shasum": null
-            },
-            "type": "library",
-            "installation-source": "source",
-            "autoload": {
-                "psr-0": {
-                    "UploadHandler": "server/php"
-                }
-            },
-            "time": "1353342139"
-        },
-        {
             "name": "mylen/jquery-file-upload-bundle",
             "version": "dev-master",
             "target-dir": "Mylen/JQueryFileUploadBundle",
             "source": {
                 "type": "git",
                 "url": "https://github.com/mylen/jquery-file-upload-bundle",
-                "reference": "643702e5f25d2e6ae4f6d49fe7636a6836cdf6f0"
+                "reference": "2.0.0"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/mylen/jquery-file-upload-bundle/archive/643702e5f25d2e6ae4f6d49fe7636a6836cdf6f0.zip",
-                "reference": "643702e5f25d2e6ae4f6d49fe7636a6836cdf6f0",
+                "url": "https://github.com/mylen/jquery-file-upload-bundle/archive/2.0.0.zip",
+                "reference": "2.0.0",
                 "shasum": ""
             },
             "require": {
@@ -1369,9 +1369,9 @@
                 "symfony/finder": "2.*",
                 "symfony/dependency-injection": "2.*",
                 "symfony/http-kernel": "2.*",
-                "myblueimp/jquery-file-upload": "dev-master"
+                "blueimp/jquery-file-upload": "dev-master"
             },
-            "time": "1353347017",
+            "time": "1353441037",
             "type": "symfony-bundle",
             "installation-source": "source",
             "autoload": {
@@ -1829,12 +1829,12 @@
             "source": {
                 "type": "git",
                 "url": "git://github.com/symfony/symfony.git",
-                "reference": "8f33f2ea86cf4ecf2fb959ca80bd6fe0b5a71694"
+                "reference": "b3c3e89462d058afc35c59cdd71a4b6c4b6cdbcc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/symfony/symfony/archive/8f33f2ea86cf4ecf2fb959ca80bd6fe0b5a71694.zip",
-                "reference": "8f33f2ea86cf4ecf2fb959ca80bd6fe0b5a71694",
+                "url": "https://github.com/symfony/symfony/archive/b3c3e89462d058afc35c59cdd71a4b6c4b6cdbcc.zip",
+                "reference": "b3c3e89462d058afc35c59cdd71a4b6c4b6cdbcc",
                 "shasum": ""
             },
             "require": {
@@ -1883,7 +1883,7 @@
                 "propel/propel1": "dev-master",
                 "monolog/monolog": "1.*"
             },
-            "time": "1353321329",
+            "time": "1353417693",
             "type": "library",
             "extra": {
                 "branch-alias": {

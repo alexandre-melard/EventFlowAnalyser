@@ -121,7 +121,7 @@ class FileController extends Controller
     {
         $upload = $this->handleRequest($editId);
         $upload->get();
-        return new Response($upload->getBody(), $upload->getType(), $res->getHeader());
+        return new Response($upload->getBody(), $upload->getType(), $upload->getHeader());
     }
 
     /**
@@ -133,30 +133,7 @@ class FileController extends Controller
     {
         $upload = $this->handleRequest($editId);
         $upload->delete();
-        return new Response($upload->getBody(), $upload->getType(), $res->getHeader());
-    }
-    
-    /**
-     *
-     * @Route("/cancel", name="files_cancel")
-     * @Template()
-     */
-    public function cancelAction()
-    {
-        /** @var FileUploader */
-        $uploader = $this->get('mylen.file_uploader');
-        $editId = $this->getRequest()->get('editId');
-        if (!preg_match('/^\d+$/', $editId)) {
-            throw new \Exception("Bad edit id");
-        }
-
-        try {
-            $uploader->removeFiles(array('folder' => 'tmp/attachments/' . $editId));
-            $this->get('session')->getFlashBag()->add('notice', 'File upload as been cancelled!');
-        } catch (Exception $e) {
-            $this->get('session')->getFlashBag()->add('error', 'could not remove file: system error: ' . $e);
-        }
-        return $this->redirect($this->generateUrl('default'));
+        return new Response($upload->getBody(), $upload->getType(), $upload->getHeader());
     }
 
     /**

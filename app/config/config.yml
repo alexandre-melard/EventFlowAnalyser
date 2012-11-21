@@ -46,52 +46,54 @@ assetic:
     #bundles: []
     filters:
         yui_js:
-            jar: %kernel.root_dir%/Resources/java/yuicompressor-2.4.6.jar
+            jar: '%kernel.root_dir%/Resources/java/yuicompressor-2.4.6.jar'
         yui_css:
-            jar: %kernel.root_dir%/Resources/java/yuicompressor-2.4.6.jar
+            jar: '%kernel.root_dir%/Resources/java/yuicompressor-2.4.6.jar'
         lessphp:
-            file: %kernel.root_dir%/../vendor/leafo/lessphp/lessc.inc.php
+            file: '%kernel.root_dir%/../vendor/leafo/lessphp/lessc.inc.php'
         scssphp:
-            file: %kernel.root_dir%/../vendor/leafo/scssphp/scss.inc.php
-        cssrewrite: ~
+            file: '%kernel.root_dir%/../vendor/leafo/scssphp/scss.inc.php'
         
     assets:
 # CSS
-        bootstrap_css:
+        bootstrap_less:
             inputs:
                 - '@MopaBootstrapBundle/Resources/bootstrap/less/bootstrap.less'
-            output: css/bootstrap.min.css
+            output: 'bundles/mopabootstrap/css/bootstrap/bootstrap.css'
             filters:
                 - lessphp
-                - yui_css
+
+        bootstrap_css:
+            inputs:
+                - 'bundles/mopabootstrap/css/bootstrap/bootstrap.css'
+            filters:
+                - abs_cssrewrite
+
         prettify:
             inputs:
                 - '@MopaBootstrapSandboxBundle/Resources/public/css/prettify.css'
-            output: css/prettify.min.css
-            filters:
-                - yui_css
+
         base_scss:
             inputs:
-                - '@UcsEventFlowAnalyser/Resources/assets/compass/sass/base.scss'
-            output: css/base.min.css
+                - '@UcsEventFlowAnalyser/Resources/assets/sass/base.scss'
+            output: 'bundles/ucseventflowanalyser/css/base.css'
             filters:
                 - scssphp
-                - yui_css
-        UcsEventFlowAnalyser_css:
+
+        base_css:
             inputs:
-                - '@base_scss'
-                - '@UcsEventFlowAnalyser/Resources/assets/compass/stylesheets/jquery-ui-1.9.1.custom.min.css'
-            output: css/UcsEventFlowAnalyser.min.css
+                - 'bundles/ucseventflowanalyser/css/base.css'
             filters:
-                - yui_css
-        all:
+                - abs_cssrewrite
+
+        app_css:
             inputs:
                 - '@bootstrap_css'
                 - '@prettify'
-                - '@UcsEventFlowAnalyser_css'
-            output: css/all.min.css
+                - '@jqueryfileupload_blueimp_css'
+                - '@base_css'
+            output: 'css/app.min.css'
             filters:
-                - cssrewrite
                 - yui_css
 # JS                
         bootstrap_js:
@@ -109,18 +111,29 @@ assetic:
                 - '@MopaBootstrapBundle/Resources/bootstrap/js/bootstrap-tab.js'
                 - '@MopaBootstrapBundle/Resources/bootstrap/js/bootstrap-transition.js'
                 - '@MopaBootstrapBundle/Resources/bootstrap/js/bootstrap-typeahead.js'
-            output: js/bootstrap.min.js
-            filters:
-                - yui_js
-        monabootstrap:
+
+        jquery_js:
             inputs:
                 - '@UcsEventFlowAnalyser/Resources/assets/js/jquery-1.7.2.min.js'
                 - '@UcsEventFlowAnalyser/Resources/assets/js/jquery-ui-1.8.22.min.js'
+
+        underscore_js:
+            inputs:
                 - '@UcsEventFlowAnalyser/Resources/assets/js/underscore-min.js'
-                - '@bootstrap_js'
+
+        monabootstrap:
+            inputs:
                 - '@MopaBootstrapBundle/Resources/public/js/mopabootstrap-collection.js'
                 - '@MopaBootstrapBundle/Resources/public/js/mopabootstrap-subnav.js'
-            output: js/monabootstrap.min.js
+
+        app_js:
+            inputs:
+                - '@jquery_js'
+                - '@bootstrap_js'
+                - '@underscore_js'
+                - '@monabootstrap'
+                - '@jqueryfileupload_blueimp_js'
+            output: 'js/app.min.js'
             filters:
                 - yui_js
 

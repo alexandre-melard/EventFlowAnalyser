@@ -62,7 +62,7 @@
             "type":"package",
             "package":{
                 "version":"dev-master",
-                "name":"myblueimp/jquery-file-upload",
+                "name":"blueimp/jquery-file-upload",
                 "autoload": {
                     "psr-0": {
                         "UploadHandler": "server/php"
