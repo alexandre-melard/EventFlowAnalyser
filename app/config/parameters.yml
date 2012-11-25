@@ -14,7 +14,7 @@ parameters:
   locale:            en
   secret:            AZD1RFZ4F
 
-  assetic.filter.compass.images_dir: %kernel.root_dir%/../web/images
+  assetic.filter.compass.images_dir: '%kernel.root_dir%/../web/images'
   assetic.filter.compass.http_path:  /images
 
   app.data_dir: %kernel.root_dir%/../web/uploads/data

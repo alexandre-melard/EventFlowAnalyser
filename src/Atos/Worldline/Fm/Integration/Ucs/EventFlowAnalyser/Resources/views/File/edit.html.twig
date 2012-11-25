@@ -10,8 +10,15 @@
 {% block article %}
     {% block js_blueimp_form %}
     <form id="fileupload" action="{{ path('files_edit', { 'id': posting.id, 'editId': editId }) }}" method="POST" {{ form_enctype(form) }}>
-        {{ form_widget(form) }}
+        <div class="span12">
+            {{ form_widget(form) }}
+        </div>
+        <h3>Files</h3>
+        <hr>
         {% include "JQueryFileUploadBundle::form.html.twig" %}
+        <div class="span12">
+            <button type="submit" class="btn btn-large btn-block">Save</button>
+        </div>
     </form>
     {% endblock js_blueimp_form %}
     <!-- modal-gallery is the modal dialog used for the image gallery -->

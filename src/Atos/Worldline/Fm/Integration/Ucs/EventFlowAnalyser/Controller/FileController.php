@@ -28,13 +28,14 @@ class FileController extends Controller
 
     /**
      * @Route("/edit", name="files_edit")
+     * @Method({"GET"})
      * @Template
      */
     public function editAction()
     {
         /** @var FileUploader */
         $uploader = $this->get('mylen.file_uploader');
-        $webDir = $this->get('kernel')->getRootDir() . '/../web';
+        $webDir = $uploader->getFileWebPath();
         $posting = new Document($webDir);
 
         $form = $this->createFormBuilder($posting)->add('name')->getForm();
@@ -53,19 +54,36 @@ class FileController extends Controller
                 $posting->id = 10;
             }
         }
+        return array('form' => $form->createView(), 'editId' => $editId, 'posting' => $posting, 'isNew' => $isNew);
+    }
 
-        //        if ($this->getRequest()->isMethod('POST')) {
-        //            $form->bind($this->getRequest());
-        //            if ($form->isValid()) {
-        //                $em = $this->getDoctrine()->getManager();
-        //
-        //                $em->persist($posting);
-        //                $em->flush();
-        //
-        //                $this->redirect($this->generateUrl('files_uploaded'));
-        //            }
-        //        }
+    /**
+     * @Route("/edit", name="files_save")
+     * @Method({"POST", "PUT", "PATCH"})
+     * @Template
+     */
+    public function saveAction()
+    {
+        /** @var FileUploader */
+        $uploader = $this->get('mylen.file_uploader');
+        $webDir = $uploader->getFileWebPath();
 
+        $posting = new Document($webDir);
+
+        $form = $this->createFormBuilder($posting)->add('name')->getForm();
+
+        $request = $this->getRequest();
+        $editId = $request->get('editId');
+
+        $form->bind($this->getRequest());
+        if ($form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+
+            $em->persist($posting);
+            $em->flush();
+
+            $this->redirect($this->generateUrl('files_uploaded'));
+        }
         return array('form' => $form->createView(), 'editId' => $editId, 'posting' => $posting, 'isNew' => $isNew);
     }
 
@@ -84,10 +102,10 @@ class FileController extends Controller
         }
         //TODO Flashbag
         // $this->get('session')->getFlashBag()->add('notice', 'File upload as been cancelled!');
-        
+
         return $uploader->handleFileUpload('tmp/attachments/' . $editId);
     }
-    
+
     /**
      *
      * @Route("/upload/{editId}", name="files_put")
@@ -99,7 +117,7 @@ class FileController extends Controller
         $upload->post();
         return new Response($upload->getBody(), $upload->getType(), $upload->getHeader());
     }
-    
+
     /**
      *
      * @Route("/upload/{editId}", name="files_head")

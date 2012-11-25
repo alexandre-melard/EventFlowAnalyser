@@ -44,7 +44,7 @@ class EventFlowService extends CacheAware
                 foreach ($parser->eventIns as $eventIn) {
                     foreach ($eventIn->eventOuts as $eventOut) {
                         if ($eventOut->type === $event->type) {
-                            array_push($parents, ["event" => $eventIn, "file" => basename($parser->file, '.xml')]);
+                            array_push($parents, array("event" => $eventIn, "file" => basename($parser->file, '.xml')));
                         }
                     }
                 }
@@ -69,7 +69,7 @@ class EventFlowService extends CacheAware
                 foreach ($parser->eventIns as $eventIn) {
                     if ($eventIn->type === $event->type) {
                         foreach ($eventIn->eventOuts as $eventOut) {
-                            array_push($children, ["event" => $eventOut, "file" => basename($parser->file, '.xml')]);
+                            array_push($children, array("event" => $eventOut, "file" => basename($parser->file, '.xml')));
                         }
                     }
                 }
@@ -93,11 +93,11 @@ class EventFlowService extends CacheAware
             foreach ($parsers as $parser) {
                 foreach ($parser->eventIns as $eventIn) {
                     if ($eventIn->type === $event->type) {
-                        array_push($files, ["direction" => "in", "name" => basename($parser->file, '.xml')]);
+                        array_push($files, array("direction" => "in", "name" => basename($parser->file, '.xml')));
                     }
                     foreach ($eventIn->eventOuts as $eventOut) {
                         if ($eventOut->type === $event->type) {
-                            array_push($files, ["direction" => "out", "name" => basename($parser->file, '.xml')]);
+                            array_push($files, array("direction" => "out", "name" => basename($parser->file, '.xml')));
                         }
                     }
                 }
@@ -150,11 +150,11 @@ class EventFlowService extends CacheAware
                 foreach ($parser->eventIns as $eventIn) {
                     foreach ($eventIn->eventOuts as $eventOut) {
                         if ($eventOut->type == $event->type) {
-                            array_push($resParsers, ["file" => basename($parser->file, '.xml'), "type" => $eventOut->type, "direction" => "out"]);
+                            array_push($resParsers, array("file" => basename($parser->file, '.xml'), "type" => $eventOut->type, "direction" => "out"));
                         }
                     }
                     if ($eventIn->type == $event->type) {
-                        array_push($resParsers, ["file" => basename($parser->file, '.xml'), "type" => $eventIn->type, "direction" => "in"]);
+                        array_push($resParsers, array("file" => basename($parser->file, '.xml'), "type" => $eventIn->type, "direction" => "in"));
                     }
                 }
             }
