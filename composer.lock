@@ -147,19 +147,19 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/doctrine/dbal",
-                "reference": "292d5edd17e0a9b9a7ee9eb20d6ae1033059153f"
+                "reference": "ef930a7ff1c06a1693c8783c1eb9e32d22e68dba"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/doctrine/dbal/archive/292d5edd17e0a9b9a7ee9eb20d6ae1033059153f.zip",
-                "reference": "292d5edd17e0a9b9a7ee9eb20d6ae1033059153f",
+                "url": "https://github.com/doctrine/dbal/archive/ef930a7ff1c06a1693c8783c1eb9e32d22e68dba.zip",
+                "reference": "ef930a7ff1c06a1693c8783c1eb9e32d22e68dba",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.3.2",
                 "doctrine/common": "2.3.*"
             },
-            "time": "2012-11-12 10:41:11",
+            "time": "2012-11-25 12:04:36",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -279,12 +279,12 @@
             "source": {
                 "type": "git",
                 "url": "git://github.com/doctrine/doctrine2.git",
-                "reference": "77d060ab74212919f1eaace72842ea43bf420f43"
+                "reference": "1aab5feb4a6e21204277264fc8d90b7a0723577c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/doctrine/doctrine2/archive/77d060ab74212919f1eaace72842ea43bf420f43.zip",
-                "reference": "77d060ab74212919f1eaace72842ea43bf420f43",
+                "url": "https://github.com/doctrine/doctrine2/archive/1aab5feb4a6e21204277264fc8d90b7a0723577c.zip",
+                "reference": "1aab5feb4a6e21204277264fc8d90b7a0723577c",
                 "shasum": ""
             },
             "require": {
@@ -296,7 +296,7 @@
             "suggest": {
                 "symfony/yaml": "If you want to use YAML Metadata Mapping Driver"
             },
-            "time": "2012-11-12 14:49:41",
+            "time": "2012-11-25 11:34:47",
             "bin": [
                 "bin/doctrine",
                 "bin/doctrine.php"
@@ -350,12 +350,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/FriendsOfSymfony/FOSUserBundle",
-                "reference": "de622286fe59ef8ad4ed00649ed6968794af30fa"
+                "reference": "1dd6822175c17c8e2b1e900422833335a9d88587"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/FriendsOfSymfony/FOSUserBundle/archive/de622286fe59ef8ad4ed00649ed6968794af30fa.zip",
-                "reference": "de622286fe59ef8ad4ed00649ed6968794af30fa",
+                "url": "https://github.com/FriendsOfSymfony/FOSUserBundle/archive/1dd6822175c17c8e2b1e900422833335a9d88587.zip",
+                "reference": "1dd6822175c17c8e2b1e900422833335a9d88587",
                 "shasum": ""
             },
             "require": {
@@ -376,7 +376,7 @@
                 "doctrine/doctrine-bundle": "*",
                 "doctrine/mongodb-odm-bundle": "*"
             },
-            "time": "2012-11-23 08:33:48",
+            "time": "2012-11-23 22:45:00",
             "type": "symfony-bundle",
             "extra": {
                 "branch-alias": {
@@ -1355,12 +1355,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/mylen/jquery-file-upload-bundle",
-                "reference": "a9ac18d55d1fbba902bcb06f44351a4c4ea19641"
+                "reference": "2d15a40a02e1522379f093d34b0338984e64c5f7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/mylen/jquery-file-upload-bundle/archive/a9ac18d55d1fbba902bcb06f44351a4c4ea19641.zip",
-                "reference": "a9ac18d55d1fbba902bcb06f44351a4c4ea19641",
+                "url": "https://github.com/mylen/jquery-file-upload-bundle/archive/2d15a40a02e1522379f093d34b0338984e64c5f7.zip",
+                "reference": "2d15a40a02e1522379f093d34b0338984e64c5f7",
                 "shasum": ""
             },
             "require": {
@@ -1371,7 +1371,7 @@
                 "symfony/http-kernel": "2.*",
                 "blueimp/jquery-file-upload": "dev-master"
             },
-            "time": "2012-11-23 14:29:42",
+            "time": "2012-11-25 15:10:28",
             "type": "symfony-bundle",
             "installation-source": "source",
             "autoload": {
@@ -1829,12 +1829,12 @@
             "source": {
                 "type": "git",
                 "url": "git://github.com/symfony/symfony.git",
-                "reference": "aa124288676648f727370876ccdf6dd7f208dc46"
+                "reference": "2adb781b238e8dfc9536babdaa03f538c47ddc34"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/symfony/symfony/archive/aa124288676648f727370876ccdf6dd7f208dc46.zip",
-                "reference": "aa124288676648f727370876ccdf6dd7f208dc46",
+                "url": "https://github.com/symfony/symfony/archive/2adb781b238e8dfc9536babdaa03f538c47ddc34.zip",
+                "reference": "2adb781b238e8dfc9536babdaa03f538c47ddc34",
                 "shasum": ""
             },
             "require": {
@@ -1883,7 +1883,7 @@
                 "propel/propel1": "dev-master",
                 "monolog/monolog": "1.*"
             },
-            "time": "2012-11-21 15:37:43",
+            "time": "2012-11-25 11:00:36",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -1987,18 +1987,18 @@
             "source": {
                 "type": "git",
                 "url": "git://github.com/fabpot/Twig.git",
-                "reference": "9b75e2c7ae51b66fd4bb2ffbf1d2f28a8604e8f6"
+                "reference": "b4743dcfaf48132203b467c5f5993e18f4f8f4c1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://github.com/fabpot/Twig/archive/9b75e2c7ae51b66fd4bb2ffbf1d2f28a8604e8f6.zip",
-                "reference": "9b75e2c7ae51b66fd4bb2ffbf1d2f28a8604e8f6",
+                "url": "https://github.com/fabpot/Twig/archive/b4743dcfaf48132203b467c5f5993e18f4f8f4c1.zip",
+                "reference": "b4743dcfaf48132203b467c5f5993e18f4f8f4c1",
                 "shasum": ""
             },
             "require": {
                 "php": ">=5.2.4"
             },
-            "time": "2012-11-19 07:06:38",
+            "time": "2012-11-25 12:44:18",
             "type": "library",
             "extra": {
                 "branch-alias": {
