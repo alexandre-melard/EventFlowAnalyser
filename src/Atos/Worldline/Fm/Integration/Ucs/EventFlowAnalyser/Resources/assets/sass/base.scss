@@ -1,5 +1,8 @@
 @import "compass/css3/shared";
 @import "compass/css3/box-sizing";
+body {
+	padding-top: 60px;
+}
 
 .bottom-divider {
   border-bottom-style: solid;
