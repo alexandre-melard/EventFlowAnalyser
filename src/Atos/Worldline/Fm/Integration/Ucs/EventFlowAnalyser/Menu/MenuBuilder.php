@@ -91,11 +91,11 @@ class MenuBuilder extends AbstractNavbarMenuBuilder
             )
         ));
         $files->addChild('Privates', array(
-            'route' => 'files_edit',
+            'route' => 'files_create',
             'routeParameters' => array('use' => 'private')
         ));
         $files->addChild('Public', array(
-            'route' => 'files_edit',
+            'route' => 'files_create',
             'routeParameters' => array('use' => 'public')
         ));
 

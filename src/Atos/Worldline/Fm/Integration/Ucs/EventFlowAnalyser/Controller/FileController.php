@@ -2,6 +2,10 @@
 
 namespace Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Controller;
 
+use Symfony\Component\Form\Form;
+
+use Symfony\Component\Filesystem\Filesystem;
+
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -26,132 +30,166 @@ class FileController extends Controller
         return array();
     }
 
-    /**
-     * @Route("/edit", name="files_edit")
-     * @Method({"GET"})
-     * @Template
-     */
-    public function editAction()
+    protected function getDataDir($visibility, $soft)
     {
-        /** @var FileUploader */
+        /* @var $uploader FileUploader */
         $uploader = $this->get('mylen.file_uploader');
-        $webDir = $uploader->getFileWebPath();
-        $posting = new Document($webDir);
+        $uploadDir = $uploader->getFileBasePath();
 
-        $form = $this->createFormBuilder($posting)->add('name')->getForm();
-
-        $request = $this->getRequest();
-        $editId = $request->get('editId');
-        if (!preg_match('/^\d+$/', $editId)) {
-            $editId = sprintf('%09d', mt_rand(0, 1999999999));
-
-            if ($posting->id) {
-                $uploader
-                        ->syncFiles(
-                                array('from_folder' => 'attachments/' . $posting->id, 'to_folder' => 'tmp/attachments/' . $editId, 'create_to_folder' => true));
-            } else {
-                $isNew = TRUE;
-                $posting->id = 10;
-            }
-        }
-        return array('form' => $form->createView(), 'editId' => $editId, 'posting' => $posting, 'isNew' => $isNew);
+        return $uploadDir . '/data/' . $visibility . DIRECTORY_SEPARATOR . $this->getUser()->getSalt() . DIRECTORY_SEPARATOR . $soft;
     }
 
     /**
-     * @Route("/edit", name="files_save")
-     * @Method({"POST", "PUT", "PATCH"})
+     * @Route("/create/", name="files_create")
+     * @Method({"GET"})
      * @Template
      */
-    public function saveAction()
+    public function createAction()
     {
-        /** @var FileUploader */
+        return $this->redirect($this->generateUrl('files_edit', array('visibility' => 'toto', 'soft' => 'titi')));
+    }
+
+    /**
+     * @Route("/edit/{visibility}/{soft}", name="files_edit")
+     * @Method({"GET"})
+     * @Template
+     */
+    public function editAction($visibility = '', $soft = '')
+    {
+        /* @var $uploader FileUploader */
         $uploader = $this->get('mylen.file_uploader');
-        $webDir = $uploader->getFileWebPath();
+        $uploadDir = $uploader->getFileBasePath();
+    
+        $form = $this->createFormBuilder()
+                        ->add($soft,         'text',  array('label' => 'name'))
+                        ->add($visibility,   'checkbox')
+                        ->getForm();
 
-        $posting = new Document($webDir);
+        $fs = new Filesystem();
+        do {
+            // Build unique ID
+            $key = sprintf('%09d', mt_rand(0, 1999999999));
+        } while ($fs->exists($uploadDir . '/tmp/' . $key));
 
-        $form = $this->createFormBuilder($posting)->add('name')->getForm();
+        // Create temporary directory where the user will be able to play with the files
+        $tmp_dir = $uploadDir . '/tmp/' . $key;
+        $fs->mkdir($tmp_dir);
+        $tmp_dir .= '/originals';
+        $fs->mkdir($tmp_dir);
 
-        $request = $this->getRequest();
-        $editId = $request->get('editId');
+        // mirror data_dir so that the user can edit current files
+        $data_dir = $this->getDataDir($visibility, $soft);
+        if ($fs->exists($data_dir)) {
+            $fs->mirror($data_dir, $tmp_dir);
+        }
+
+        return array('form' => $form->createView(), 'key' => $key);
+    }
+
+    /**
+     * @Route("/edit/{key}", name="files_save")
+     * @Method({"POST", "PUT", "PATCH"})
+     */
+    public function saveAction($key)
+    {
+        /* @var $uploader FileUploader */
+        $uploader = $this->get('mylen.file_uploader');
+        $uploadDir = $uploader->getFileBasePath();
+
+        /* @var $form Form */
+        $form = $this->createFormBuilder()->add('name')->add('public', 'checkbox')->getForm();
 
         $form->bind($this->getRequest());
+        $soft = $form->get("name")->getData();
+        $visibility = $form->get("public")->getData() ? 'public' : 'private';
+
         if ($form->isValid()) {
-            $em = $this->getDoctrine()->getManager();
+            $fs = new Filesystem();
 
-            $em->persist($posting);
-            $em->flush();
-
-            $this->redirect($this->generateUrl('files_uploaded'));
+            // Create data directory if soft is new 
+            $data_dir = $this->getDataDir($visibility, $soft);
+            if (!$fs->exists($data_dir)) {
+                $fs->mkdir($data_dir);
+            }
+            $tmp_dir = $uploadDir . '/tmp/' . $key . '/originals';
+            $fs->mirror($tmp_dir, $data_dir);
+            $fs->remove($tmp_dir);
+            $this->get('session')->getFlashBag()->add('notice', 'File upload as been completed!');
+        } else {
+            $this->get('session')->getFlashBag()->add('error', 'File upload could not be completed... Please check form values and retry');
         }
-        return array('form' => $form->createView(), 'editId' => $editId, 'posting' => $posting, 'isNew' => $isNew);
+        return $this->redirect($this->generateUrl('files_edit', array('visibility' => $visibility, 'soft' => $soft)));
     }
 
     /**
      * 
-     * @param string $editId
+     * @param string $key
      * @throws \Exception
      * @return \Mylen\JQueryFileUploadBundle\Services\IResponseContainer
      */
-    protected function handleRequest($editId)
+    protected function handleRequest($key)
     {
-        /** @var FileUploader */
+        /* @var $uploader FileUploader */
         $uploader = $this->get('mylen.file_uploader');
-        if (!preg_match('/^\d+$/', $editId)) {
+        if (!preg_match('/^\d+$/', $key)) {
             throw new \Exception("Bad edit id");
         }
         //TODO Flashbag
         // $this->get('session')->getFlashBag()->add('notice', 'File upload as been cancelled!');
 
-        return $uploader->handleFileUpload('tmp/attachments/' . $editId);
+        return $uploader->handleFileUpload('tmp/' . $key);
     }
 
     /**
      *
-     * @Route("/upload/{editId}", name="files_put")
+     * @Route("/upload/{key}", name="files_put")
      * @Method({"PATCH", "POST", "PUT"})
      */
-    public function putAction($editId)
+    public function putAction($key)
     {
-        $upload = $this->handleRequest($editId);
-        $upload->post();
-        return new Response($upload->getBody(), $upload->getType(), $upload->getHeader());
+        /* @var $uploader IResponseContainer */
+        $uploader = $this->handleRequest($key);
+        $uploader->post();
+        return new Response($uploader->getBody(), $uploader->getType(), $uploader->getHeader());
     }
 
     /**
      *
-     * @Route("/upload/{editId}", name="files_head")
+     * @Route("/upload/{key}", name="files_head")
      * @Method("HEAD")
      */
-    public function headAction($editId)
+    public function headAction($key)
     {
-        $uploader = $this->handleRequest($editId);
+        /* @var $uploader IResponseContainer */
+        $uploader = $this->handleRequest($key);
         $uploader->head();
         return new Response($uploader->getBody(), $uploader->getType(), $uploader->getHeader());
     }
 
     /**
      *
-     * @Route("/upload/{editId}", name="files_get")
+     * @Route("/upload/{key}", name="files_get")
      * @Method("GET")
      */
-    public function getAction($editId)
+    public function getAction($key)
     {
-        $upload = $this->handleRequest($editId);
-        $upload->get();
-        return new Response($upload->getBody(), $upload->getType(), $upload->getHeader());
+        /* @var $uploader IResponseContainer */
+        $uploader = $this->handleRequest($key);
+        $uploader->get();
+        return new Response($uploader->getBody(), $uploader->getType(), $uploader->getHeader());
     }
 
     /**
      *
-     * @Route("/upload/{editId}", name="files_delete")
+     * @Route("/upload/{key}", name="files_delete")
      * @Method("DELETE")
      */
-    public function deleteAction($editId)
+    public function deleteAction($key)
     {
-        $upload = $this->handleRequest($editId);
-        $upload->delete();
-        return new Response($upload->getBody(), $upload->getType(), $upload->getHeader());
+        /* @var $uploader IResponseContainer */
+        $uploader = $this->handleRequest($key);
+        $uploader->delete();
+        return new Response($uploader->getBody(), $uploader->getType(), $uploader->getHeader());
     }
 
     /**
