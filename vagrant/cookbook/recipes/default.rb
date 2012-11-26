@@ -48,6 +48,7 @@ php5-curl
 php5-mysql
 php5-intl
 php-apc
+php5-xdebug
 ).each { | pkg | package pkg }
 
 
@@ -86,4 +87,11 @@ execute "check if date.timezone is Europe/Paris in /etc/php5/cli/php.ini?" do
   not_if "grep '^date.timezone = Europe/Paris' /etc/php5/cli/php.ini"
   command "sed -i 's/;date.timezone =.*/date.timezone = Europe\\/Paris/g' /etc/php5/cli/php.ini"
 end
+
+execute "check if xdebug is enabled in /etc/php5/apache2/php.ini?" do
+  user "root"
+  not_if "grep '^xdebug.default_enable=1' /etc/php5/apache2/php.ini"
+  command "echo '[xdebug]\nxdebug.default_enable=1\nxdebug.remote_enable=1\nxdebug.remote_handler=dbgp\nxdebug.remote_host=192.168.111.1\nxdebug.remote_port=9000\nxdebug.remote_autostart=0' >> /etc/php5/apache2/php.ini"
+end
+  
 
