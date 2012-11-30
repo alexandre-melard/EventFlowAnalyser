@@ -17,9 +17,11 @@ Vagrant::Config.run do |config|
   config.vm.customize ["setextradata", :id, "VBoxInternal2/SharedFoldersEnableSymlinksCreate/v-root", "1"]
 
   config.vm.provision :chef_solo do |chef|
-    chef.cookbooks_path = ["cookbooks", "."]
+    chef.cookbooks_path = ["cookbooks", "site-cookbooks"]
     chef.log_level = ENV['CHEF_LOG'] || "info"
 
+#    chef.add_recipe "proxy"
+    chef.add_recipe "cookbook"
     chef.add_recipe "apt"
     chef.add_recipe "openssl"
     chef.add_recipe "apache2"
@@ -28,9 +30,10 @@ Vagrant::Config.run do |config|
     chef.add_recipe "apache2::mod_rewrite"
 
     #specific config
-    chef.add_recipe "cookbook"
-
     chef.json = {
+    	:proxy => {
+	    	:http_proxy => "http://proxy.priv.atos.fr:3128",
+    	},
         :mysql => {
             :server_root_password => 'helloroot',
 		    :server_repl_password  => 'helloroot',
