@@ -12,12 +12,12 @@ use Monolog\Logger;
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\DependencyInjection\CacheAware;
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Parser;
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Event;
+use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\EventIn;
+use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\EventOut;
 
 class EventFlowService extends CacheAware
 {
-    /**
-     * @var Logger
-     */
+    /* @var $logger Logger */
     protected $logger;
     
     /**
@@ -36,21 +36,20 @@ class EventFlowService extends CacheAware
      */
     public function parents($parsers, $event)
     {
-        if ($buf = $this->cache->fetch('parents' . $event->type)) {
-            $parents = unserialize($buf);
-        } else {
-            $parents = array();
-            foreach ($parsers as $parser) {
-                foreach ($parser->eventIns as $eventIn) {
-                    foreach ($eventIn->eventOuts as $eventOut) {
-                        if ($eventOut->type === $event->type) {
-                            array_push($parents, array("event" => $eventIn, "file" => basename($parser->file, '.xml')));
-                        }
+        $parents = array();
+        foreach ($parsers as $parser) {
+            /* @var $parser Parser */
+            foreach ($parser->getEventIns() as $eventIn) {
+                /* @var $eventIn EventIn */
+                foreach ($eventIn->getEventOuts() as $eventOut) {
+                    /* @var $eventOut EventOut */
+                    if ($eventOut->getType() === $event->getType()) {
+                        array_push($parents, array("event" => $eventIn, "file" => basename($parser->getDocument()->getPath(), '.xml')));
                     }
                 }
             }
-            $this->cache->save('parents' . $event->type, serialize($parents));
         }
+
         return $parents;
     }
 
@@ -61,21 +60,20 @@ class EventFlowService extends CacheAware
      */
     public function children($parsers, $event)
     {
-        if ($buf = $this->cache->fetch('children' . $event->type)) {
-            $children = unserialize($buf);
-        } else {
-            $children = array();
-            foreach ($parsers as $parser) {
-                foreach ($parser->eventIns as $eventIn) {
-                    if ($eventIn->type === $event->type) {
-                        foreach ($eventIn->eventOuts as $eventOut) {
-                            array_push($children, array("event" => $eventOut, "file" => basename($parser->file, '.xml')));
-                        }
+        $children = array();
+        foreach ($parsers as $parser) {
+            /* @var $parser Parser */
+            foreach ($parser->getEventIns() as $eventIn) {
+                /* @var $eventIn EventIn */
+                if ($eventIn->getType() === $event->getType()) {
+                    foreach ($eventIn->getEventOuts() as $eventOut) {
+                        /* @var $eventOut EventOut */
+                        array_push($children, array("event" => $eventOut, "file" => basename($parser->getDocument()->getPath(), '.xml')));
                     }
                 }
             }
-            $this->cache->save('children' . $event->type, serialize($children));
         }
+        
         return $children;
     }
 
@@ -86,24 +84,23 @@ class EventFlowService extends CacheAware
      */
     public function files($parsers, $event)
     {
-        if ($buf = $this->cache->fetch('files' . $event->type)) {
-            $files = unserialize($buf);
-        } else {
-            $files = array();
-            foreach ($parsers as $parser) {
-                foreach ($parser->eventIns as $eventIn) {
-                    if ($eventIn->type === $event->type) {
-                        array_push($files, array("direction" => "in", "name" => basename($parser->file, '.xml')));
-                    }
-                    foreach ($eventIn->eventOuts as $eventOut) {
-                        if ($eventOut->type === $event->type) {
-                            array_push($files, array("direction" => "out", "name" => basename($parser->file, '.xml')));
-                        }
+        $files = array();
+        foreach ($parsers as $parser) {
+            /* @var $parser Parser */
+            foreach ($parser->getEventIns() as $eventIn) {
+                /* @var $eventIn EventIn */
+                if ($eventIn->getType() === $event->getType()) {
+                    array_push($files, array("direction" => "in", "name" => basename($parser->getDocument()->getPath(), '.xml')));
+                }
+                foreach ($eventIn->getEventOuts() as $eventOut) {
+                    /* @var $eventOut EventOut */
+                    if ($eventOut->getType() === $event->getType()) {
+                        array_push($files, array("direction" => "out", "name" => basename($parser->getDocument()->getPath(), '.xml')));
                     }
                 }
             }
-            $this->cache->save('files' . $event->type, serialize($files));
         }
+        
         return $files;
     }
 
@@ -115,22 +112,20 @@ class EventFlowService extends CacheAware
      */
     public function uniqueEvents($soft, $parsers)
     {
-        if ($buf = $this->cache->fetch('uniqueEvents' . $soft)) {
-            $events = unserialize($buf);
-        } else {
-            $events = array();
-            foreach ($parsers as $parser) {
-                foreach ($parser->eventIns as $eventIn) {
-                    foreach ($eventIn->eventOuts as $eventOut) {
-                        array_push($events, $eventOut->type);
-                    }
-                    array_push($events, $eventIn->type);
+        $events = array();
+        foreach ($parsers as $parser) {
+            /* @var $parser Parser */
+            foreach ($parser->getEventIns() as $eventIn) {
+                /* @var $eventIn EventIn */
+                foreach ($eventIn->getEventOuts() as $eventOut) {
+                    array_push($events, $eventOut->getType());
                 }
+                array_push($events, $eventIn->getType());
             }
-            $events = array_unique($events);
-            asort($events);
-            $this->cache->save('uniqueEvents' . $soft, serialize($events));
         }
+        $events = array_unique($events);
+        asort($events);
+
         return $events;
     }
 
@@ -141,25 +136,24 @@ class EventFlowService extends CacheAware
      */
     public function eventParsers($parsers, $event)
     {
-        if ($buf = $this->cache->fetch('eventParsers' . $event->type)) {
-            $resParsers = unserialize($buf);
-        } else {
-            /** @var $resParsers Parser[] */
-            $resParsers = array();
-            foreach ($parsers as $parser) {
-                foreach ($parser->eventIns as $eventIn) {
-                    foreach ($eventIn->eventOuts as $eventOut) {
-                        if ($eventOut->type == $event->type) {
-                            array_push($resParsers, array("file" => basename($parser->file, '.xml'), "type" => $eventOut->type, "direction" => "out"));
-                        }
-                    }
-                    if ($eventIn->type == $event->type) {
-                        array_push($resParsers, array("file" => basename($parser->file, '.xml'), "type" => $eventIn->type, "direction" => "in"));
+        /* @var $resParsers Parser[] */
+        $resParsers = array();
+        foreach ($parsers as $parser) {
+            /* @var $parser Parser */
+            foreach ($parser->getEventIns() as $eventIn) {
+                /* @var $eventIn EventIn */
+                foreach ($eventIn->getEventOuts() as $eventOut) {
+                    /* @var $eventOut EventOut */
+                    if ($eventOut->getType() == $event->getType()) {
+                        array_push($resParsers, array("file" => basename($parser->getDocument()->getPath(), '.xml'), "type" => $eventOut->getType(), "direction" => "out"));
                     }
                 }
+                if ($eventIn->getType() == $event->getType()) {
+                    array_push($resParsers, array("file" => basename($parser->getDocument()->getPath(), '.xml'), "type" => $eventIn->getType(), "direction" => "in"));
+                }
             }
-            $this->cache->save('eventParsers' . $event->type, serialize($resParsers));
         }
+
         return $resParsers;
     }
 

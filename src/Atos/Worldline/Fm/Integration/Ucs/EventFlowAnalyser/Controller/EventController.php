@@ -2,6 +2,14 @@
 
 namespace Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Controller;
 
+use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Document;
+
+use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Service\FileService;
+
+use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Dao\ProjectDao;
+
+use Symfony\Component\Finder\Finder;
+
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Event;
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\EventFlow;
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Service\ParserService;
@@ -27,49 +35,64 @@ class EventController extends Controller
     }
 
     /**
-     * @Route("/{use}/{soft}/all", name="events_all")
+     * @Route("/{visibility}/{soft}/all", name="events_all")
      * @Template
      */
-    public function allAction($use, $soft)
+    public function allAction($visibility, $soft)
     {
-        $dir = $this->getUser()->getSalt();
-        $path = $this->container->getParameter('app.data_dir')."/$dir/$use/$soft";
-        $parsers = $this->get('app.parser')->parseDir($path);
+        /* @var $projectDao ProjectDao */
+        $projectDao = $this->get('app.project_dao');
+        $project = $projectDao->get($this->getUser(), $visibility, $soft);
+        $documents = $project->getDocuments();
+        $parsers = array();
+        foreach ($documents as $document) {
+            /* @var $document Document */
+            $parsers[] = $document->getParser();
+        }
+        
         $events = $this->get('app.event_flow')->uniqueEvents($soft, $parsers);
+        
         return array(
             'title' => 'Display All Events',
-            'use' => $use,
+            'visibility' => $visibility,
             'soft' => $soft,
             'events' => $events
         );
     }
 
     /**
-     * @Route("/event/{use}/{soft}/{id}", name="events_event")
+     * @Route("/event/{visibility}/{soft}/{id}", name="events_event")
      * @Template
      */
-    public function eventAction($use, $soft, $id)
+    public function eventAction($visibility, $soft, $id)
     {
         $logger = $this->get('logger');
-        $dir = $this->getUser()->getSalt();
-        $path = $this->container->getParameter('app.data_dir')."/$dir/$use/$soft";
-        $parsers = $this->get('app.parser')->parseDir($path);
-
+        
+        /* @var $projectDao ProjectDao */
+        $projectDao = $this->get('app.project_dao');
+        $project = $projectDao->get($this->getUser(), $visibility, $soft);
+        $documents = $project->getDocuments();
+        $parsers = array();
+        foreach ($documents as $document) {
+            /* @var $document Document */
+            $parsers[] = $document->getParser();
+        }
+                
         $event = new Event($id);
         $eventFlowService = $this->get('app.event_flow');
         $parents = $eventFlowService->parents($parsers, $event);
         $children = $eventFlowService->children($parsers, $event);
         $eventFlow = new EventFlow($event, $parents, $children);
-        $files = $eventFlowService->files($parsers, $event);
-
+        $filesRes = $eventFlowService->files($parsers, $event);
+        
         return array(
-            'title' => $eventFlowService->getShortEvent($event->type),
-            'use' => $use,
+            'title' => $eventFlowService->getShortEvent($event->getType()),
+            'visibility' => $visibility,
             'soft' => $soft,
-            'event' => $eventFlow->event->type,
-            'parents' => $eventFlow->parents,
-            'children' => $eventFlow->children,
-            'files' => $files
+            'event' => $eventFlow->getEvent()->getType(),
+            'parents' => $eventFlow->getParents(),
+            'children' => $eventFlow->getChildren(),
+            'files' => $filesRes
         );
     }
 }

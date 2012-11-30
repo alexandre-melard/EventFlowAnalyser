@@ -8,126 +8,157 @@
  */
 namespace Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity;
 
+use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Patterns\VisitorGuest;
+
+use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Patterns\VisitorHost;
+
+use Symfony\Component\Filesystem\Filesystem;
+
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Atos\Worldline\Fm\UserBundle\Entity\User;
+use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Parser;
 
 /**
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
  */
-class Document
+class Document extends Entity implements VisitorHost
 {
-    /**
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    public $id;
-
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank
      */
-    public $name;
+    protected $name;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    public $path;
+    protected $path;
 
     /**
-     * @var UploadedFile
-     * @Assert\File[](maxSize="6000000")
+     * @ORM\ManyToOne(targetEntity="Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Project")
      */
-    public $files;
-
-    public $uploadDir;
-    public $webDir;
-
-    public function __construct($webDir, $uploadDir = 'uploads/documents')
-    {
-        $this->webDir = $webDir;
-        $this->uploadDir = $uploadDir;
-    }
+    protected $project;
 
     /**
-     * @ORM\PrePersist()
-     * @ORM\PreUpdate()
+     * @ORM\OneToOne(targetEntity="Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Parser", cascade={"all"})
      */
-    public function preUpload()
+    protected $parser;
+
+    protected $fs;
+    protected $tmp;
+
+    /**
+     * 
+     * @param $path path to the document
+     */
+    public function __construct($path)
     {
-        if (null !== $this->file) {
-            // do whatever you want to generate a unique name
-            $this->path = sha1(uniqid(mt_rand(), true)) . '.' . $this->file->guessExtension();
-        }
+        $this->path = $path;
+        $this->name = '';
+        $this->fs = new Filesystem();
     }
 
     /**
-     * @ORM\PostPersist()
-     * @ORM\PostUpdate()
+     * Get document's name
+     * @return string
      */
-    public function upload()
+    public function getName()
     {
-        if (null === $this->file) {
-            return;
-        }
-        $fname = pathinfo($this->path, PATHINFO_FILENAME);
-        $ext = pathinfo($this->path, PATHINFO_EXTENSION);
-        if ($ext === 'zip') {
-            $zip = new \ZipArchive();
-            $ret = $zip->open($this->file->getRealPath());
-            if ($ret === TRUE) {
-                $tmpdir = $this->getUploadRootDir() . '/tmp/' . $fname;
-                $zip->extractTo($tmpdir);
-                $zip->close();
-
-                // validate files
-                $finder = new \Symfony\Component\Finder\Finder();
-                $finder->name('*.xml');
-                foreach ($finder->files()->in($tmpdir) as $file) {
-                    $this->file->move($this->getUploadRootDir(), $tmpdir . '/' . $file->getRelativePathname());
-                }
-            } else {
-                throw new \RuntimeException('could not extract zip file');
-            }
-        }
-        // if there is an error when moving the file, an exception will
-        // be automatically thrown by move(). This will properly prevent
-        // the entity from being persisted to the database on error
-        $this->file->move($this->getUploadRootDir(), $this->path);
-
-        unset($this->file);
+        return $this->name;
     }
 
     /**
-     * @ORM\PostRemove()
+     * Set document's name
+     * @param $name string
      */
-    public function removeUpload()
+    public function setName($name)
     {
-        if ($file = $this->getAbsolutePath()) {
-            unlink($file);
-        }
+        $this->name = $name;
     }
 
-    public function getAbsolutePath()
+    /**
+     * Get the path to the document.
+     * @return path to document
+     */
+    public function getPath()
     {
-        return null === $this->path ? null : $this->getUploadRootDir() . '/' . $this->path;
+        return $this->path;
     }
 
-    public function getWebPath()
+    /**
+     * Set the path to the document.
+     * @param path to document
+     */
+    public function setPath($path)
     {
-        return null === $this->path ? null : $this->getUploadDir() . '/' . $this->path;
+        $this->path = $path;
     }
 
-    protected function getUploadRootDir()
+    /** 
+     * Get the tmp path to the document use while editing a project.
+     * @return temporary path to document
+     */
+    public function getTmp()
     {
-        // the absolute directory path where uploaded documents should be saved
-        return $this->webDir . '/' . $this->getUploadDir();
+        return $this->tmp;
     }
 
-    protected function getUploadDir()
+    /** 
+     * Set the tmp path to the document use while editing a project.
+     * @param temporary path to document
+     */
+    public function setTmp($tmp)
     {
-        return $this->uploadDir;
+        $this->tmp = $tmp;
     }
+
+    /**
+     * Get document's associated project
+     * @return Project
+     */
+    public function getProject()
+    {
+        return $this->project;
+    }
+
+    /**
+     * Set document's associated project
+     * @param Project
+     */
+    public function setProject($project)
+    {
+        $this->project = $project;
+    }
+
+    /**
+     * Get associated Parser object
+     * @return Parser
+     */
+    public function getParser()
+    {
+        return $this->parser;
+    }
+
+    /**
+     * Set associated Parser object
+     * @param Parser
+     */
+    public function setParser($parser)
+    {
+        $this->parser = $parser;
+    }
+    
+    /**
+     * (non-PHPdoc)
+     * @see Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Patterns.VisitorHost::accept()
+     */
+    public function accept(VisitorGuest $guest)
+    {
+        $this->parser->accept($guest);
+        $guest->visit($this);
+    }
+    
 }

@@ -9,6 +9,7 @@ services:
       - '@app.file'
       - '@app.parser'
       - '@app.event_flow'
+      - '@session'
     tags:
         - { name: monolog.logger, channel: app }
 

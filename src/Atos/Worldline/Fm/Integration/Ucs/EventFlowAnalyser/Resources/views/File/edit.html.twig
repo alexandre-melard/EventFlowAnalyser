@@ -11,7 +11,13 @@
     {% block js_blueimp_form %}
     <form id="fileupload" action="{{ asset('files/edit/' ~ key ) }}" method="POST" {{ form_enctype(form) }}>
         <div class="span12">
-            {{ form_widget(form) }}
+            {{ form_errors(form) }}
+        
+            {{ form_label(form.name) }}
+            {{ form_widget(form.name) }}
+            {{ form_widget(form.visibility) }}
+        
+            {{ form_rest(form) }}
         </div>
         <h3>Files</h3>
         <hr>

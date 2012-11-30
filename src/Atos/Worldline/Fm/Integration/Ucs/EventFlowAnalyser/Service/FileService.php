@@ -8,14 +8,14 @@
  */
 namespace Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Service;
 
+use Symfony\Component\Finder\Finder;
+
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\DependencyInjection\CacheAware;
 use Monolog\Logger;
 
 class FileService extends CacheAware
 {
-    /**
-     * @var Logger
-     */
+    /* @var $logger Logger */
     protected $logger;
     
     /**
@@ -25,6 +25,24 @@ class FileService extends CacheAware
     {
         parent::__construct($c);
         $this->logger = $l;
+    }
+    
+    public function getFiles($dir, $visibility, $salt, $soft) {
+
+        $path = "$dir/$visibility";
+        if ($visibility == 'private') {
+            $path .= '/' . $salt;
+        }
+        
+        $finder = new Finder();
+        $finder->name('*.xml')->in($path)->name($soft);
+        
+        $files = array();
+        foreach ($finder->files() as $file) {
+            $files[] = $file->getPathname();
+        }        
+        
+        return $files;
     }
     
     public function scanDirIterator(\DirectoryIterator $entries) {
@@ -44,10 +62,10 @@ class FileService extends CacheAware
     }
 
     /**
-     * data -> salt -> public ->    app -> file1.xml
+     * data -> public  -> salt ->   app -> file1.xml
      *                                  -> file2.xml
      *                                  -> ...
-     *              -> private ->   app -> file1.xml
+     *      -> private -> salt ->   app -> file1.xml
      *                                  -> file2.xml
      *                                  -> ...
      * @param $dir mixed path to xml directory

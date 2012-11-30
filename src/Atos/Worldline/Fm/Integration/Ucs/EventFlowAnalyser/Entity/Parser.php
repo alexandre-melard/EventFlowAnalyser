@@ -8,42 +8,116 @@
  */
 namespace Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity;
 
-class Parser
-{
-    public $file;
-    public $xsd;
+use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Patterns\VisitorGuest;
 
-    /* @var $eventIns EventIn[] */
-    public $eventIns;
+use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Patterns\VisitorHost;
+use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Document;
+use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\EventIn;
+use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Entity;
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * @ORM\Entity
+ * @ORM\HasLifecycleCallbacks
+ */
+class Parser extends Entity implements VisitorHost
+{
+    /**
+     * @ORM\OneToOne(targetEntity="Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Document")
+     */
+    protected $document;
 
     /**
-     * @param $file xml parser result file path.
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
-    public function __construct($file, $xsd)
+    protected $xsd;
+
+    /**
+     * One to Many 
+     * @ORM\ManyToMany(targetEntity="Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\EventIn", cascade={"all"})
+     * @var array
+     */
+    protected $eventIns;
+
+    /**
+     * @param $document xml parser result document path.
+     */
+    public function __construct($d)
     {
-        $this->file = $file;
-        $this->xsd = $xsd;
+        $this->document = $d;
         $this->eventIns = array();
     }
 
     /**
+     * @return Document
+     */
+    public function getDocument()
+    {
+        return $this->document;
+    }
+
+    public function setDocument($document)
+    {
+        $this->document = $document;
+    }
+
+    public function getXsd()
+    {
+        return $this->xsd;
+    }
+
+    public function setXsd($xsd)
+    {
+        $this->xsd = $xsd;
+    }
+
+    /**
+     * return array Events in
+     */
+    public function getEventIns()
+    {
+        return $this->eventIns;
+    }
+
+    /**
+     * Set input events
+     * @param array $eventIns
+     */
+    public function setEventIns(array $eventIns)
+    {
+        $this->eventIns = $eventIns;
+    }
+
+    /**
+     * Add en event in to the input events
      * @param EventIn $event
      */
     public function addEventIn(EventIn $event)
     {
-        if (!empty($event)) {
-            array_push($this->eventIns, $event);
-        }
+        $this->eventIns[$event->getType()] = $event;
     }
 
     /**
+     * remove an element from the input events
      * @param EventIn $event
      */
     public function removeEventIn(EventIn $event)
     {
-        if (!empty($event)) {
-            unset($this->eventIns[$event]);
-        }
+        unset($this->eventIns[$event->getType()]);
+        return $event;
     }
-
+    
+    /**
+     * (non-PHPdoc)
+     * @see Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Patterns.VisitorHost::accept()
+     */
+    public function accept(VisitorGuest $guest)
+    {
+        foreach ($this->getEventIns() as $eventIn) {
+            /* @var $eventIn EventIn */
+            $eventIn->accept($guest);
+        }
+        $guest->visit($this);
+    }
+    
 }

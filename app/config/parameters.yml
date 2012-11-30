@@ -19,6 +19,10 @@ parameters:
 
   app.data_dir: %kernel.root_dir%/../web/uploads/data
   app.event_xsd: %kernel.root_dir%/config/eventflow.xsd
+  
+# Nav bar
+  knp_menu.renderer.twig.template: MopaBootstrapBundle:Menu:menu.html.twig
+
 # Uploader
   file_uploader.file_base_path: "%kernel.root_dir%/../web/uploads"
   file_uploader.web_base_path: "/uploads"

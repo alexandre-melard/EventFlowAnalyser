@@ -2,6 +2,12 @@
 
 namespace Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Menu;
 
+use Symfony\Component\Filesystem\Filesystem;
+
+use Symfony\Component\Finder\SplFileInfo;
+
+use Symfony\Component\Finder\Finder;
+
 use Liip\ThemeBundle\ActiveTheme;
 use Knp\Menu\FactoryInterface;
 use Symfony\Component\Security\Core\SecurityContextInterface;
@@ -10,6 +16,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Mopa\Bundle\BootstrapBundle\Navbar\AbstractNavbarMenuBuilder;
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Service\ParserService;
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Service\EventFlowService;
+use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Service\FileService;
 use Atos\Worldline\Fm\UserBundle\Entity\User;
 use Monolog\Logger;
 use Doctrine\Common\Cache\Cache;
@@ -23,19 +30,26 @@ use Doctrine\Common\Cache\Cache;
  */
 class MenuBuilder extends AbstractNavbarMenuBuilder
 {
-    /** @var User */
+    /* @var $user User */
     protected $user;
 
     protected $isLoggedIn;
 
-    /** @var Logger */
+    /* @var $logger Logger */
     protected $logger;
     
     protected $data_dir;
 
+    /* @var $file FileService*/
     protected $file;
+    
+    /* @var $parser ParserService */
     protected $parser;
+
+    /* @var $eventFlow EventFlowService */
     protected $evenFlow;
+    
+    protected $session;
     
     public function __construct(
             FactoryInterface $factory, 
@@ -44,7 +58,8 @@ class MenuBuilder extends AbstractNavbarMenuBuilder
             $data_dir,
             $file,
             $parser,
-            $evenFlow            
+            $evenFlow,
+            $session            
             )
     {
         parent::__construct($factory);
@@ -52,11 +67,11 @@ class MenuBuilder extends AbstractNavbarMenuBuilder
         $this->logger = $logger;
         $this->isLoggedIn = $securityContext->isGranted('IS_AUTHENTICATED_FULLY');
         $this->user = $securityContext->getToken()->getUser();
-        // TODO add parser file and even_flow services...
         $this->data_dir = $data_dir;
         $this->file = $file;
         $this->parser = $parser;
         $this->evenFlow = $evenFlow;        
+        $this->session = $session;
     }
 
 
@@ -64,73 +79,157 @@ class MenuBuilder extends AbstractNavbarMenuBuilder
     {
         $this->logger->debug('UcsEventFlowAnalyser::MenuBuilder:: createMainMenu');
         $menu = $this->createNavbarMenuItem();
-        $menu->addChild('Home', array('route' => 'default'));
+        $menu->addChild(
+                'Home', 
+                array(
+                        'route' => 'default', 
+                        'extras' => array('icon' => 'home')
+                        )
+                );
 
         // Build profile menu
         $profile = $this->createDropdownMenuItem($menu, "Profile", false, array('icon' => 'caret'));
 
         if (!$this->isLoggedIn) {
-            $profile->addChild('Login', array('route' => 'fos_user_security_login'));
-            $profile->addChild('Register', array('route' => 'fos_user_registration_register'));
+            $profile->addChild(
+                    'Login', 
+                    array(
+                            'route' => 'fos_user_security_login',
+                            'extras' => array('icon' => 'arrow-right')
+                        )
+                    );
+            $profile->addChild(
+                    'Register', 
+                    array(
+                            'route' => 'fos_user_registration_register',
+                            'extras' => array('icon' => 'user')
+                        )
+                    );
             return $menu;
         }
-        $dir = $this->user->getSalt();
-        $profile->addChild('Logout', array('route' => 'fos_user_security_logout'));
-        $profile->addChild('Profile', array('route' => 'fos_user_profile_show'));
-
-        $use = 'public';
-        $soft = 'soft';
+        $profile->addChild(
+                'Logout', 
+                array(
+                        'route' => 'fos_user_security_logout',
+                        'extras' => array('icon' => 'off')
+                )
+                );
+        $profile->addChild(
+                'Profile', 
+                array(
+                        'route' => 'fos_user_profile_show',
+                        'extras' => array('icon' => 'info-sign')
+                        )
+                );
 
         // Build files menu
         $files = $this->createDropdownMenuItem($menu, "Files", false, array('icon' => 'caret'));
+        $files->addChild(
+                'Create', 
+                array(
+                        'route' => 'files_create',
+                        'extras' => array('icon' => 'plus-sign')
+                    )
+                );
+        $this->addDivider($files);
         $files->addChild('All', array(
-            'route' => 'files_all',
-            'routeParameters' => array(
-                'use' => $use,
-                'soft' => $soft,
-            )
+            'route' => 'files_list_all',
+            'extras' => array('icon' => 'list')                
         ));
         $files->addChild('Privates', array(
-            'route' => 'files_create',
-            'routeParameters' => array('use' => 'private')
+            'route' => 'files_list',
+            'routeParameters' => array('visibility' => 'private'),
+            'extras' => array('icon' => 'folder-close')                
         ));
         $files->addChild('Public', array(
-            'route' => 'files_create',
-            'routeParameters' => array('use' => 'public')
+            'route' => 'files_list',
+            'routeParameters' => array('visibility' => 'public'),
+            'extras' => array('icon' => 'folder-open')                
         ));
 
-        // Retrieve file types
-        try {
-            $path = $this->data_dir ."/$dir/$use/$soft";
-            $parsers = $this->parser->parseDir($path);
-            $EventFlowService = $this->evenFlow;
-            $events = $EventFlowService->uniqueEvents($soft, $parsers);
-            if (count($events) > 0) {
-                $this->logger->debug('UcsEventFlowAnalyser::MenuBuilder:: number of events = ' . count($events));
-                // Build files menu
-                $eventsMenu = $this->createDropdownMenuItem($menu, "Events", false, array('icon' => 'caret'));
-                $eventsMenu->addChild("All",
-                    array(
+        $salt = $this->user->getSalt();
+
+        $fs = new Filesystem();
+        if ($fs->exists($this->data_dir . '/private/') && $fs->exists($this->data_dir . '/public/'))
+        {
+            // Build Projects menu
+            $projects = $this->createDropdownMenuItem($menu, "Projects", false, array('icon' => 'caret'));
+            
+            if ($fs->exists($this->data_dir . '/private/' . $salt))
+            {
+                $projects->addChild('Private', array(
+                        'uri'    => '#',
+                        'extras' => array('icon' => 'folder-close')
+                ));
+                $this->addDivider($projects);
+                $finder = new Finder();
+                $finder->in($this->data_dir . '/private/' . $salt);
+                /* @var $file SplFileInfo */
+                foreach ($finder->directories() as $dir) {
+                    $projects->addChild($dir->getFilename(), array(
+                            'route' => 'events_all',
+                            'routeParameters' => array(
+                                    'visibility' => 'private',
+                                    'soft' => $dir->getFilename()),
+                            'extras' => array('icon' => 'folder-close')
+                    ));
+                
+                }
+                $this->addDivider($projects);
+            }            
+            $projects->addChild('Public', array(
+                    'uri'    => '#',
+                    'extras' => array('icon' => 'folder-open')
+            ));
+            $this->addDivider($projects);
+    
+            $finder = new Finder();
+            $finder->in($this->data_dir . '/public/' );
+
+            // get all projects from public dir
+            $finder->depth('>=1');
+            
+            /* @var $file SplFileInfo */
+            foreach ($finder->directories() as $dir) {
+                $projects->addChild($dir->getFilename(), array(
                         'route' => 'events_all',
                         'routeParameters' => array(
-                            'use' => $use,
-                            'soft' => $soft)
-                    ));
-                foreach ($events as $event) {
-                    $this->logger->debug("UcsEventFlowAnalyser::MenuBuilder::created event = $event");
-                    $eventsMenu->addChild($EventFlowService->getShortEvent($event),
-                        array(
-                            'route' => 'events_event',
-                            'routeParameters' => array(
-                                'use' => $use,
-                                'soft' => $soft,
-                                'id' => $event)
-                        ));
-                }
+                                'visibility' => 'public',
+                                'soft' => $dir->getFilename()),
+                        'extras' => array('icon' => 'folder-open')
+                ));
+            
             }
-        } catch (\RuntimeException $e) {
-            $this->logger->info('UcsEventFlowAnalyser::MenuBuilder::no directory yet to exploit to build events list');
-        }
+        }        
+//         // Retrieve file types
+//         if ( $this->session->has('event')) {
+//             $eventSession = $this->session->get('event');
+//             try {
+//                 $this->file->getFiles($this->data_dir, $eventSession['visibility'], $eventSession['salt'], $eventSession['soft']);
+//                 $parsers = $this->parser->parseFiles($eventSession['files']);
+//                 $EventFlowService = $this->evenFlow;
+//                 $events = $EventFlowService->uniqueEvents($eventSession['soft'], $parsers);
+//                 if (count($events) > 0) {
+//                     $this->logger->debug('UcsEventFlowAnalyser::MenuBuilder:: number of events = ' . count($events));
+
+//                     // Build files menu
+//                     $eventsMenu = $this->createDropdownMenuItem($menu, "Events", false, array('icon' => 'caret'));
+//                     foreach ($events as $event) {
+//                         $this->logger->debug("UcsEventFlowAnalyser::MenuBuilder::created event = $event");
+//                         $eventsMenu->addChild($EventFlowService->getShortEvent($event),
+//                             array(
+//                                 'route' => 'events_event',
+//                                 'routeParameters' => array(
+//                                     'visibility' => $eventSession['visibility'],
+//                                     'soft' => $eventSession['soft'],
+//                                     'id' => $event)
+//                             ));
+//                     }
+//                 }
+//             } catch (\RuntimeException $e) {
+//                 $this->logger->info('UcsEventFlowAnalyser::MenuBuilder::no directory yet to exploit to build events list');
+//             }
+//         }
         return $menu;
     }
 

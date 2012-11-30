@@ -8,10 +8,42 @@
  */
 namespace Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity;
 
-class EventOut extends Event
+use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Patterns\VisitorHost;
+
+use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Patterns\VisitorGuest;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * @ORM\Entity
+ * @ORM\HasLifecycleCallbacks
+ */
+class EventOut extends Entity implements VisitorHost
 {
-    public function __construct($type)
+    /**
+     * @ORM\ManyToOne(targetEntity="Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Event")
+     */
+    protected $event;
+    
+    public function accept(VisitorGuest $guest)
     {
-        parent::__construct($type);
+        $this->event->accept($guest);
+        $guest->visit($this);
     }
+    
+    public function getEvent()
+    {
+        return $this->event;
+    }
+
+    public function setEvent($event)    
+    {
+        $this->event = $event;
+    }
+    
+    public function getType()
+    {
+        return $this->event->getType();
+    }
+    
 }

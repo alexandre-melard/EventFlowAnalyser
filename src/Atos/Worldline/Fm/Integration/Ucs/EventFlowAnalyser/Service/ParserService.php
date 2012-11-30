@@ -8,11 +8,25 @@
  */
 namespace Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Service;
 
+use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Dao\ParserDao;
+
+use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Dao\EventOutDao;
+
+use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Dao\EventInDao;
+
+use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Dao\EventDao;
+
+use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Event;
+
+use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Document;
+
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\DependencyInjection\CacheAware;
+use Doctrine\Common\Cache\ApcCache;
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Parser;
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\EventIn;
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\EventOut;
 use Monolog\Logger;
+use Doctrine\Common\Cache\Cache;
 
 class ParserService extends CacheAware
 {
@@ -20,15 +34,39 @@ class ParserService extends CacheAware
      * @var Logger
      */
     protected $logger;
+
     protected $xsd;
-    
+
     /**
-     * @param Cache $c
+     * @var ParserDao
      */
-    public function __construct($c, $l, $x)
+    protected $parserDao;
+
+    /**
+     * @var EventDao
+     */
+    protected $eventDao;
+
+    /**
+     * @var EventInDao
+     */
+    protected $eventInDao;
+
+    /**
+     * @var EventOutDao
+     */
+    protected $eventOutDao;
+
+    /**
+     * 
+     * @param Cache $c
+     * @param Logger $l
+     * @param string $x
+     */
+    public function __construct(Cache $c, Logger $l, $x)
     {
         parent::__construct($c);
-        $this->logger = $l; 
+        $this->logger = $l;
         $this->xsd = $x;
     }
 
@@ -41,54 +79,64 @@ class ParserService extends CacheAware
      */
     public function parse(Parser $parser)
     {
-        if ($parserString = $this->cache->fetch('parse' . $parser->file)) {
-            $parser = unserialize($parserString);
-        } else {
-            $this->validate($parser->file, $parser->xsd);
-            $xml = simplexml_load_file($parser->file);
-            if (null != $xml->events->in) {
-                foreach ($xml->events->in as $in) {
-                    $eventIn = new EventIn((string) $in->event);
-                    if (null !== $in->out->event) {
-                        foreach ($in->out->event as $event) {
-                            $eventIn->addEventOut(new EventOut((string) $event));
-                        }
+        $this->validate($parser->getDocument()->getPath(), $parser->getXsd());
+        $xml = simplexml_load_file($parser->getDocument()->getPath());
+        if (null != $xml->events->in) {
+            foreach ($xml->events->in as $in) {
+                $eventIn = $this->eventInDao->getEventIn((string) $in->event);
+                $eventIn->setEvent($this->eventDao->getEvent((string) $in->event));
+                if (null !== $in->out->event) {
+                    foreach ($in->out->event as $event) {
+                        $eventOut = $this->eventOutDao->getEventOut((string) $event);
+                        $eventOut->setEvent($this->eventDao->getEvent((string) $event));
+                        $eventIn->addEventOut($eventOut);
                     }
-                    $parser->addEventIn($eventIn);
                 }
+                $parser->addEventIn($eventIn);
             }
-            $this->cache->save('parse' . $parser->file, serialize($parser));
         }
+
         return $parser;
     }
 
     /**
-     * @param $dir path to xml directory
-     * @return Parser[]
+     * @param    array Document
+     * @return   array Document
      * @throws \RuntimeException
      */
-    public function parseDir($dir)
+    public function parseDocuments(array $documents)
     {
-        if (!is_dir($dir)) {
-            throw new \RuntimeException("Directory does not exists: [" . $dir . "]");
+        /** @var $parsers Parser[] */
+        $parsers = array();
+        foreach ($documents as $document) {
+            /* @var $document Document */
+
+            /* @var $parser Parser */
+            $parser = $this->parserDao->getParser($document);
+            $parser->setXsd($this->xsd);
+            $document->setParser($this->parse($parser));
         }
-        if ($parsersString = $this->cache->fetch('parseDir' . $dir)) {
-            $parsers = unserialize($parsersString);
-        } else {
-            /** @var $parsers Parser[] */
-            $parsers = array();
-            $files = scandir($dir);
-            foreach ($files as $file) {
-                if (substr($file, -3, 3) === "xml") {
-                    array_push($parsers, $this->parse(new Parser($dir . DIRECTORY_SEPARATOR . $file, $this->xsd)));
-                }
-            }
-            $this->cache->save('parseDir' . $dir, serialize($parsers));
+
+        return $documents;
+    }
+
+    /**
+     * @param    array $files path to xml directory
+     * @return   array Parser
+     * @throws \RuntimeException
+     */
+    public function parseFiles($files)
+    {
+        /** @var $parsers Parser[] */
+        $parsers = array();
+        foreach ($files as $file) {
+            array_push($parsers, $this->parse(new Parser($file, $this->xsd)));
         }
+
         return $parsers;
     }
 
-    public function libxml_display_error($error)
+    public function libxmlDisplayError($error)
     {
         $return = "\n";
         switch ($error->level) {
@@ -111,15 +159,15 @@ class ParserService extends CacheAware
         return $return;
     }
 
-    public function libxml_display_errors($display_errors = true)
+    public function libxmlDisplayErrors($display_errors = true)
     {
         $errors = libxml_get_errors();
         $chain_errors = "";
 
         foreach ($errors as $error) {
-            $chain_errors .= preg_replace('/( in\ \/(.*))/', '', strip_tags($this->libxml_display_error($error))) . "\n";
+            $chain_errors .= preg_replace('/( in\ \/(.*))/', '', strip_tags($this->libxmlDisplayError($error))) . "\n";
             if ($display_errors) {
-                trigger_error($this->libxml_display_error($error), E_USER_WARNING);
+                trigger_error($this->libxmlDisplayError($error), E_USER_WARNING);
             }
         }
         libxml_clear_errors();
@@ -143,11 +191,49 @@ class ParserService extends CacheAware
         if ($validate) {
             $result = true;
         } else {
-            $error = $this->libxml_display_errors();
+            $error = $this->libxmlDisplayErrors();
             libxml_use_internal_errors(false);
             throw new Exception("DOMDocument::schemaValidate() Generated Errors : $error");
         }
         libxml_use_internal_errors(false);
+
         return $result;
     }
+
+    /**
+     * 
+     * @param EventDao $dao
+     */
+    public function setEventDao(EventDao $dao)
+    {
+        $this->eventDao = $dao;
+    }
+
+    /**
+     * 
+     * @param EventInDao $dao
+     */
+    public function setEventInDao(EventInDao $dao)
+    {
+        $this->eventInDao = $dao;
+    }
+
+    /**
+     * 
+     * @param EventOutDao $dao
+     */
+    public function setEventOutDao(EventOutDao $dao)
+    {
+        $this->eventOutDao = $dao;
+    }
+
+    /**
+     * 
+     * @param ParserDao $parserDao
+     */
+    public function setParserDao(ParserDao $parserDao)
+    {
+        $this->parserDao = $parserDao;
+    }
+
 }
