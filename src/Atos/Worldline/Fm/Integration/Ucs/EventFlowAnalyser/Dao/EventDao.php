@@ -1,5 +1,7 @@
 <?php
 namespace Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Dao;
+use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Project;
+
 use Doctrine\ORM\EntityManager;
 
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Event;
@@ -9,39 +11,30 @@ use Monolog\Logger;
 
 class EventDao extends AbstractDao
 {
-    protected $events;
-
-     /**
-      * @param EntityManager $em
-      * @param Logger $l
-      */
-     public function __construct(EntityManager $em, Logger $l) {
-         parent::__construct($em, $l);
-         $this->events = array();
-     }
-
     /**
-     * Try to retrieve Event from datasource else instanciates one. 
+     * Try to get event from datasource
+     * @param Project $project
      * @param string $type
+     * @return Event
      */
-    public function getEvent($type) 
-    {
-        $event = $this->em
-                    ->getRepository('UcsEventFlowAnalyser:Event')
-                    ->findOneBy(
-                            array(
-                                    'type' => $type
-                            )
-                    );
-        if (!isset($event)) {
-            if (!isset($this->events[$type])) {
-                $event = new Event($type);
-                $this->events[$type] = $event;
-            } else {
-                $event = $this->events[$type];
-            }
-        }
-        
-        return $event;
+    function getByType(Project $project, $type) {
+        $qb = $this->em->createQueryBuilder();
+        return $qb
+        ->select('event')
+        ->from('UcsEventFlowAnalyser:Event', 'event')
+        ->where(
+                $qb->expr()->andx(
+                    $qb->expr()->eq('event.type', ':type'),
+                    $qb->expr()->eq('event.project', ':project')
+                    )
+                )
+        ->setParameters( 
+                array (
+                    'type'    => $type,
+                    'project' => $project->getId(),
+                    )
+                )
+        ->getQuery()
+        ->getSingleResult();
     }
 }

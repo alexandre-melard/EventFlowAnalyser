@@ -24,31 +24,39 @@ use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Parser;
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
  */
-class Document extends Entity implements VisitorHost
+class Document implements VisitorHost, Entity
 {
+    /**
+     * @ORM\Id
+     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="AUTO")
+     * @var IntegerType
+     */
+    private $id;
+    
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank
      */
-    protected $name;
+    private $name;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    protected $path;
+    private $path;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Project")
+     * @ORM\ManyToOne(targetEntity="Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Project", inversedBy="documents")
      */
-    protected $project;
+    private $project;
 
     /**
      * @ORM\OneToOne(targetEntity="Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Parser", cascade={"all"})
      */
-    protected $parser;
+    private $parser;
 
-    protected $fs;
-    protected $tmp;
+    private $fs;
+    private $tmp;
 
     /**
      * 
@@ -60,7 +68,23 @@ class Document extends Entity implements VisitorHost
         $this->name = '';
         $this->fs = new Filesystem();
     }
-
+    
+    /**
+     * @return IntegerType
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+    /**
+     *
+     * @param IntegerType $id
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
+    
     /**
      * Get document's name
      * @return string

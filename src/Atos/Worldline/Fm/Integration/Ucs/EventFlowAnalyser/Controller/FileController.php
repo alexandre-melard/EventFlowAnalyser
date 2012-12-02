@@ -189,11 +189,13 @@ class FileController extends Controller
             
             try {
                 $fs->mirror($project->getTmp(), $project->getPath());
+                $fs->remove($project->getTmp());
+                $fs->remove($project->getTmp() . "/../");
             } catch (Exception $e) {
                 $fs->remove($project->getTmp());
                 $fs->remove($project->getTmp() . "/../");
                 throw $e;
-            }
+            } 
             $project->populate();
             
             /* @var $projectDao ProjectDao */

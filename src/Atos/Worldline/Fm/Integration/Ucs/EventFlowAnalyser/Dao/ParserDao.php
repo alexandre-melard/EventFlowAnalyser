@@ -9,23 +9,19 @@ use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Dao\AbstractDao;
 class ParserDao extends AbstractDao
 {
     /**
-     * Try to retrieve Event from datasource else instanciates one.
-     * @param string $type
+     * Try to get parser from datasource
+     * @param Document $document
+     * @return Parser
      */
-    public function getParser(Document $document)
-    {
-        $parser = $this->em
-                    ->getRepository('UcsEventFlowAnalyser:Parser')
-                    ->findOneBy(
-                            array(
-                                    'document' => $document->getId()
-                            )
-                    );
-        if (!isset($parser)) {
-            $parser = new Parser($document);
-        }
-    
-        return $parser;
+    function get(Document $document) {
+        $qb = $this->em->createQueryBuilder();
+        return $qb
+        ->select('parser', 'eventIns')
+        ->from('UcsEventFlowAnalyser:Parser', 'parser')
+        ->leftJoin('parser.eventIns', 'eventIns')
+        ->where($qb->expr()->eq('parser.document', ':document'))
+        ->setParameter('document', $document->getId())
+        ->getQuery()
+        ->getSingleResult();
     }
-    
 }

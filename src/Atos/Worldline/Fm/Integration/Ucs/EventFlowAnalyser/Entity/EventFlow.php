@@ -20,24 +20,32 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
  */
-class EventFlow extends Entity implements VisitorHost
+class EventFlow implements VisitorHost, Entity
 {
+    /**
+     * @ORM\Id
+     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="AUTO")
+     * @var IntegerType
+     */
+    private $id;
+    
     /**
      * @ORM\OneToOne(targetEntity="Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Event")
      */
-    protected $event;
+    private $event;
 
     /**
      * One to Many type TODO : check if join tables are necessary
-     * @ORM\ManyToMany(targetEntity="Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\EventOut")
+     * @ORM\OneToMany(targetEntity="Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\EventOut", mappedBy="eventFlow")
      */
-    protected $parents;
+    private $parents;
 
     /**
      * One to Many type TODO : check if join tables are necessary
-     * @ORM\ManyToMany(targetEntity="Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\EventIn")
+     * @ORM\OneToMany(targetEntity="Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\EventIn", mappedBy="eventFlow")
      */
-    protected $children;
+    private $children;
 
     /**
      * @param $event Event
@@ -50,7 +58,23 @@ class EventFlow extends Entity implements VisitorHost
         $this->parents = $parents;
         $this->children = $children;
     }
-
+    
+    /**
+     * @return IntegerType
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+    /**
+     *
+     * @param IntegerType $id
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
+    
     /**
      * @return Event
      */
@@ -77,7 +101,19 @@ class EventFlow extends Entity implements VisitorHost
     {
         $this->parents = $parents;
     }
-
+    
+    public function addparent(EventOut $parent) {
+        $this->parents[$parent->getType()] = $parent;
+    }
+    
+    public function removeparent(EventOut $parent) {
+        unset($this->parents[$parent->getType()]);
+    }
+    
+    public function getparent(EventOut $parent) {
+        return $this->parents[$parent->getType()];
+    }
+    
     /**
      * 
      * @return EventOut[]
@@ -91,10 +127,17 @@ class EventFlow extends Entity implements VisitorHost
     {
         $this->children = $children;
     }
-
-    public function getId()
-    {
-        return $this->id;
+    
+    public function addChild(EventIn $child) {
+        $this->children[$child->getType()] = $child;
+    }
+    
+    public function removeChild(EventIn $child) {
+        unset($this->children[$child->getType()]);
+    }
+    
+    public function getchild(EventIn $child) {
+        return $this->children[$child->getType()];
     }
     
     /**

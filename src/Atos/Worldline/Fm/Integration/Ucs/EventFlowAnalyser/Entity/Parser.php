@@ -20,24 +20,32 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
  */
-class Parser extends Entity implements VisitorHost
+class Parser implements Entity, VisitorHost
 {
+    /**
+     * @ORM\Id
+     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="AUTO")
+     * @var IntegerType
+     */
+    private $id;
+    
     /**
      * @ORM\OneToOne(targetEntity="Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Document")
      */
-    protected $document;
+    private $document;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    protected $xsd;
+    private $xsd;
 
     /**
      * One to Many 
-     * @ORM\ManyToMany(targetEntity="Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\EventIn", cascade={"all"})
+     * @ORM\OneToMany(targetEntity="Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\EventIn", mappedBy="parser")
      * @var array
      */
-    protected $eventIns;
+    private $eventIns;
 
     /**
      * @param $document xml parser result document path.
@@ -47,7 +55,23 @@ class Parser extends Entity implements VisitorHost
         $this->document = $d;
         $this->eventIns = array();
     }
-
+    
+    /**
+     * @return IntegerType
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+    /**
+     *
+     * @param IntegerType $id
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
+    
     /**
      * @return Document
      */

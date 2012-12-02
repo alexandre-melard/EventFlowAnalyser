@@ -22,40 +22,52 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
  */
-class Project extends Entity implements VisitorHost
+class Project implements Entity, VisitorHost
 {
+    /**
+     * @ORM\Id
+     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="AUTO")
+     * @var IntegerType
+     */
+    private $id;
+
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank
      */
-    protected $name;
+    private $name;
 
     /**
      * @ORM\Column(type="string", length=8)
      * @Assert\NotBlank
      */
-    protected $visibility;
+    private $visibility;
 
     /**
      * @ORM\ManyToOne(targetEntity="Atos\Worldline\Fm\UserBundle\Entity\User")
      */
-    protected $user;
+    private $user;
 
     /**
-     * One to Many type 
-     * @ORM\ManyToMany(targetEntity="Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Document")
+     * @ORM\OneToMany(targetEntity="Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Document", mappedBy="project")
      */
-    protected $documents;
+    private $documents;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Event", mappedBy="project")
+     */
+    private $events;
 
     /**
      * @ORM\Column(type="string", length=2000)
      */
-    protected $path;
+    private $path;
 
-    protected $tmp;
+    private $tmp;
 
     /* @var $parserService ParserService */
-    protected $parserService;
+    private $parserService;
 
     /**
      * 
@@ -67,6 +79,7 @@ class Project extends Entity implements VisitorHost
         $this->visibility = 'public';
         $this->name = '';
         $this->fs = new Filesystem();
+        $this->events = array();
     }
 
     /**
@@ -106,6 +119,22 @@ class Project extends Entity implements VisitorHost
     public function removeUpload()
     {
         $this->fs->remove($this->path);
+    }
+
+    /**
+     * @return IntegerType
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+    /**
+     *
+     * @param IntegerType $id
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
     }
 
     /**
@@ -230,16 +259,6 @@ class Project extends Entity implements VisitorHost
         $this->parserService = $parserService;
     }
 
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    public function setId($id)
-    {
-        $this->id = $id;
-    }
-
     /**
      * (non-PHPdoc)
      * @see Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Patterns.VisitorHost::accept()
@@ -253,4 +272,40 @@ class Project extends Entity implements VisitorHost
         $guest->visit($this);
     }
 
+    /**
+     * @return array Event
+     */
+    public function getEvents()
+    {
+        return $this->events;
+    }
+
+    /**
+     * 
+     * @param array Event $events
+     */
+    public function setEvents(array $events)
+    {
+        $this->events = $events;
+    }
+    
+    /**
+     * return associated event
+     * @param string $type
+     */
+    public function getEvent($type) 
+    {
+        return $this->events[$type];
+    }
+
+    /**
+     * add event to associated array event
+     * @param Event $event
+     * @return Event
+     */
+    public function addEvent(Event $event)
+    {
+        $this->events[$event->getType()] = $event;
+        return $event; 
+    }
 }

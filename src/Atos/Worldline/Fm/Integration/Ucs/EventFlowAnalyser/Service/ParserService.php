@@ -8,25 +8,23 @@
  */
 namespace Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Service;
 
+use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Project;
+
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Dao\ParserDao;
-
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Dao\EventOutDao;
-
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Dao\EventInDao;
-
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Dao\EventDao;
-
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Event;
-
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Document;
-
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\DependencyInjection\CacheAware;
+
 use Doctrine\Common\Cache\ApcCache;
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Parser;
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\EventIn;
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\EventOut;
 use Monolog\Logger;
 use Doctrine\Common\Cache\Cache;
+use Doctrine\ORM\NoResultException;
 
 class ParserService extends CacheAware
 {
@@ -56,7 +54,8 @@ class ParserService extends CacheAware
      * @var EventOutDao
      */
     protected $eventOutDao;
-
+    
+   
     /**
      * 
      * @param Cache $c
@@ -68,8 +67,30 @@ class ParserService extends CacheAware
         parent::__construct($c);
         $this->logger = $l;
         $this->xsd = $x;
+        $this->events = array();
     }
-
+    
+    /**
+     * Create an event if not exists in cache.
+     * This assure uniqueness of the event before flushing data to datasource.
+     * @param string $type
+     * @return Event
+     */
+    protected function getEvent(Project $project, $type) {
+        try {
+            $event = $project->getEvent($type);
+        } catch ( \ErrorException $e ) {
+            try {
+                $event = $this->eventDao->getByType($project, $type);
+            } catch (NoResultException $e) {
+                $event = new Event($type);
+                $event->setProject($project);
+            }
+            $project->addEvent($event);
+        }
+        return $event;
+    }
+    
     /**
      * Parse xml file to return Parser array type.
      * events -> in -> event
@@ -79,16 +100,33 @@ class ParserService extends CacheAware
      */
     public function parse(Parser $parser)
     {
+/**
+ * TODO Add EventFlow loading, remove DB access !! As it is initial loading, 
+ * DB should be empty for this project !!
+ */
+        
         $this->validate($parser->getDocument()->getPath(), $parser->getXsd());
         $xml = simplexml_load_file($parser->getDocument()->getPath());
         if (null != $xml->events->in) {
             foreach ($xml->events->in as $in) {
-                $eventIn = $this->eventInDao->getEventIn((string) $in->event);
-                $eventIn->setEvent($this->eventDao->getEvent((string) $in->event));
+                $event = $this->getEvent($parser->getDocument()->getProject(), (string) $in->event);
+                try {
+                    $eventIn = $this->eventInDao->get($parser, $event);
+                } catch (NoResultException $e) {
+                    $eventIn = new EventIn();
+                    $eventIn->setEvent($event);
+                    $eventIn->setParser($parser);
+                }
                 if (null !== $in->out->event) {
-                    foreach ($in->out->event as $event) {
-                        $eventOut = $this->eventOutDao->getEventOut((string) $event);
-                        $eventOut->setEvent($this->eventDao->getEvent((string) $event));
+                    foreach ($in->out->event as $eventType) {
+                        $event = $this->getEvent($parser->getDocument()->getProject(), (string) $eventType);
+                        try {
+                            $eventOut = $this->eventOutDao->get($eventIn, $event);
+                        } catch (NoResultException $e) {
+                            $eventOut = new EventOut();
+                            $eventOut->setEvent($event);
+                            $eventOut->setEventIn($eventIn);
+                        }
                         $eventIn->addEventOut($eventOut);
                     }
                 }
@@ -112,8 +150,13 @@ class ParserService extends CacheAware
             /* @var $document Document */
 
             /* @var $parser Parser */
-            $parser = $this->parserDao->getParser($document);
-            $parser->setXsd($this->xsd);
+            try {
+                $parser = $this->parserDao->get($document);
+            } catch (NoResultException $e) {
+                $parser = new Parser($document);
+                $parser->setXsd($this->xsd);
+                $parser->setDocument($document);
+            }
             $document->setParser($this->parse($parser));
         }
 
