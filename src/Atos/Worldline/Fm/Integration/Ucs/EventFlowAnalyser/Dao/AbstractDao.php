@@ -3,6 +3,7 @@ namespace Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Dao;
 
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Entity;
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Dao\Visitor\PersistVisitor;
+use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Dao\Visitor\RemoveVisitor;
 use Symfony\Bundle\MonologBundle\MonologBundle;
 use Doctrine\ORM\EntityManager;
 use Monolog\Logger;
@@ -23,7 +24,12 @@ abstract class AbstractDao
      * @var PersistVisitor
      */
     protected $pv;
-
+    
+    /**
+     * @var RemoveVisitor
+     */
+    protected $rv;
+    
     /**
      * Return new Dao with Entity Manager and Logger
      * @param EntityManager $em
@@ -44,11 +50,19 @@ abstract class AbstractDao
     }
     
     /**
-     * @param Project $project
+     * @param Entity $entity
      */
     public function persist(Entity $entity)
     {
         $this->pv->persist($entity);
+    }
+    
+    /**
+     * @param Entity $entity
+     */
+    public function remove(Entity $entity)
+    {
+        $this->rv->remove($entity);
     }
     
     /**
@@ -58,5 +72,14 @@ abstract class AbstractDao
     public function setPersistVisitor(PersistVisitor $pv)
     {
         $this->pv = $pv;
+    }
+    
+    /**
+     * 
+     * @param RemoveVisitor $rv
+     */
+    public function setRemoveVisitor(RemoveVisitor $rv)
+    {
+        $this->rv = $rv;
     }
 }

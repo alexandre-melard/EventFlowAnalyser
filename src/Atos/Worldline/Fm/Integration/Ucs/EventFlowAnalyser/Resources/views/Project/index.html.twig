@@ -1,0 +1,21 @@
+{% extends "UcsEventFlowAnalyser::layout.html.twig" %}
+{% block content %}
+<h1>Project</h1>
+<h2>List</h2>
+<p>
+<ul class="unstyled">
+    <li><i class="icon-arrow-right"></i> <a href="{{ asset('/projects/list/public') }}">list all public projects</a></li>
+    <li><i class="icon-arrow-right"></i> <a href="{{ asset('/projects/list/private') }}">list your private projects</a></li>
+    <li><i class="icon-arrow-right"></i> <a href="{{ asset('/projects/list/all') }}">list all public projects and your private projects</a></li>
+</ul>
+</p>
+<h2>Edit</h2>
+<p>
+<ul class="unstyled">
+    <li><i class="icon-arrow-right"></i> <a href="{{ asset('/projects/create') }}">Create a project.</a></li>
+    <li><i class="icon-arrow-right"></i> <a href="{{ asset('/file/edit') }}">Edit a project.</a></li>
+    <li><i class="icon-arrow-right"></i> <a href="{{ asset('/projects/delete') }}">Delete a project.</a></li>
+</ul>
+</p>
+
+{% endblock content %}

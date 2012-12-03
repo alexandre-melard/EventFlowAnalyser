@@ -16,16 +16,45 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
  */
-class Event extends Entity implements VisitorHost
+class Event  implements VisitorHost, Entity
 {
     /**
-     * @ORM\Column(type="string", length=255, unique=true, nullable=false)
+     * @ORM\Id
+     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="AUTO")
+     * @var IntegerType
      */
-    protected $type;
+    private $id;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=false)
+     */
+    private $type;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Project", inversedBy="events")
+     */
+    private $project;
 
     public function __construct($type)
     {
         $this->type = $type;
+    }
+
+    /**
+     * @return IntegerType
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+    /**
+     *
+     * @param IntegerType $id
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
     }
 
     public function getType()
@@ -37,7 +66,7 @@ class Event extends Entity implements VisitorHost
     {
         $this->type = $type;
     }
-    
+
     /**
      * (non-PHPdoc)
      * @see Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Patterns.VisitorHost::accept()
@@ -46,5 +75,15 @@ class Event extends Entity implements VisitorHost
     {
         $guest->visit($this);
     }
-    
+
+    public function getProject()
+    {
+        return $this->project;
+    }
+
+    public function setProject($project)
+    {
+        $this->project = $project;
+    }
+
 }

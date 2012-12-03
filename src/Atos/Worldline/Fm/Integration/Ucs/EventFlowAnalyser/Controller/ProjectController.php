@@ -2,6 +2,10 @@
 
 namespace Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Controller;
 
+use Doctrine\ORM\NoResultException;
+
+use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Uploader\XmlUploadHandlerFactory;
+
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Dao\ProjectDao;
 
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Parser;
@@ -20,37 +24,29 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 
 use Mylen\JQueryFileUploadBundle\Services\FileUploader;
 
+use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Service\ProjectService;
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Service\FileService;
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Service\ParserService;
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Project;
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Document;
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\EventIn;
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\EventOut;
-use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Form\FileType;
-use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Form\FileEditType;
+use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Form\ProjectType;
+use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Form\ProjectEditType;
 
 
 /**
- * @Route("/files")
+ * @Route("/projects")
  */
-class FileController extends Controller
+class ProjectController extends Controller
 {
     /**
-     * @Route("/", name="files_default")
+     * @Route("/", name="projects_default")
      * @Template
      */
     public function indexAction()
     {
         return array();
-    }
-
-    protected function getDataDir($visibility, $soft = '')
-    {
-        /* @var $uploader FileUploader */
-        $uploader = $this->get('mylen.file_uploader');
-        $uploadDir = $uploader->getFileBasePath();
-
-        return $uploadDir . '/data/' . $visibility . DIRECTORY_SEPARATOR . $this->getUser()->getSalt() . DIRECTORY_SEPARATOR . $soft;
     }
 
     protected function createTmp($key = null)
@@ -77,46 +73,75 @@ class FileController extends Controller
     }
 
     /**
-     * @Route("/create/", name="files_create")
+     * @Route("/create/", name="projects_create")
      * @Method({"GET"})
-     * @Template("UcsEventFlowAnalyser:File:edit.html.twig")
+     * @Template("UcsEventFlowAnalyser:Project:edit.html.twig")
      */
     public function createAction()
     {
         list($key, $tmp_dir) = $this->createTmp();
         
         $project = new Project($this->getUser());
-        $form = $this->createForm(new FileType(), $project);
+        $form = $this->createForm(new ProjectType(), $project);
         
         return array('form' => $form->createView(), 'key' => $key);
     }
-
+    
     /**
-     * @Route("/edit/{visibility}/{soft}", name="files_edit")
+     * @Route("/delete/{visibility}/{name}", name="projects_delete")
      * @Method({"GET"})
      * @Template
      */
-    public function editAction($visibility, $soft)
+    public function deleteAction($visibility, $name)
     {
-        list($key, $tmp_dir) = $this->createTmp();
-        $projectDao = $this->get('app.project_dao');
-        $project = $this->getDoctrine()
-            ->getRepository('UcsEventFlowAnalyser:Project')
-            ->findOneBy(
-                    array(
-                            'user' => $this->getUser()->getId(), 
-                            'visibility' => $visibility, 
-                            'name' => $soft
-                         )
-                    );
+        try {
+            /* @var $projectDao ProjectDao */
+            $projectDao = $this->get('app.project_dao');
+            
+            try {
+                /* @var $project Project */
+                $project = $projectDao->get($this->getUser(), $visibility, $name);
+            } catch (NoResultException $e) {
+                $this->get('session')->getFlashBag()->add('error', "Project $name ($visibility) could not be removed because it wasn't found!");
+            }
+            
+            /* will remove also the FS files thanks to postRemove callback :o) */
+            $projectDao->remove($project);
+            $projectDao->flush();
+        } catch (Exception $e) {
+            $this->get('session')->getFlashBag()->add('error', "Project $name ($visibility) could not be removed [" . $e->getMessage() . "]");
+        }
+        $this->get('session')->getFlashBag()->add('success', "Project $name ($visibility) has been removed successfully");
         
-        $form = $this->createForm(new FileEditType(), $project);
+        return $this->redirect($this->generateUrl('projects_default'));
+    }
+    
+    /**
+     * @Route("/edit/{visibility}/{name}", name="projects_edit")
+     * @Method({"GET"})
+     * @Template
+     */
+    public function editAction($visibility, $name)
+    {
+        /* @var $uploader FileUploader */
+        $uploader = $this->get('mylen.file_uploader');
+        $uploadDir = $uploader->getFileBasePath();
+        
+        list($key, $tmp_dir) = $this->createTmp();
+
+        $projectDao = $this->get('app.project_dao');
+        $project = $projectDao->get($this->getUser(), $visibility, $name);
+        
+        $form = $this->createForm(new ProjectEditType(), $project);
 
         $form->get('original_name')->setData($project->getName());
         $form->get('original_visibility')->setData($project->getVisibility());
         
+        /* @var $projectService ProjectService */
+        $projectService = $this->get('app.project');
+        
         // mirror data_dir so that the user can edit current files
-        $data_dir = $this->getDataDir($project->getVisibility(), $project->getName());
+        $data_dir = $projectService->getDataDir($project, $uploadDir);
         $fs = new Filesystem();
         if ($fs->exists($data_dir)) {
             $fs->mirror($data_dir, $tmp_dir);
@@ -126,17 +151,17 @@ class FileController extends Controller
     }
     
     /**
-     * @Route("/error/{visibility}/{soft}/{key}", name="files_error")
+     * @Route("/error/{visibility}/{name}/{key}", name="projects_error")
      * @Method({"GET"})
      * @Template
      */
-    public function errorAction($visibility, $soft, $key)
+    public function errorAction($visibility, $name, $key)
     {
         list($key, $tmp_dir) = $this->createTmp($key);
     
         $project = new Project($this->getUser());
     
-        $project->setName($soft);
+        $project->setName($name);
         $project->setVisibility($visibility);
     
         $form = $this->createForm(new FileEditType(), $project);
@@ -144,8 +169,11 @@ class FileController extends Controller
         $form->get('original_name')->setData($project->getName());
         $form->get('original_visibility')->setData($project->getVisibility());
     
+        /* @var $projectService ProjectService */
+        $projectService = $this->get('app.project');
+        
         // mirror data_dir so that the user can edit current files
-        $data_dir = $this->getDataDir($project->getVisibility(), $project->getName());
+        $data_dir = $projectService->getDataDir($project, $uploadDir);
         $fs = new Filesystem();
         if ($fs->exists($data_dir)) {
             $fs->mirror($data_dir, $tmp_dir);
@@ -155,7 +183,7 @@ class FileController extends Controller
     }
     
     /**
-     * @Route("/edit/{key}", name="files_save")
+     * @Route("/edit/{key}", name="projects_save")
      * @Method({"POST", "PUT", "PATCH"})
      */
     public function saveAction($key)
@@ -163,11 +191,12 @@ class FileController extends Controller
         /* @var $uploader FileUploader */
         $uploader = $this->get('mylen.file_uploader');
         $uploadDir = $uploader->getFileBasePath();
+        $webDir = $uploader->getWebBasePath();
 
         $project = new Project($this->getUser());
         
         /* @var $form Form */
-        $form = $this->createForm(new FileEditType(), $project);
+        $form = $this->createForm(new ProjectEditType(), $project);
         
         $form->bind($this->getRequest());
         
@@ -176,25 +205,18 @@ class FileController extends Controller
             if ($form->has('edit')) {
                 $original_name = $form->get('original_name')->getData();
                 $original_visibility = $form->get('original_visibility')->getData();
-                $data_dir = $this->getDataDir($original_visibility, $original_name);
-                
-                if ($fs->exists($data_dir)) {
-                    $fs->remove($data_dir);
-                }
             }
+            /* @var $projectService ProjectService */
+            $projectService = $this->get('app.project');
+            $projectService->setParserService($this->get('app.parser'));
+            $project->setProjectService($projectService);
             
-            $project->setPath($this->getDataDir($project->getVisibility(), $project->getName()));
+            $project->setPath($projectService->getDataDir($project, $uploadDir));
+            $project->setWebPath($projectService->getDataDir($project, $webDir));
             $project->setTmp($uploadDir . '/tmp/' . $key . '/originals');
-            $project->setParserService($this->get('app.parser'));
             
-            try {
-                $fs->mirror($project->getTmp(), $project->getPath());
-            } catch (Exception $e) {
-                $fs->remove($project->getTmp());
-                $fs->remove($project->getTmp() . "/../");
-                throw $e;
-            }
-            $project->populate();
+            // Populate project with documents and so forth
+            $project = $projectService->populate($project);
             
             /* @var $projectDao ProjectDao */
             $projectDao = $this->get('app.project_dao');
@@ -206,71 +228,35 @@ class FileController extends Controller
             $this->get('session')->getFlashBag()->add('error', 'File upload could not be completed... Please check form values and retry');
         }
 
-        return $this->redirect($this->generateUrl('files_edit', array('visibility' => $project->getVisibility(), 'soft' => $project->getName())));
+        return $this->redirect($this->generateUrl('projects_edit', array('visibility' => $project->getVisibility(), 'name' => $project->getName())));
     }
     
     /**
-     * @Route("/list/all", name="files_list_all")
+     * @Route("/list/all", name="projects_list_all")
      * @Method({"GET"})
      * @Template
      */
     public function listAllAction()
     {
-        /* returned files */
-        $files = array();
-    
-        /* @var $fs Filesystem */
-        $fs = new Filesystem();
-    
-        foreach ( array('public', 'private') as $visibility ) {
-            $dir = $this->getDataDir($visibility);
-            if ($fs->exists($dir)) {
-                $files[$visibility] = array();
-    
-                /* @var $finder Finder */
-                $finder = Finder::create()->files()->in($dir);
-    
-                foreach ($finder->directories() as $entry) {
-                    /* @var $entry SplFileInfo */
-                    $files[$visibility][$entry->getRelativePathname()] = array();
-                }
-                foreach ($finder->name('*.xml')->files() as $entry) {
-                    array_push($files[$visibility][$entry->getRelativePath()], $entry->getFilename());
-                }
-            }
-        }
-    
-        return array('files' => $files);
+        /* @var $projectDao ProjectDao */
+        $projectDao = $this->get('app.project_dao');
+
+        return array('projects' => $projectDao->getAllByUser($this->getUser()));
     }
     
     /**
-     * @Route("/list/{visibility}", name="files_list")
+     * @Route("/list/{visibility}", name="projects_list")
      * @Method({"GET"})
      * @Template
      */
     public function listAction($visibility)
     {
-        /* returned files */
-        $files = array();
-    
-        /* @var $fs Filesystem */
-        $fs = new Filesystem();
-        $data_dir = $this->getDataDir($visibility);
-        if ($fs->exists($data_dir)) {
-    
-            /* @var $finder Finder */
-            $finder = Finder::create()->files()->in($data_dir);
-    
-            foreach ($finder->directories() as $entry) {
-                /* @var $entry SplFileInfo */
-                $files[$entry->getRelativePathname()] = array();
-            }
-            foreach ($finder->name('*.xml')->files() as $entry) {
-                array_push($files[$entry->getRelativePath()], $entry->getFilename());
-            }
-        }
-    
-        return array('files' => $files, 'visibility' => $visibility);
+        /* @var $projectDao ProjectDao */
+        $projectDao = $this->get('app.project_dao');
+
+        return array(
+                'projects'   => $projectDao->getAllByVisibility($this->getUser(), $visibility), 
+                'visibility' => $visibility);
     }
 
     /**
@@ -281,17 +267,19 @@ class FileController extends Controller
      */
     protected function handleRequest($key)
     {
-        /* @var $uploader FileUploader */
-        $uploader = $this->get('mylen.file_uploader');
         if (!preg_match('/^\d+$/', $key)) {
             throw new \Exception("Bad edit id");
         }
+        
+        /* @var $uploader FileUploader */
+        $uploader = $this->get('mylen.file_uploader');
+        $uploader->setUploadHandlerFactory(new XmlUploadHandlerFactory($this->container->getParameter('app.event_xsd')));        
         return $uploader->handleFileUpload('tmp/' . $key);
     }
 
     /**
      *
-     * @Route("/upload/{key}", name="files_put")
+     * @Route("/upload/{key}", name="projects_put")
      * @Method({"PATCH", "POST", "PUT"})
      */
     public function putAction($key)
@@ -299,13 +287,13 @@ class FileController extends Controller
         /* @var $uploader IResponseContainer */
         $uploader = $this->handleRequest($key);
         $uploader->post();
-
+        
         return new Response($uploader->getBody(), $uploader->getType(), $uploader->getHeader());
     }
 
     /**
      *
-     * @Route("/upload/{key}", name="files_head")
+     * @Route("/upload/{key}", name="projects_head")
      * @Method("HEAD")
      */
     public function headAction($key)
@@ -319,7 +307,7 @@ class FileController extends Controller
 
     /**
      *
-     * @Route("/upload/{key}", name="files_get")
+     * @Route("/upload/{key}", name="projects_get")
      * @Method("GET")
      */
     public function getAction($key)
@@ -333,30 +321,15 @@ class FileController extends Controller
 
     /**
      *
-     * @Route("/upload/{key}", name="files_delete")
+     * @Route("/upload/{key}", name="projects_delete_file")
      * @Method("DELETE")
      */
-    public function deleteAction($key)
+    public function deleteProjectAction($key)
     {
         /* @var $uploader IResponseContainer */
         $uploader = $this->handleRequest($key);
         $uploader->delete();
 
         return new Response($uploader->getBody(), $uploader->getType(), $uploader->getHeader());
-    }
-
-    /**
-     * @Route("/all", name="files_all")
-     * @Template
-     */
-    public function allAction()
-    {
-        /** @var FileUploader */
-        $uploader = $this->get('mylen.file_uploader');
-        $dir = $this->getUser()->getSalt();
-        $path = $this->get('kernel')->locateResource('@UcsEventFlowAnalyser/Resources/data/' . $dir);
-        $files = $this->get('app.file')->scanDir($path);
-
-        return array("title" => "Display All Files", "private" => $files['private'], "public" => $files['public']);
     }
 }

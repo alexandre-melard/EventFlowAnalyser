@@ -1,0 +1,48 @@
+{% extends "UcsEventFlowAnalyser::layout.html.twig" %}
+
+{% block title "UCS Event Flow Analyser: All Events" %}
+
+{% macro display_projects(projects, visibility) %}
+    <h1>{{ visibility|title }}</h1>
+    <div class="row-fluid">
+    {% if projects|length == 0 %}
+        <p class="text-info"><i class="icon-warning-sign"></i>Nothing to show.</p>
+    {% endif %}
+    {% for  project in projects %}
+        {% if project.visibility == visibility %}
+        <div class="span6">
+            <ul class="unstyled">
+                <li><h2>{{ project.name|e }}</h2></li>
+                {% if project.documents|length > 0 %}
+                <div class="row-fluid">
+                    <div class="span6">
+                        <ul class="unstyled">
+                            {% for  document in project.documents|slice(0,(project.documents|length)/2) %}
+                                <li><i class="icon-file"></i> <a href="{{ asset(document.uri) }}">{{ document.name|e }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                    <div class="span6">
+                        <ul class="unstyled">
+                            {% for  document in project.documents|slice((project.documents|length)/2, project.documents|length) %}
+                                <li><i class="icon-file"></i> <a href="{{ asset(document.uri) }}">{{ document.name|e }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                {% else %}
+                    <p class="text-warning"><i class="icon-warning-sign"></i>No document for the {{ project }}.</p>
+                {% endif %}
+            </ul>
+        </div>
+        {% endif %}
+    {% endfor %}
+    </div>
+    <hr>
+{% endmacro display_projects %}
+
+{% block article %}
+    <article>
+        {{ _self.display_projects(projects, visibility) }}
+    </article>
+{% endblock %}

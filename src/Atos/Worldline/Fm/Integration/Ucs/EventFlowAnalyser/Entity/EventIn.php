@@ -16,38 +16,56 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
  */
-class EventIn extends Entity implements VisitorHost
+class EventIn implements Entity, VisitorHost
 {
     /**
-     * One to Many type 
-     * @ORM\ManyToMany(targetEntity="Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\EventOut")
+     * @ORM\Id
+     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="AUTO")
+     * @var IntegerType
      */
-    protected $eventOuts;
+    private $id;
+
+    /**
+     * One to Many type 
+     * @ORM\OneToMany(targetEntity="Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\EventOut", mappedBy="eventIn")
+     */
+    private $eventOuts;
 
     /**
      * @ORM\ManyToOne(targetEntity="Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Event")
      * @var Event
      */
-    protected $event;
+    private $event;
 
-    public function __construct()
-    {
-        $this->eventOuts = array();
-    }
-    
+    /**
+     * @ORM\ManyToOne(targetEntity="Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Parser", inversedBy="eventIns")
+     * @var Parser
+     */
+    private $parser;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\EventFlow", inversedBy="children")
+     */
+    private $eventFlow;
+
     public function accept(VisitorGuest $guest)
     {
-        foreach ($this->getEventOuts() as $eventOut) {
-            /* @var $eventOut EventOut */
-            $eventOut->accept($guest);
+        if(isset($this->eventOuts)) {
+            foreach ($this->eventOuts as $eventOut) {
+                /* @var $eventOut EventOut */
+                $eventOut->accept($guest);
+            }
         }
-        $this->event->accept($guest);
         $guest->visit($this);
     }
-    
+
     public function addEventOut(EventOut $event)
     {
         if (!empty($event)) {
+            if (!isset($this->eventOuts)) {
+                $this->eventOuts = array();
+            }
             array_push($this->eventOuts, $event);
         }
     }
@@ -59,11 +77,30 @@ class EventIn extends Entity implements VisitorHost
         }
     }
 
+    /**
+     * @return IntegerType
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+    /**
+     *
+     * @param IntegerType $id
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
+
     /** 
      * @return EventOut
      */
     public function getEventOuts()
     {
+        if (!isset($this->eventOuts)) {
+            $this->eventOuts = array();
+        }
         return $this->eventOuts;
     }
 
@@ -81,10 +118,30 @@ class EventIn extends Entity implements VisitorHost
     {
         $this->event = $event;
     }
-    
+
     public function getType()
     {
         return $this->event->getType();
     }
-    
+
+    public function getParser()
+    {
+        return $this->parser;
+    }
+
+    public function setParser(Parser $parser)
+    {
+        $this->parser = $parser;
+    }
+
+    public function getEventFlow()
+    {
+        return $this->eventFlow;
+    }
+
+    public function setEventFlow(EventFlow $eventFlow)
+    {
+        $this->eventFlow = $eventFlow;
+    }
+
 }

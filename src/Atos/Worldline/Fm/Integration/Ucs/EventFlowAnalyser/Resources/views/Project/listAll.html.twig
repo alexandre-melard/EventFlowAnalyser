@@ -1,0 +1,11 @@
+{% import "UcsEventFlowAnalyser:Project:list.html.twig" as list %}
+{% extends "UcsEventFlowAnalyser::layout.html.twig" %}
+
+{% block title "UCS Event Flow Analyser: All Projects" %}
+
+{% block article %}
+    <article>
+        {{ list.display_projects(projects, "public") }}
+        {{ list.display_projects(projects, "private") }}
+    </article>
+{% endblock %}

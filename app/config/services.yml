@@ -1,12 +1,20 @@
+imports:
+    - { resource: 'services_dao.yml' }
 services:
   app.parser:
     class: Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Service\ParserService
-    arguments: ['@cache', '@logger', '%app.event_xsd%']
+    arguments: ['@cache', '@logger']
     calls:
         - [ setEventDao, [ '@app.event_dao' ] ]
         - [ setEventInDao, [ '@app.event_in_dao' ] ]
         - [ setEventOutDao, [ '@app.event_out_dao' ] ]
         - [ setParserDao, [ '@app.parser_dao' ] ]
+
+  app.project:
+    class: Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Service\ProjectService
+    arguments: ['@cache', '@logger']
+    calls:
+        - [ setParserService, [ '@app.parser' ] ]
 
   app.file:
     class: Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Service\FileService
@@ -15,44 +23,4 @@ services:
   app.event_flow:
     class: Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Service\EventFlowService
     arguments: ['@cache', '@logger']
-
-  app.persist_visitor:
-    class: Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Dao\Visitor\PersistVisitor
-    arguments: ['@doctrine.orm.entity_manager', '@logger']
-
-  app.event_dao:
-    class: Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Dao\EventDao
-    arguments: ['@doctrine.orm.entity_manager', '@logger']
-    calls:
-        - [ setPersistVisitor, [ '@app.persist_visitor' ] ]
-
-  app.event_out_dao:
-    class: Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Dao\EventOutDao
-    arguments: ['@doctrine.orm.entity_manager', '@logger']
-    calls:
-        - [ setPersistVisitor, [ '@app.persist_visitor' ] ]
-
-  app.event_in_dao:
-    class: Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Dao\EventInDao
-    arguments: ['@doctrine.orm.entity_manager', '@logger']
-    calls:
-        - [ setPersistVisitor, [ '@app.persist_visitor' ] ]
-            
-  app.parser_dao:
-    class: Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Dao\ParserDao
-    arguments: ['@doctrine.orm.entity_manager', '@logger']
-    calls:
-        - [ setPersistVisitor, [ '@app.persist_visitor' ] ]
-
-  app.document_dao:
-    class: Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Dao\DocumentDao
-    arguments: ['@doctrine.orm.entity_manager', '@logger']
-    calls:
-        - [ setPersistVisitor, [ '@app.persist_visitor' ] ]
-
-  app.project_dao:
-    class: Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Dao\ProjectDao
-    arguments: ['@doctrine.orm.entity_manager', '@logger']
-    calls:
-        - [ setPersistVisitor, [ '@app.persist_visitor' ] ]
-    
+   

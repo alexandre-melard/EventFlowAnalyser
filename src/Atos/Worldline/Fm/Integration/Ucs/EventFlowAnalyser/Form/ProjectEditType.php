@@ -1,12 +1,10 @@
 <?php
 namespace Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Form;
 
-use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\AbstractExtensiontType;
 use Symfony\Component\Form\FormBuilderInterface;
 
-use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Form\EventListener\EditFileFieldSubscriber;
-
-class FileEditType extends FileType
+class ProjectEditType extends ProjectType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {

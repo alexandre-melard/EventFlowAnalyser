@@ -123,84 +123,84 @@ class MenuBuilder extends AbstractNavbarMenuBuilder
                 );
 
         // Build files menu
-        $files = $this->createDropdownMenuItem($menu, "Files", false, array('icon' => 'caret'));
-        $files->addChild(
+        $projects = $this->createDropdownMenuItem($menu, "Projects", false, array('icon' => 'caret'));
+        $projects->addChild(
                 'Create', 
                 array(
-                        'route' => 'files_create',
+                        'route' => 'projects_create',
                         'extras' => array('icon' => 'plus-sign')
                     )
                 );
-        $this->addDivider($files);
-        $files->addChild('All', array(
-            'route' => 'files_list_all',
+        $this->addDivider($projects);
+        $projects->addChild('All', array(
+            'route' => 'projects_list_all',
             'extras' => array('icon' => 'list')                
         ));
-        $files->addChild('Privates', array(
-            'route' => 'files_list',
+        $projects->addChild('Privates', array(
+            'route' => 'projects_list',
             'routeParameters' => array('visibility' => 'private'),
             'extras' => array('icon' => 'folder-close')                
         ));
-        $files->addChild('Public', array(
-            'route' => 'files_list',
+        $projects->addChild('Public', array(
+            'route' => 'projects_list',
             'routeParameters' => array('visibility' => 'public'),
             'extras' => array('icon' => 'folder-open')                
         ));
 
-        $salt = $this->user->getSalt();
+//         $salt = $this->user->getSalt();
 
-        $fs = new Filesystem();
-        if ($fs->exists($this->data_dir . '/private/') && $fs->exists($this->data_dir . '/public/'))
-        {
-            // Build Projects menu
-            $projects = $this->createDropdownMenuItem($menu, "Projects", false, array('icon' => 'caret'));
+//         $fs = new Filesystem();
+//         if ($fs->exists($this->data_dir . '/private/') && $fs->exists($this->data_dir . '/public/'))
+//         {
+//             // Build Projects menu
+//             $projects = $this->createDropdownMenuItem($menu, "Projects", false, array('icon' => 'caret'));
             
-            if ($fs->exists($this->data_dir . '/private/' . $salt))
-            {
-                $projects->addChild('Private', array(
-                        'uri'    => '#',
-                        'extras' => array('icon' => 'folder-close')
-                ));
-                $this->addDivider($projects);
-                $finder = new Finder();
-                $finder->in($this->data_dir . '/private/' . $salt);
-                /* @var $file SplFileInfo */
-                foreach ($finder->directories() as $dir) {
-                    $projects->addChild($dir->getFilename(), array(
-                            'route' => 'events_all',
-                            'routeParameters' => array(
-                                    'visibility' => 'private',
-                                    'soft' => $dir->getFilename()),
-                            'extras' => array('icon' => 'folder-close')
-                    ));
+//             if ($fs->exists($this->data_dir . '/private/' . $salt))
+//             {
+//                 $projects->addChild('Private', array(
+//                         'uri'    => '#',
+//                         'extras' => array('icon' => 'folder-close')
+//                 ));
+//                 $this->addDivider($projects);
+//                 $finder = new Finder();
+//                 $finder->in($this->data_dir . '/private/' . $salt);
+//                 /* @var $file SplFileInfo */
+//                 foreach ($finder->directories() as $dir) {
+//                     $projects->addChild($dir->getFilename(), array(
+//                             'route' => 'events_all',
+//                             'routeParameters' => array(
+//                                     'visibility' => 'private',
+//                                     'soft' => $dir->getFilename()),
+//                             'extras' => array('icon' => 'folder-close')
+//                     ));
                 
-                }
-                $this->addDivider($projects);
-            }            
-            $projects->addChild('Public', array(
-                    'uri'    => '#',
-                    'extras' => array('icon' => 'folder-open')
-            ));
-            $this->addDivider($projects);
+//                 }
+//                 $this->addDivider($projects);
+//             }            
+//             $projects->addChild('Public', array(
+//                     'uri'    => '#',
+//                     'extras' => array('icon' => 'folder-open')
+//             ));
+//             $this->addDivider($projects);
     
-            $finder = new Finder();
-            $finder->in($this->data_dir . '/public/' );
+//             $finder = new Finder();
+//             $finder->in($this->data_dir . '/public/' );
 
-            // get all projects from public dir
-            $finder->depth('>=1');
+//             // get all projects from public dir
+//             $finder->depth('>=1');
             
-            /* @var $file SplFileInfo */
-            foreach ($finder->directories() as $dir) {
-                $projects->addChild($dir->getFilename(), array(
-                        'route' => 'events_all',
-                        'routeParameters' => array(
-                                'visibility' => 'public',
-                                'soft' => $dir->getFilename()),
-                        'extras' => array('icon' => 'folder-open')
-                ));
+//             /* @var $file SplFileInfo */
+//             foreach ($finder->directories() as $dir) {
+//                 $projects->addChild($dir->getFilename(), array(
+//                         'route' => 'events_all',
+//                         'routeParameters' => array(
+//                                 'visibility' => 'public',
+//                                 'soft' => $dir->getFilename()),
+//                         'extras' => array('icon' => 'folder-open')
+//                 ));
             
-            }
-        }        
+//             }
+//         }        
 //         // Retrieve file types
 //         if ( $this->session->has('event')) {
 //             $eventSession = $this->session->get('event');

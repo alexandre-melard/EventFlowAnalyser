@@ -20,24 +20,27 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
  */
-class Parser extends Entity implements VisitorHost
+class Parser implements Entity, VisitorHost
 {
     /**
-     * @ORM\OneToOne(targetEntity="Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Document")
+     * @ORM\Id
+     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="AUTO")
+     * @var IntegerType
      */
-    protected $document;
-
+    private $id;
+    
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\OneToOne(targetEntity="Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Document", mappedBy="parser")
      */
-    protected $xsd;
+    private $document;
 
     /**
      * One to Many 
-     * @ORM\ManyToMany(targetEntity="Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\EventIn", cascade={"all"})
+     * @ORM\OneToMany(targetEntity="Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\EventIn", mappedBy="parser")
      * @var array
      */
-    protected $eventIns;
+    private $eventIns;
 
     /**
      * @param $document xml parser result document path.
@@ -45,9 +48,37 @@ class Parser extends Entity implements VisitorHost
     public function __construct($d)
     {
         $this->document = $d;
-        $this->eventIns = array();
     }
-
+    
+    /**
+     * (non-PHPdoc)
+     * @see Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Patterns.VisitorHost::accept()
+     */
+    public function accept(VisitorGuest $guest)
+    {
+        foreach ($this->getEventIns() as $eventIn) {
+            /* @var $eventIn EventIn */
+            $eventIn->accept($guest);
+        }
+        $guest->visit($this);
+    }
+    
+    /**
+     * @return IntegerType
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+    /**
+     *
+     * @param IntegerType $id
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
+    }
+    
     /**
      * @return Document
      */
@@ -61,21 +92,14 @@ class Parser extends Entity implements VisitorHost
         $this->document = $document;
     }
 
-    public function getXsd()
-    {
-        return $this->xsd;
-    }
-
-    public function setXsd($xsd)
-    {
-        $this->xsd = $xsd;
-    }
-
     /**
      * return array Events in
      */
     public function getEventIns()
     {
+        if (!isset($this->eventIns)) {
+            $this->eventIns = array();
+        }
         return $this->eventIns;
     }
 
@@ -105,19 +129,6 @@ class Parser extends Entity implements VisitorHost
     {
         unset($this->eventIns[$event->getType()]);
         return $event;
-    }
-    
-    /**
-     * (non-PHPdoc)
-     * @see Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Patterns.VisitorHost::accept()
-     */
-    public function accept(VisitorGuest $guest)
-    {
-        foreach ($this->getEventIns() as $eventIn) {
-            /* @var $eventIn EventIn */
-            $eventIn->accept($guest);
-        }
-        $guest->visit($this);
     }
     
 }

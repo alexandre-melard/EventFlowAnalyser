@@ -9,7 +9,7 @@
 
 {% block article %}
     {% block js_blueimp_form %}
-    <form id="fileupload" action="{{ asset('files/edit/' ~ key ) }}" method="POST" {{ form_enctype(form) }}>
+    <form id="fileupload" action="{{ asset('projects/edit/' ~ key ) }}" method="POST" {{ form_enctype(form) }}>
         <div class="span12">
             {{ form_errors(form) }}
         
@@ -19,7 +19,7 @@
         
             {{ form_rest(form) }}
         </div>
-        <h3>Files</h3>
+        <h3>projects</h3>
         <hr>
         {% include "JQueryFileUploadBundle::form.html.twig" %}
         <div class="span12">
@@ -31,11 +31,11 @@
     {% block js_blueimp_tmpl_gallery %}
             {% include "JQueryFileUploadBundle::gallery.html.twig" %}
     {% endblock js_blueimp_tmpl_gallery %}
-    <!-- The template to display files available for upload -->
+    <!-- The template to display projects available for upload -->
     {% block js_blueimp_tmpl_upload %}
         {% include "JQueryFileUploadBundle::template-upload.html.twig" %}
     {% endblock js_blueimp_tmpl_upload %}
-    <!-- The template to display files available for download -->
+    <!-- The template to display projects available for download -->
     {% block js_blueimp_tmpl_download %}
         {% include "JQueryFileUploadBundle::template-download.html.twig" %}
     {% endblock js_blueimp_tmpl_download %}
@@ -44,6 +44,6 @@
 {% block foot_script %}
     {% include "UcsEventFlowAnalyser::javascripts.html.twig" %}
     <script type="text/javascript">
-        $(blueimpUploader('{{ path('files_put', { 'key': key }) }}'));
+        $(blueimpUploader('{{ path('projects_put', { 'key': key }) }}'));
     </script>
 {% endblock foot_script %}

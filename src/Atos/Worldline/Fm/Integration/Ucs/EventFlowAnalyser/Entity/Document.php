@@ -8,47 +8,57 @@
  */
 namespace Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity;
 
-use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Patterns\VisitorGuest;
-
-use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Patterns\VisitorHost;
-
-use Symfony\Component\Filesystem\Filesystem;
-
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
+
 use Atos\Worldline\Fm\UserBundle\Entity\User;
+
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Parser;
+use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Patterns\VisitorGuest;
+use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Patterns\VisitorHost;
 
 /**
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
  */
-class Document extends Entity implements VisitorHost
+class Document implements VisitorHost, Entity
 {
+    /**
+     * @ORM\Id
+     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="AUTO")
+     * @var IntegerType
+     */
+    private $id;
+
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank
      */
-    protected $name;
+    private $name;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
-    protected $path;
+    private $path;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Project")
+     * @ORM\Column(type="string", length=255, nullable=true)
      */
-    protected $project;
+    private $uri;
 
     /**
-     * @ORM\OneToOne(targetEntity="Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Parser", cascade={"all"})
+     * @ORM\ManyToOne(targetEntity="Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Project", inversedBy="documents")
      */
-    protected $parser;
+    private $project;
 
-    protected $fs;
-    protected $tmp;
+    /**
+     * @ORM\OneToOne(targetEntity="Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Parser", inversedBy="document")
+     */
+    private $parser;
+
+    private $tmp;
 
     /**
      * 
@@ -58,7 +68,42 @@ class Document extends Entity implements VisitorHost
     {
         $this->path = $path;
         $this->name = '';
-        $this->fs = new Filesystem();
+    }
+
+    /**
+     * (non-PHPdoc)
+     * @see Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Patterns.VisitorHost::accept()
+     */
+    public function accept(VisitorGuest $guest)
+    {
+        $this->parser->accept($guest);
+        $guest->visit($this);
+    }
+
+    /**
+     * @ORM\PrePersist()
+     * @ORM\PreUpdate()
+     */
+    public function commit()
+    {
+        // set the path right as the tmp folder will be remove after persist.
+        $this->path = $this->tmp;
+    }
+
+    /**
+     * @return IntegerType
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+    /**
+     *
+     * @param IntegerType $id
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
     }
 
     /**
@@ -150,15 +195,15 @@ class Document extends Entity implements VisitorHost
     {
         $this->parser = $parser;
     }
-    
-    /**
-     * (non-PHPdoc)
-     * @see Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Patterns.VisitorHost::accept()
-     */
-    public function accept(VisitorGuest $guest)
+
+    public function getUri()
     {
-        $this->parser->accept($guest);
-        $guest->visit($this);
+        return $this->uri;
     }
-    
+
+    public function setUri($uri)
+    {
+        $this->uri = $uri;
+    }
+
 }

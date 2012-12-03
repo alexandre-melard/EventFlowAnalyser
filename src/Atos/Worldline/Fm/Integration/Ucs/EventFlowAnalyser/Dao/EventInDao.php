@@ -1,5 +1,9 @@
 <?php
 namespace Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Dao;
+use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Parser;
+
+use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Event;
+
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\EventIn;
 
 use Doctrine\ORM\NoResultException;
@@ -9,25 +13,30 @@ use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Dao\AbstractDao;
 class EventInDao extends AbstractDao
 {
     /**
-     * Try to retrieve Event from datasource else instanciates one.
-     * @param string $type
+     * Try to get eventOut from datasource
+     * @param Parser $parser
+     * @param Event $event
+     * @return EventOut
      */
-    public function getEventIn($type)
-    {
-        try {
-            $event = $this->em
-            ->createQuery('
-                    SELECT i FROM UcsEventFlowAnalyser:EventIn i
-                    JOIN i.event e
-                    WHERE e.type = :type'
+    function get(Parser $parser, Event $event) {
+        $qb = $this->em->createQueryBuilder();
+        return $qb
+        ->select('eventIn', 'eventOuts')
+        ->from('UcsEventFlowAnalyser:EventIn', 'eventIn')
+        ->leftJoin('eventIn.eventOuts', 'eventOuts')
+        ->where(
+                $qb->expr()->andx(
+                        $qb->expr()->eq('eventIn.event', ':event'),
+                        $qb->expr()->eq('eventIn.parser', ':parser')
+                        )
                 )
-                ->setParameter('type', $type)
-            ->getSingleResult();
-        } catch ( NoResultException $e ) {
-            $event = new EventIn();
-        }    
-    
-        return $event;
+        ->setParameters(
+                array (
+                        'event'=> $event->getId(),
+                        'parser' => $parser->getId()
+                        )
+                )
+        ->getQuery()
+        ->getSingleResult();
     }
-    
 }

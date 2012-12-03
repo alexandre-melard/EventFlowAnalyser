@@ -25,7 +25,7 @@ security:
         - { path: ^/resetting, role: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/admin/, role: ROLE_ADMIN }
         - { path: ^/events/*, role: ROLE_USER }
-        - { path: ^/files/*, role: ROLE_USER }
+        - { path: ^/projects/*, role: ROLE_USER }
 
     role_hierarchy:
         ROLE_ADMIN:       ROLE_USER

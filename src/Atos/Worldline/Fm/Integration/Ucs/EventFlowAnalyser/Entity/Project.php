@@ -7,55 +7,72 @@
  */
 namespace Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity;
 
-use Symfony\Component\Finder\Finder;
+use Doctrine\ORM\Mapping as ORM;
+use Doctrine\ORM\NoResultException;
 
-use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Service\ParserService;
+use Symfony\Component\Validator\Constraints as Assert;
 
-use Symfony\Component\Filesystem\Filesystem;
-
+use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Service\ProjectService;
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Patterns\VisitorGuest;
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Patterns\VisitorHost;
-use Symfony\Component\Validator\Constraints as Assert;
-use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity
  * @ORM\HasLifecycleCallbacks
  */
-class Project extends Entity implements VisitorHost
+class Project implements Entity, VisitorHost
 {
+    /**
+     * @ORM\Id
+     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="AUTO")
+     * @var IntegerType
+     */
+    private $id;
+
     /**
      * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank
      */
-    protected $name;
+    private $name;
 
     /**
      * @ORM\Column(type="string", length=8)
      * @Assert\NotBlank
      */
-    protected $visibility;
+    private $visibility;
 
     /**
      * @ORM\ManyToOne(targetEntity="Atos\Worldline\Fm\UserBundle\Entity\User")
      */
-    protected $user;
+    private $user;
 
     /**
-     * One to Many type 
-     * @ORM\ManyToMany(targetEntity="Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Document")
+     * @ORM\OneToMany(targetEntity="Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Document", mappedBy="project")
      */
-    protected $documents;
+    private $documents;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Event", mappedBy="project")
+     */
+    private $events;
 
     /**
      * @ORM\Column(type="string", length=2000)
      */
-    protected $path;
+    private $path;
 
-    protected $tmp;
+    /**
+     * @ORM\Column(type="string", length=2000)
+     */
+    private $webPath;
 
-    /* @var $parserService ParserService */
-    protected $parserService;
+    /**
+     * @var ProjectService
+     */
+    protected $projectService;
+
+    private $tmp;
 
     /**
      * 
@@ -66,7 +83,23 @@ class Project extends Entity implements VisitorHost
         $this->user = $user;
         $this->visibility = 'public';
         $this->name = '';
-        $this->fs = new Filesystem();
+    }
+
+    /**
+     * (non-PHPdoc)
+     * @see Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Patterns.VisitorHost::accept()
+     */
+    public function accept(VisitorGuest $guest)
+    {
+        foreach ($this->getEvents() as $event) {
+            /* @var $event Event */
+            $event->accept($guest);
+        }
+        foreach ($this->documents as $document) {
+            /* @var $document Document */
+            $document->accept($guest);
+        }
+        $guest->visit($this);
     }
 
     /**
@@ -75,29 +108,16 @@ class Project extends Entity implements VisitorHost
      */
     public function preUpload()
     {
-        // Create data directory if soft is new, clear it if not
-        if ($this->fs->exists($this->path)) {
-            $this->fs->remove($this->path);
-        }
-        $this->fs->mkdir($this->path);
+        $this->projectService->createDir($this->getPath(), true);
     }
 
-    public function populate()
+    /**
+     * @ORM\PostPersist()
+     * @ORM\PostUpdate()
+     */
+    public function upload()
     {
-        if ($this->parserService === null) {
-            throw new Exception("parserService must be set");
-        }
-        $finder = new Finder();
-        $finder->in($this->path);
-        foreach ($finder as $file) {
-            /* @var $file SplFileInfo */
-            $document = new Document($file->getPathname());
-            $document->setName($file->getBasename('.xml'));
-            $document->setProject($this);
-            $document->setTmp($this->tmp);
-            $this->addDocument($document);
-        }
-        $this->documents = $this->parserService->parseDocuments($this->documents);
+        $this->projectService->mirror($this->getTmp(), $this->getPath(), true);
     }
 
     /**
@@ -105,7 +125,23 @@ class Project extends Entity implements VisitorHost
      */
     public function removeUpload()
     {
-        $this->fs->remove($this->path);
+        $this->projectService->removeDir($this->getPath());
+    }
+
+    /**
+     * @return IntegerType
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+    /**
+     *
+     * @param IntegerType $id
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
     }
 
     /**
@@ -225,32 +261,70 @@ class Project extends Entity implements VisitorHost
         $this->tmp = $tmp;
     }
 
-    public function setParserService(ParserService $parserService)
+    /**
+     * @return array Event
+     */
+    public function getEvents()
     {
-        $this->parserService = $parserService;
-    }
+        if (!isset($this->events)) {
+            $this->events = array();
+        }
 
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    public function setId($id)
-    {
-        $this->id = $id;
+        return $this->events;
     }
 
     /**
-     * (non-PHPdoc)
-     * @see Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Patterns.VisitorHost::accept()
+     * 
+     * @param array Event $events
      */
-    public function accept(VisitorGuest $guest)
+    public function setEvents(array $events)
     {
-        foreach ($this->documents as $document) {
-            /* @var $document Document */
-            $document->accept($guest);
+        $this->events = $events;
+    }
+
+    /**
+     * return associated event
+     * @param string $type
+     */
+    public function getEvent($type)
+    {
+        if (!isset($this->events)) {
+            throw new \Exception("need to instanciate events first");
         }
-        $guest->visit($this);
+        return $this->events[$type];
+    }
+
+    /**
+     * add event to associated array event
+     * @param Event $event
+     * @return Event
+     */
+    public function addEvent(Event $event)
+    {
+        if (!isset($this->events)) {
+            $this->events = array();
+        }
+        $this->events[$event->getType()] = $event;
+        return $event;
+    }
+
+    /**
+     * Set the project services container
+     * @param ProjectService $projectService
+     */
+    public function setProjectService(ProjectService $projectService)
+    {
+        $this->projectService = $projectService;
+    }
+
+    public function getWebPath()
+    {
+        return $this->webPath;
+    }
+
+    public function setWebPath($webPath)
+    {
+        $this->webPath = $webPath;
     }
 
 }

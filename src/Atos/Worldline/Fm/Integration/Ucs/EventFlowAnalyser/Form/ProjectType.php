@@ -6,7 +6,7 @@ use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Project;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 
-class FileType extends AbstractType
+class ProjectType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -30,6 +30,6 @@ class FileType extends AbstractType
 
     public function getName()
     {
-        return 'file';
+        return 'project';
     }
 }
