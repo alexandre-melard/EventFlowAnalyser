@@ -76,6 +76,7 @@ class ParserService extends CacheAware
     protected function getEvent(Project $project, $type) {
         try {
             $event = $project->getEvent($type);
+<<<<<<< HEAD
             $this->logger->debug(__FUNCTION__ . ": found event :" . $event->getType());
         } catch ( \Exception $e ) {
             $this->logger->debug(__FUNCTION__ . ": caught exception :" . $e->getMessage());
@@ -83,6 +84,16 @@ class ParserService extends CacheAware
             $event->setProject($project);
             $project->addEvent($event);
             $this->logger->debug(__FUNCTION__ . ": creating event :" . $event->getType());
+=======
+        } catch ( \ErrorException $e ) {
+            try {
+                $event = $this->eventDao->getByType($project, $type);
+            } catch (NoResultException $e) {
+                $event = new Event($type);
+                $event->setProject($project);
+            }
+            $project->addEvent($event);
+>>>>>>> branch 'master' of https://github.com/mylen/EventFlowAnalyser.git
         }
         return $event;
     }
@@ -96,17 +107,36 @@ class ParserService extends CacheAware
      */
     public function parse(Parser $parser)
     {
+<<<<<<< HEAD
         $this->logger->debug("parse : " . $parser->getDocument()->getName());
+=======
+/**
+ * TODO Add EventFlow loading, remove DB access !! As it is initial loading, 
+ * DB should be empty for this project !!
+ */
+        
+        $this->validate($parser->getDocument()->getPath(), $parser->getXsd());
+>>>>>>> branch 'master' of https://github.com/mylen/EventFlowAnalyser.git
         $xml = simplexml_load_file($parser->getDocument()->getPath());
         $this->logger->debug("parse : set parser's document name to :" . $xml->header->process);
         $parser->getDocument()->setName($xml->header->process);
         if (null != $xml->events->in) {
             foreach ($xml->events->in as $in) {
                 $event = $this->getEvent($parser->getDocument()->getProject(), (string) $in->event);
+<<<<<<< HEAD
                 $eventIn = new EventIn();
                 $eventIn->setEvent($event);
                 $eventIn->setParser($parser);
                 $this->logger->debug(__FUNCTION__ . ": creating eventIn :" . $eventIn->getType());
+=======
+                try {
+                    $eventIn = $this->eventInDao->get($parser, $event);
+                } catch (NoResultException $e) {
+                    $eventIn = new EventIn();
+                    $eventIn->setEvent($event);
+                    $eventIn->setParser($parser);
+                }
+>>>>>>> branch 'master' of https://github.com/mylen/EventFlowAnalyser.git
                 if (null !== $in->out->event) {
                     foreach ($in->out->event as $eventType) {
                         $event = $this->getEvent($parser->getDocument()->getProject(), (string) $eventType);
