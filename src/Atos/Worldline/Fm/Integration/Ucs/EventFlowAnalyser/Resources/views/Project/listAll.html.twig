@@ -5,7 +5,7 @@
 
 {% block article %}
     <article>
-        {{ list.display_projects(public, "public") }}
-        {{ list.display_projects(private, "private") }}
+        {{ list.display_projects(projects, "public") }}
+        {{ list.display_projects(projects, "private") }}
     </article>
 {% endblock %}
