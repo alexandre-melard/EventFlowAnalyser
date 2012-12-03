@@ -107,22 +107,6 @@ class Document implements VisitorHost, Entity
     }
     
     /**
-     * @return IntegerType
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-    /**
-     *
-     * @param IntegerType $id
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-    }
-    
-    /**
      * Get document's name
      * @return string
      */

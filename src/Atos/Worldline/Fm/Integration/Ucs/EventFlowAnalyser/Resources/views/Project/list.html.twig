@@ -8,7 +8,7 @@
             <div class="span12"><h1>{{ visibility|title }}</h1></div>
         </div>
         {% if projects|length == 0 %}
-        <div class="span12"><p class="text-info"><i class="icon-warning-sign"></i> No project to show.</p></div>
+        <div class="span12"><p class="text-info"><i class="icon-warning-sign"></i>No project to show.</p></div>
         {% else %}                
             {% for project in projects %}
                 {% if loop.first %}
@@ -61,22 +61,23 @@
             {% endfor %}
         {% endif %}
     </div>
+    <div class="modal fade" id="myModal">
+      <div class="modal-header">
+        <a class="close" data-dismiss="modal">&times;</a>
+        <h3>Modal header</h3>
+      </div>
+      <div class="modal-body" id="modal-body" style="white-space:pre">
+        <pre>One fine body&hellip;</pre>
+      </div>
+      <div class="modal-footer">
+        <a href="#" class="btn" data-dismiss="modal">Close</a>
+      </div>
+    </div>
+    
 {% endmacro display_projects %}
 
 {% block article %}
     <article>
         {{ _self.display_projects(projects, visibility) }}
-        <div class="modal fade" id="myModal">
-          <div class="modal-header">
-            <a class="close" data-dismiss="modal">&times;</a>
-            <h3>Modal header</h3>
-          </div>
-          <div class="modal-body" id="modal-body" style="white-space:pre">
-            <pre>One fine body&hellip;</pre>
-          </div>
-          <div class="modal-footer">
-            <a href="#" class="btn" data-dismiss="modal">Close</a>
-          </div>
-        </div>
     </article>
 {% endblock %}

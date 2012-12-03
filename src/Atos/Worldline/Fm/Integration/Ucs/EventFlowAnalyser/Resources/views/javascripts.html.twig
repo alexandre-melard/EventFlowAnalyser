@@ -5,11 +5,6 @@
         window.prettyPrint && prettyPrint();
     });
 <!-- Bootstrap JS -->
-    $('#myModal').modal({
-        backdrop: true,
-        keyboard: true,
-        show: false
-    });
     $('a[rel="popup"]').live('click', function(e) {
         e.preventDefault();
         $('#myModal').find('h3').html($(this).data('modal-title'));

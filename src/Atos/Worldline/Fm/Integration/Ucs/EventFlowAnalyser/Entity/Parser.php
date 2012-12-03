@@ -31,14 +31,6 @@ class Parser implements Entity, VisitorHost
     private $id;
     
     /**
-     * @ORM\Id
-     * @ORM\Column(type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     * @var IntegerType
-     */
-    private $id;
-    
-    /**
      * @ORM\OneToOne(targetEntity="Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Document", mappedBy="parser")
      */
     private $document;

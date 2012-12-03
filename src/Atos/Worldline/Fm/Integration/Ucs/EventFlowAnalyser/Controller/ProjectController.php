@@ -94,12 +94,12 @@ class ProjectController extends Controller
      */
     public function deleteAction($visibility, $name)
     {
-        /* @var $projectDao ProjectDao */
-        $projectDao = $this->get('app.project_dao');
-        
-        try {
-            /* @var $project Project */
-            $project = $projectDao->get($this->getUser(), $visibility, $name);
+            /* @var $projectDao ProjectDao */
+            $projectDao = $this->get('app.project_dao');
+            
+            try {
+                /* @var $project Project */
+                $project = $projectDao->get($this->getUser(), $visibility, $name);
             $project->setProjectService($this->get('app.project'));
             
             /* will remove also the FS files thanks to postRemove callback :o) */
@@ -165,7 +165,7 @@ class ProjectController extends Controller
         $project->setName($name);
         $project->setVisibility($visibility);
     
-        $form = $this->createForm(new FileEditType(), $project);
+        $form = $this->createForm(new ProjectEditType(), $project);
     
         $form->get('original_name')->setData($project->getName());
         $form->get('original_visibility')->setData($project->getVisibility());
@@ -241,7 +241,7 @@ class ProjectController extends Controller
     {
         /* @var $projectDao ProjectDao */
         $projectDao = $this->get('app.project_dao');
-        
+
         $public = $projectDao->getAllByVisibility($this->getUser(), 'public');
         $private = $projectDao->getAllByVisibility($this->getUser(), 'private');
         
