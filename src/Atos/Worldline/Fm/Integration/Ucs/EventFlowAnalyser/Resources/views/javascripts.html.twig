@@ -4,4 +4,32 @@
     $(document).ready(function () {
         window.prettyPrint && prettyPrint();
     });
+<!-- Bootstrap JS -->
+    $('#myModal').modal({
+        backdrop: true,
+        keyboard: true,
+        show: false
+    });
+    $('a[rel="popup"]').live('click', function(e) {
+        e.preventDefault();
+        $('#myModal').find('h3').html($(this).data('modal-title'));
+        $.get(this.href, 
+    	    function(data) {
+              	$('#modal-body').text(data);
+            },
+            "text"
+            )
+        .complete(function(){ 
+            $('#myModal').modal('show');
+        });
+    });
+    $("a[rel=tooltip-right]").tooltip( {
+        animation:true,
+        placement: "right"
+        });
+    $("a[rel=tooltip-left]").tooltip( {
+        animation:true,
+        placement: "left"
+        });
+        
 </script>

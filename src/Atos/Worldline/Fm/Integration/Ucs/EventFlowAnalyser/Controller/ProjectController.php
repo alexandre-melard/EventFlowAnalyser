@@ -94,26 +94,26 @@ class ProjectController extends Controller
      */
     public function deleteAction($visibility, $name)
     {
+        /* @var $projectDao ProjectDao */
+        $projectDao = $this->get('app.project_dao');
+        
         try {
-            /* @var $projectDao ProjectDao */
-            $projectDao = $this->get('app.project_dao');
-            
-            try {
-                /* @var $project Project */
-                $project = $projectDao->get($this->getUser(), $visibility, $name);
-            } catch (NoResultException $e) {
-                $this->get('session')->getFlashBag()->add('error', "Project $name ($visibility) could not be removed because it wasn't found!");
-            }
+            /* @var $project Project */
+            $project = $projectDao->get($this->getUser(), $visibility, $name);
+            $project->setProjectService($this->get('app.project'));
             
             /* will remove also the FS files thanks to postRemove callback :o) */
             $projectDao->remove($project);
             $projectDao->flush();
+            
+        } catch (NoResultException $e) {
+            $this->get('session')->getFlashBag()->add('error', "Project $name ($visibility) could not be removed because it wasn't found!");
         } catch (Exception $e) {
             $this->get('session')->getFlashBag()->add('error', "Project $name ($visibility) could not be removed [" . $e->getMessage() . "]");
         }
         $this->get('session')->getFlashBag()->add('success', "Project $name ($visibility) has been removed successfully");
         
-        return $this->redirect($this->generateUrl('projects_default'));
+        return $this->redirect($this->container->get('request')->getReferer());
     }
     
     /**
@@ -132,13 +132,14 @@ class ProjectController extends Controller
         $projectDao = $this->get('app.project_dao');
         $project = $projectDao->get($this->getUser(), $visibility, $name);
         
+        /* @var $projectService ProjectService */
+        $projectService = $this->get('app.project');
+        $project->setProjectService($projectService);
+        
         $form = $this->createForm(new ProjectEditType(), $project);
 
         $form->get('original_name')->setData($project->getName());
         $form->get('original_visibility')->setData($project->getVisibility());
-        
-        /* @var $projectService ProjectService */
-        $projectService = $this->get('app.project');
         
         // mirror data_dir so that the user can edit current files
         $data_dir = $projectService->getDataDir($project, $uploadDir);
@@ -240,8 +241,14 @@ class ProjectController extends Controller
     {
         /* @var $projectDao ProjectDao */
         $projectDao = $this->get('app.project_dao');
-
-        return array('projects' => $projectDao->getAllByUser($this->getUser()));
+        
+        $public = $projectDao->getAllByVisibility($this->getUser(), 'public');
+        $private = $projectDao->getAllByVisibility($this->getUser(), 'private');
+        
+        return array(
+                'public' => $public,
+                'private' => $private
+                );
     }
     
     /**
