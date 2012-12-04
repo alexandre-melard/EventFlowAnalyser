@@ -21,15 +21,11 @@ body {
   height: 50px;
   h1 {
     color: #231F20;
-    font-family: StagMedium;
+    font-family: 'PT Sans', sans-serif;
     font-size: 2em;
-    font-weight: normal;
+    font-weight: bold;
     line-height: 22px;
   }
-}
-
-* {
-  @include box-sizing(border-box);
 }
 
 .center {

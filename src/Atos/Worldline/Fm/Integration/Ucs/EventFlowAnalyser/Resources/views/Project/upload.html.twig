@@ -1,0 +1,49 @@
+{% extends "UcsEventFlowAnalyser::layout.html.twig" %}
+
+{% block head_style %}
+    {% include "UcsEventFlowAnalyser::stylesheets.html.twig" %}
+    {% block js_blueimp_stylesheets %}
+{#         {% include "JQueryFileUploadBundle::stylesheets.html.twig" %}#}
+    {% endblock js_blueimp_stylesheets %}
+{% endblock head_style %}
+
+{% block article %}
+    {% block js_blueimp_form %}
+    <form id="fileupload" action="{{ asset('projects/' ~ actionTarget ~ '/' ~ key ) }}" method="POST" {{ form_enctype(form) }}>
+        <div class="span12">
+            {{ form_errors(form) }}
+        
+            {{ form_label(form.name) }}
+            {{ form_widget(form.name) }}
+            {{ form_widget(form.visibility) }}
+        
+            {{ form_rest(form) }}
+        </div>
+        <h3>projects</h3>
+        <hr>
+        {% include "JQueryFileUploadBundle::form.html.twig" %}
+        <div class="span12">
+            <button type="submit" class="btn btn-large btn-block">Save</button>
+        </div>
+    </form>
+    {% endblock js_blueimp_form %}
+    <!-- modal-gallery is the modal dialog used for the image gallery -->
+    {% block js_blueimp_tmpl_gallery %}
+            {% include "JQueryFileUploadBundle::gallery.html.twig" %}
+    {% endblock js_blueimp_tmpl_gallery %}
+    <!-- The template to display projects available for upload -->
+    {% block js_blueimp_tmpl_upload %}
+        {% include "JQueryFileUploadBundle::template-upload.html.twig" %}
+    {% endblock js_blueimp_tmpl_upload %}
+    <!-- The template to display projects available for download -->
+    {% block js_blueimp_tmpl_download %}
+        {% include "JQueryFileUploadBundle::template-download.html.twig" %}
+    {% endblock js_blueimp_tmpl_download %}
+{% endblock %}
+
+{% block foot_script %}
+    {% include "UcsEventFlowAnalyser::javascripts.html.twig" %}
+    <script type="text/javascript">
+        $(blueimpUploader('{{ path('projects_put', { 'key': key }) }}'));
+    </script>
+{% endblock foot_script %}

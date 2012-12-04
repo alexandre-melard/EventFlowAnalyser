@@ -8,7 +8,7 @@
             <div class="span12"><h1>{{ visibility|title }}</h1></div>
         </div>
         {% if projects|length == 0 %}
-        <div class="span12"><p class="text-info"><i class="icon-warning-sign"></i>No project to show.</p></div>
+        <div class="span12"><p class="text-info"><i class="icon-warning-sign"></i> No project to show.</p></div>
         {% else %}                
             {% for project in projects %}
                 {% if loop.first %}
@@ -29,7 +29,7 @@
                     </div>
                 </div>
                 {% if project.documents|length == 0 %}
-                <div class="span12"><p class="text-info"><i class="icon-warning-sign"></i>No documents imported yet.</p></div>
+                <div class="span12"><p class="text-info"><i class="icon-warning-sign"></i> No documents imported yet.</p></div>
                 {% else %}
                 <div class="row-fluid show-grid">
                     {% set docsLength = project.documents|length %}

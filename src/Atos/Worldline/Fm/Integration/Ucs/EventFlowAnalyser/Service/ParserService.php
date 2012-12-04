@@ -76,13 +76,10 @@ class ParserService extends CacheAware
     protected function getEvent(Project $project, $type) {
         try {
             $event = $project->getEvent($type);
-            $this->logger->debug(__FUNCTION__ . ": found event :" . $event->getType());
         } catch ( \Exception $e ) {
-            $this->logger->debug(__FUNCTION__ . ": caught exception :" . $e->getMessage());
             $event = new Event($type);
             $event->setProject($project);
             $project->addEvent($event);
-            $this->logger->debug(__FUNCTION__ . ": creating event :" . $event->getType());
         }
         return $event;
     }
@@ -96,9 +93,7 @@ class ParserService extends CacheAware
      */
     public function parse(Parser $parser)
     {
-        $this->logger->debug("parse : " . $parser->getDocument()->getName());
         $xml = simplexml_load_file($parser->getDocument()->getPath());
-        $this->logger->debug("parse : set parser's document name to :" . $xml->header->process);
         $parser->getDocument()->setName($xml->header->process);
         if (null != $xml->events->in) {
             foreach ($xml->events->in as $in) {
@@ -106,14 +101,12 @@ class ParserService extends CacheAware
                 $eventIn = new EventIn();
                 $eventIn->setEvent($event);
                 $eventIn->setParser($parser);
-                $this->logger->debug(__FUNCTION__ . ": creating eventIn :" . $eventIn->getType());
                 if (null !== $in->out->event) {
                     foreach ($in->out->event as $eventType) {
                         $event = $this->getEvent($parser->getDocument()->getProject(), (string) $eventType);
                         $eventOut = new EventOut();
                         $eventOut->setEvent($event);
                         $eventOut->setEventIn($eventIn);
-                        $this->logger->debug(__FUNCTION__ . ": creating eventOut :" . $eventOut->getType());
                         $eventIn->addEventOut($eventOut);
                     }
                 }

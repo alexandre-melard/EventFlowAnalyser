@@ -94,6 +94,8 @@ ruby_block "provision_xdebug" do
     file.write_file
     file.insert_line_if_no_match("/xdebug.remote_autostart=1/", "xdebug.remote_autostart=1")
     file.write_file
+    file.insert_line_if_no_match("/xdebug.max_nesting_level=200/", "xdebug.max_nesting_level=200")
+    file.write_file
   end
 end
   

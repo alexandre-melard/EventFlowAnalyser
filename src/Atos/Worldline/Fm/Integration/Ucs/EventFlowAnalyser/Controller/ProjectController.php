@@ -72,10 +72,11 @@ class ProjectController extends Controller
         return array($key, $tmp_dir);
     }
 
+    
     /**
      * @Route("/create/", name="projects_create")
      * @Method({"GET"})
-     * @Template("UcsEventFlowAnalyser:Project:edit.html.twig")
+     * @Template
      */
     public function createAction()
     {
@@ -84,38 +85,53 @@ class ProjectController extends Controller
         $project = new Project($this->getUser());
         $form = $this->createForm(new ProjectType(), $project);
         
-        return array('form' => $form->createView(), 'key' => $key);
+        return array('form' => $form->createView(), 'actionTarget' => 'create', 'key' => $key);
     }
-    
+
     /**
-     * @Route("/delete/{visibility}/{name}", name="projects_delete")
-     * @Method({"GET"})
-     * @Template
+     * @Route("/create/{key}", name="projects_create_save")
+     * @Method({"POST", "PUT", "PATCH"})
      */
-    public function deleteAction($visibility, $name)
+    public function createSaveAction($key)
     {
+        /* @var $project Project */
+        $project = new Project($this->getUser());
+
+        /* @var $form Form */
+        $form = $this->createForm(new ProjectType(), $project);
+
+        $form->bind($this->getRequest());
+
+        if ($form->isValid()) {
+
+            /* @var $projectService ProjectService */
+            $projectService = $this->get('app.project');
+            $project->setProjectService($projectService);
+            
+            /* @var $uploader FileUploader */
+            $uploader = $this->get('mylen.file_uploader');
+            $uploadDir = $uploader->getFileBasePath();
+            $webDir = $uploader->getWebBasePath();
+            
+            $project->setPath($projectService->getDataDir($project, $uploadDir));
+            $project->setWebPath($projectService->getDataDir($project, $webDir));
+            $project->setTmp($uploadDir . '/tmp/' . $key . '/originals');
+
+            // Populate project with documents and so forth
+            $project = $projectService->populate($project);
+    
             /* @var $projectDao ProjectDao */
             $projectDao = $this->get('app.project_dao');
-            
-            try {
-                /* @var $project Project */
-                $project = $projectDao->get($this->getUser(), $visibility, $name);
-            $project->setProjectService($this->get('app.project'));
-            
-            /* will remove also the FS files thanks to postRemove callback :o) */
-            $projectDao->remove($project);
+            $projectDao->persist($project);
             $projectDao->flush();
-            
-        } catch (NoResultException $e) {
-            $this->get('session')->getFlashBag()->add('error', "Project $name ($visibility) could not be removed because it wasn't found!");
-        } catch (Exception $e) {
-            $this->get('session')->getFlashBag()->add('error', "Project $name ($visibility) could not be removed [" . $e->getMessage() . "]");
-        }
-        $this->get('session')->getFlashBag()->add('success', "Project $name ($visibility) has been removed successfully");
-        
-        return $this->redirect($this->container->get('request')->getReferer());
-    }
     
+            $this->get('session')->getFlashBag()->add('success', "Project $project->getName() ($project->getVisibility()) creation as been completed!");
+        } else {
+            $this->get('session')->getFlashBag()->add('error', 'Project $project->getName() ($project->getVisibility()) could not be completed... Please check form values and retry');
+        }
+    
+        return $this->redirect($this->generateUrl('projects_edit', array('visibility' => $project->getVisibility(), 'name' => $project->getName())));
+    }
     /**
      * @Route("/edit/{visibility}/{name}", name="projects_edit")
      * @Method({"GET"})
@@ -129,6 +145,7 @@ class ProjectController extends Controller
         
         list($key, $tmp_dir) = $this->createTmp();
 
+        /* @var $projectDao ProjectDao */
         $projectDao = $this->get('app.project_dao');
         $project = $projectDao->get($this->getUser(), $visibility, $name);
         
@@ -148,52 +165,19 @@ class ProjectController extends Controller
             $fs->mirror($data_dir, $tmp_dir);
         }
 
-        return array('form' => $form->createView(), 'key' => $key);
+        return array('form' => $form->createView(), 'actionTarget' => 'edit', 'key' => $key);
     }
     
     /**
-     * @Route("/error/{visibility}/{name}/{key}", name="projects_error")
-     * @Method({"GET"})
-     * @Template
-     */
-    public function errorAction($visibility, $name, $key)
-    {
-        list($key, $tmp_dir) = $this->createTmp($key);
-    
-        $project = new Project($this->getUser());
-    
-        $project->setName($name);
-        $project->setVisibility($visibility);
-    
-        $form = $this->createForm(new ProjectEditType(), $project);
-    
-        $form->get('original_name')->setData($project->getName());
-        $form->get('original_visibility')->setData($project->getVisibility());
-    
-        /* @var $projectService ProjectService */
-        $projectService = $this->get('app.project');
-        
-        // mirror data_dir so that the user can edit current files
-        $data_dir = $projectService->getDataDir($project, $uploadDir);
-        $fs = new Filesystem();
-        if ($fs->exists($data_dir)) {
-            $fs->mirror($data_dir, $tmp_dir);
-        }
-    
-        return array('form' => $form->createView(), 'key' => $key);
-    }
-    
-    /**
-     * @Route("/edit/{key}", name="projects_save")
+     * @Route("/edit/{key}", name="projects_edit_save")
      * @Method({"POST", "PUT", "PATCH"})
      */
-    public function saveAction($key)
+    public function editSaveAction($key)
     {
-        /* @var $uploader FileUploader */
-        $uploader = $this->get('mylen.file_uploader');
-        $uploadDir = $uploader->getFileBasePath();
-        $webDir = $uploader->getWebBasePath();
-
+        /* @var $projectDao ProjectDao */
+        $projectDao = $this->get('app.project_dao');
+        
+        /* @var $project Project */
         $project = new Project($this->getUser());
         
         /* @var $form Form */
@@ -202,34 +186,70 @@ class ProjectController extends Controller
         $form->bind($this->getRequest());
         
         if ($form->isValid()) {
-            $fs = new Filesystem();
-            if ($form->has('edit')) {
-                $original_name = $form->get('original_name')->getData();
-                $original_visibility = $form->get('original_visibility')->getData();
-            }
+
             /* @var $projectService ProjectService */
             $projectService = $this->get('app.project');
-            $projectService->setParserService($this->get('app.parser'));
             $project->setProjectService($projectService);
             
+            /* @var $uploader FileUploader */
+            $uploader = $this->get('mylen.file_uploader');
+            $uploadDir = $uploader->getFileBasePath();
+            
             $project->setPath($projectService->getDataDir($project, $uploadDir));
-            $project->setWebPath($projectService->getDataDir($project, $webDir));
+            $project->setWebPath($projectService->getDataDir($project, $uploader->getWebBasePath()));
             $project->setTmp($uploadDir . '/tmp/' . $key . '/originals');
             
             // Populate project with documents and so forth
             $project = $projectService->populate($project);
             
-            /* @var $projectDao ProjectDao */
-            $projectDao = $this->get('app.project_dao');
             $projectDao->persist($project);            
+            
+            // Removing Old Project
+            $original_name = $form->get('original_name')->getData();
+            $original_visibility = $form->get('original_visibility')->getData();
+            $project_old = $projectDao->get($this->getUser(), $original_visibility, $original_name);
+            $project_old->setProjectService($projectService);
+            
+            $projectDao->remove($project_old);
+            
             $projectDao->flush();
             
-            $this->get('session')->getFlashBag()->add('success', 'File upload as been completed!');
+            $this->get('session')->getFlashBag()->add('success', 'Project ' . $project->getName() . ' (' . $project->getVisibility() . ') creation as been completed!');
+            $this->get('session')->getFlashBag()->add('success', 'Project ' . $project_old->getName() . '(' . $project_old->getVisibility() . ') removal as been completed!');
         } else {
-            $this->get('session')->getFlashBag()->add('error', 'File upload could not be completed... Please check form values and retry');
+            $this->get('session')->getFlashBag()->add('error', 'Project ' . $project->getName() . ' (' . $project->getVisibility() . ') could not be completed... Please check form values and retry');
         }
 
         return $this->redirect($this->generateUrl('projects_edit', array('visibility' => $project->getVisibility(), 'name' => $project->getName())));
+    }
+    
+    /**
+     * @Route("/delete/{visibility}/{name}", name="projects_delete")
+     * @Method({"GET"})
+     * @Template
+     */
+    public function deleteAction($visibility, $name)
+    {
+        /* @var $projectDao ProjectDao */
+        $projectDao = $this->get('app.project_dao');
+    
+        try {
+            /* @var $project Project */
+            $project = $projectDao->get($this->getUser(), $visibility, $name);
+            $project->setProjectService($this->get('app.project'));
+    
+            /* will remove also the FS files thanks to postRemove callback :o) */
+            $projectDao->remove($project);
+            $projectDao->flush();
+    
+        } catch (NoResultException $e) {
+            $this->get('session')->getFlashBag()->add('error', "Project $name ($visibility) could not be removed because it wasn't found!");
+        } catch (Exception $e) {
+            $this->get('session')->getFlashBag()->add('error', "Project $name ($visibility) could not be removed [" . $e->getMessage() . "]");
+        }
+        $this->get('session')->getFlashBag()->add('success', "Project $name ($visibility) has been removed successfully");
+    
+        return $this->redirect($this->container->get('request')->getReferer());
     }
     
     /**
