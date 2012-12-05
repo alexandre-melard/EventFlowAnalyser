@@ -1,22 +1,21 @@
 <script type="text/javascript" src="{{ asset('js/app.min.js') }}"></script>
 
 <script type="text/javascript">
-    $(document).ready(function () {
-        window.prettyPrint && prettyPrint();
-    });
-
     <!-- Bootstrap JS -->
     $('a[rel="popup"]').live('click', function(e) {
         e.preventDefault();
-        $('#myModal').find('h3').html($(this).data('modal-title'));
+        $('#modal-process').find('h3').html($(this).attr("title"));
+        $('#modal-link').attr("href", $(this).attr("href"));
+        $('#modal-link').attr("download", $(this).attr("title"));
         $.get(this.href, 
     	    function(data) {
-              	$('#modal-body').text(data);
+              	$('#modal-content').text(data).html();
             },
             "text"
             )
         .complete(function(){ 
-            $('#myModal').modal('show');
+        	prettyPrint();
+            $('#modal-process').modal('show');
         });
     });
     $("a[rel=tooltip-right]").tooltip( {

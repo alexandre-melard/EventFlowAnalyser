@@ -40,6 +40,11 @@ class Document implements VisitorHost, Entity
 
     /**
      * @ORM\Column(type="string", length=255)
+     */
+    private $originalName;
+
+    /**
+     * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank
      */
     private $shaKey;
@@ -95,11 +100,12 @@ class Document implements VisitorHost, Entity
         // do whatever you want to generate a unique name
         $this->setKey(sha1(uniqid(mt_rand(), true)));
         $filename = $this->getKey() . '.' . pathinfo($this->path, PATHINFO_EXTENSION);
-        
+
         // set the path right as the tmp folder will be remove after persist.
         $tmp = $this->path;
         $this->setPath(dirname($this->tmp) . '/' . $filename);
         $this->setUri(dirname($this->uri) . '/' . $filename);
+        $this->setOriginalName(basename($tmp));
         $this->setTmp($tmp);
     }
 
@@ -249,6 +255,16 @@ class Document implements VisitorHost, Entity
     public function setKey($key)
     {
         $this->shaKey = $key;
+    }
+
+    public function getOriginalName()
+    {
+        return $this->originalName;
+    }
+
+    public function setOriginalName($originalName)
+    {
+        $this->originalName = $originalName;
     }
 
 }

@@ -145,10 +145,6 @@ class ProjectController extends Controller
      */
     public function editAction($visibility, $name)
     {
-        /* @var $uploader FileUploader */
-        $uploader = $this->get('mylen.file_uploader');
-        $uploadDir = $uploader->getFileBasePath();
-        
         list($key, $tmp_dir) = $this->createTmp();
 
         /* @var $projectDao ProjectDao */
@@ -163,13 +159,13 @@ class ProjectController extends Controller
 
         $form->get('original_name')->setData($project->getName());
         $form->get('original_visibility')->setData($project->getVisibility());
+
+        /* @var $uploader FileUploader */
+        $uploader = $this->get('mylen.file_uploader');
         
         // mirror data_dir so that the user can edit current files
-        $data_dir = $projectService->getDataDir($project, $uploadDir);
-        $fs = new Filesystem();
-        if ($fs->exists($data_dir)) {
-            $fs->mirror($data_dir, $tmp_dir);
-        }
+        $data_dir = $projectService->getDataDir($project, $uploader->getFileBasePath());
+        $projectService->dataToTmp($project, $data_dir, $tmp_dir);
 
         return array('form' => $form->createView(), 'actionTarget' => 'edit', 'key' => $key);
     }
@@ -220,8 +216,8 @@ class ProjectController extends Controller
             
             $projectDao->flush();
             
-            // clean up tmp dir
-            $projectService->removeDir($project->getTmp());
+            // clean up tmp dir (.../data/tmp/XXX/original/../)
+            $projectService->removeDir($project->getTmp() . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR);
             
             $this->get('session')->getFlashBag()->add('success', 'Project ' . $project->getName() . ' (' . $project->getVisibility() . ') creation as been completed!');
             $this->get('session')->getFlashBag()->add('success', 'Project ' . $project_old->getName() . '(' . $project_old->getVisibility() . ') removal as been completed!');
@@ -347,15 +343,6 @@ class ProjectController extends Controller
         /* @var $uploader IResponseContainer */
         $uploader = $this->handleRequest($key);
         $uploader->get();
-        
-        /* @var $projectDao ProjectDao */
-        $documentDao = $this->get('app.document_dao');
-        $files = json_decode($uploader->getBody());
-        foreach ($files as $file) {
-            $document = $documentDao->getByKey($this->getUser(), str_replace('.xml', '', $file->name));
-            $file->name = $document->getName();           
-        }
-        $uploader->setBody(json_encode($files));
         
         return new Response($uploader->getBody(), $uploader->getType(), $uploader->getHeader());
     }

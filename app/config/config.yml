@@ -69,13 +69,12 @@ assetic:
             filters:
                 - abs_cssrewrite
 
-        prettify:
+        prettify_css:
             inputs:
-                - '@MopaBootstrapSandboxBundle/Resources/public/css/prettify.css'
+                - '@UcsEventFlowAnalyser/Resources/assets/prettify/prettify.css'
 
         base_scss:
             inputs:
-#                - 'http://fonts.googleapis.com/css?family=PT+Sans:700'
                 - '@UcsEventFlowAnalyser/Resources/assets/sass/base.scss'
             output: 'bundles/ucseventflowanalyser/css/base.css'
             filters:
@@ -90,7 +89,7 @@ assetic:
         app_css:
             inputs:
                 - '@bootstrap_css'
-                - '@prettify'
+                - '@prettify_css'
                 - '@jqueryfileupload_blueimp_css'
                 - '@base_css'
             output: 'css/app.min.css'
@@ -118,6 +117,10 @@ assetic:
                 - '@UcsEventFlowAnalyser/Resources/assets/js/jquery-1.7.2.min.js'
                 - '@UcsEventFlowAnalyser/Resources/assets/js/jquery-ui-1.8.22.min.js'
 
+        prettify_js:
+            inputs:
+                - '@UcsEventFlowAnalyser/Resources/assets/prettify/prettify.js'
+
         underscore_js:
             inputs:
                 - '@UcsEventFlowAnalyser/Resources/assets/js/underscore-min.js'
@@ -134,6 +137,7 @@ assetic:
                 - '@underscore_js'
                 - '@monabootstrap'
                 - '@jqueryfileupload_blueimp_js'
+                - '@prettify_js'
             output: 'js/app.min.js'
             filters:
                 - yui_js

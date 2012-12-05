@@ -98,13 +98,28 @@ class ProjectService extends CacheAware
     
     public function mirror($from, $to, $delete) 
     {
-        // if there is an error when moving the file, an exception will
-        // be automatically thrown by move(). This will properly prevent
-        // the entity from being persisted to the database on error
         $this->fs->mirror($from, $to);
         if ($delete) {
             $this->fs->remove($from);
-            $this->fs->remove($from . "/../");
+        }
+    }
+    
+    /**
+     * Copy documents from projects data dir to $to dir.
+     * The documents are renamed to their origin value during the copy.
+     * @param Project $project
+     * @param string $from
+     * @param string $to
+     */
+    public function dataToTmp(Project $project, $from, $to)
+    {
+        foreach ($project->getDocuments() as $document) {
+            /* @var $document Document */
+            $this->fs->copy(
+                    $document->getPath(), 
+                    $to . DIRECTORY_SEPARATOR . $document->getOriginalName(),
+                    true
+                    );
         }
     }
     
