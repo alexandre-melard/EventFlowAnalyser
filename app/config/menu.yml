@@ -6,10 +6,7 @@ services:
       - "@logger"
       - '@security.context'
       - '%app.data_dir%'
-      - '@app.file'
-      - '@app.parser'
-      - '@app.event_flow'
-      - '@session'
+      - '@app.project_dao'
     tags:
         - { name: monolog.logger, channel: app }
 

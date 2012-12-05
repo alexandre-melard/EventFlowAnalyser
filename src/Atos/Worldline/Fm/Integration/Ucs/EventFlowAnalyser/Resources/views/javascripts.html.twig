@@ -4,7 +4,8 @@
     $(document).ready(function () {
         window.prettyPrint && prettyPrint();
     });
-<!-- Bootstrap JS -->
+
+    <!-- Bootstrap JS -->
     $('a[rel="popup"]').live('click', function(e) {
         e.preventDefault();
         $('#myModal').find('h3').html($(this).data('modal-title'));
@@ -26,5 +27,8 @@
         animation:true,
         placement: "left"
         });
-        
+    $("a[rel=tooltip-top]").tooltip( {
+        animation:true,
+        placement: "top"
+        });
 </script>

@@ -2,6 +2,12 @@
 
 namespace Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Menu;
 
+use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Event;
+
+use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Project;
+
+use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Dao\ProjectDao;
+
 use Symfony\Component\Filesystem\Filesystem;
 
 use Symfony\Component\Finder\SplFileInfo;
@@ -14,9 +20,6 @@ use Symfony\Component\Security\Core\SecurityContextInterface;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\HttpFoundation\Request;
 use Mopa\Bundle\BootstrapBundle\Navbar\AbstractNavbarMenuBuilder;
-use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Service\ParserService;
-use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Service\EventFlowService;
-use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Service\FileService;
 use Atos\Worldline\Fm\UserBundle\Entity\User;
 use Monolog\Logger;
 use Doctrine\Common\Cache\Cache;
@@ -43,23 +46,18 @@ class MenuBuilder extends AbstractNavbarMenuBuilder
     /* @var $file FileService*/
     protected $file;
     
-    /* @var $parser ParserService */
-    protected $parser;
+    /* @var $request Request */
+    protected $request;
 
-    /* @var $eventFlow EventFlowService */
-    protected $evenFlow;
-    
-    protected $session;
+    /* @var $projectDao ProjectDao */
+    protected $projectDao;        
     
     public function __construct(
             FactoryInterface $factory, 
             Logger $logger, 
             SecurityContextInterface $securityContext,
             $data_dir,
-            $file,
-            $parser,
-            $evenFlow,
-            $session            
+            ProjectDao $projectDao
             )
     {
         parent::__construct($factory);
@@ -68,17 +66,14 @@ class MenuBuilder extends AbstractNavbarMenuBuilder
         $this->isLoggedIn = $securityContext->isGranted('IS_AUTHENTICATED_FULLY');
         $this->user = $securityContext->getToken()->getUser();
         $this->data_dir = $data_dir;
-        $this->file = $file;
-        $this->parser = $parser;
-        $this->evenFlow = $evenFlow;        
-        $this->session = $session;
+        $this->projectDao = $projectDao;        
     }
 
 
     public function createMainMenu(Request $request)
     {
         $this->logger->debug('UcsEventFlowAnalyser::MenuBuilder:: createMainMenu');
-        $menu = $this->createNavbarMenuItem();
+        $menu = $this->createNavbarMenuItem('root', true);
         $menu->addChild(
                 'Home', 
                 array(
@@ -141,117 +136,35 @@ class MenuBuilder extends AbstractNavbarMenuBuilder
             'routeParameters' => array('visibility' => 'private'),
             'extras' => array('icon' => 'folder-close')                
         ));
-        $projects->addChild('Public', array(
+        $public = $projects->addChild('Public', array(
             'route' => 'projects_list',
             'routeParameters' => array('visibility' => 'public'),
             'extras' => array('icon' => 'folder-open')                
         ));
-
-//         $salt = $this->user->getSalt();
-
-//         $fs = new Filesystem();
-//         if ($fs->exists($this->data_dir . '/private/') && $fs->exists($this->data_dir . '/public/'))
-//         {
-//             // Build Projects menu
-//             $projects = $this->createDropdownMenuItem($menu, "Projects", false, array('icon' => 'caret'));
+        
+        $crumbs = explode('/', $request->getPathInfo());
+        if ( array_search('event', $crumbs) ) {
+            list ($visibility, $name, $type) = array_slice($crumbs, 3, 3);
+            $name = urldecode($name);
             
-//             if ($fs->exists($this->data_dir . '/private/' . $salt))
-//             {
-//                 $projects->addChild('Private', array(
-//                         'uri'    => '#',
-//                         'extras' => array('icon' => 'folder-close')
-//                 ));
-//                 $this->addDivider($projects);
-//                 $finder = new Finder();
-//                 $finder->in($this->data_dir . '/private/' . $salt);
-//                 /* @var $file SplFileInfo */
-//                 foreach ($finder->directories() as $dir) {
-//                     $projects->addChild($dir->getFilename(), array(
-//                             'route' => 'events_all',
-//                             'routeParameters' => array(
-//                                     'visibility' => 'private',
-//                                     'soft' => $dir->getFilename()),
-//                             'extras' => array('icon' => 'folder-close')
-//                     ));
+            $eventsMenu = $this->createDropdownMenuItem($menu, "Events", false, array('icon' => 'caret'));
+            
+            /* @var $project Project */
+            $project = $this->projectDao->get($this->user, $visibility, $name);
+            foreach ($project->getEvents() as $event ) {
+                /* @var $event Event */
+                $eventsMenu->addChild($event->getShortEvent(), array(
+                        'route' => 'events_event',
+                        'routeParameters' => array(
+                                'visibility' => $visibility,
+                                'name' => $name,
+                                'type' => $event->getType(),
+                        ),
+                        'extras' => array('icon' => 'cog')
+                ));
+            }
+        }
                 
-//                 }
-//                 $this->addDivider($projects);
-//             }            
-//             $projects->addChild('Public', array(
-//                     'uri'    => '#',
-//                     'extras' => array('icon' => 'folder-open')
-//             ));
-//             $this->addDivider($projects);
-    
-//             $finder = new Finder();
-//             $finder->in($this->data_dir . '/public/' );
-
-//             // get all projects from public dir
-//             $finder->depth('>=1');
-            
-//             /* @var $file SplFileInfo */
-//             foreach ($finder->directories() as $dir) {
-//                 $projects->addChild($dir->getFilename(), array(
-//                         'route' => 'events_all',
-//                         'routeParameters' => array(
-//                                 'visibility' => 'public',
-//                                 'soft' => $dir->getFilename()),
-//                         'extras' => array('icon' => 'folder-open')
-//                 ));
-            
-//             }
-//         }        
-//         // Retrieve file types
-//         if ( $this->session->has('event')) {
-//             $eventSession = $this->session->get('event');
-//             try {
-//                 $this->file->getFiles($this->data_dir, $eventSession['visibility'], $eventSession['salt'], $eventSession['soft']);
-//                 $parsers = $this->parser->parseFiles($eventSession['files']);
-//                 $EventFlowService = $this->evenFlow;
-//                 $events = $EventFlowService->uniqueEvents($eventSession['soft'], $parsers);
-//                 if (count($events) > 0) {
-//                     $this->logger->debug('UcsEventFlowAnalyser::MenuBuilder:: number of events = ' . count($events));
-
-//                     // Build files menu
-//                     $eventsMenu = $this->createDropdownMenuItem($menu, "Events", false, array('icon' => 'caret'));
-//                     foreach ($events as $event) {
-//                         $this->logger->debug("UcsEventFlowAnalyser::MenuBuilder::created event = $event");
-//                         $eventsMenu->addChild($EventFlowService->getShortEvent($event),
-//                             array(
-//                                 'route' => 'events_event',
-//                                 'routeParameters' => array(
-//                                     'visibility' => $eventSession['visibility'],
-//                                     'soft' => $eventSession['soft'],
-//                                     'id' => $event)
-//                             ));
-//                     }
-//                 }
-//             } catch (\RuntimeException $e) {
-//                 $this->logger->info('UcsEventFlowAnalyser::MenuBuilder::no directory yet to exploit to build events list');
-//             }
-//         }
-        return $menu;
-    }
-
-    public function createNavbarsSubnavMenu(Request $request)
-    {
-        $menu = $this->createSubnavbarMenuItem();
-        $menu->addChild('Top', array('route' => '#top'));
-        $menu->addChild('Navbars', array('route' => '#navbars'));
-        $menu->addChild('Template', array('route' => '#template'));
-        $menu->addChild('Menus', array('route' => '#menus'));
-        // ... add more children
-        return $menu;
-    }
-
-    public function createComponentsSubnavMenu(Request $request)
-    {
-        $menu = $this->createSubnavbarMenuItem();
-        $menu->addChild('Top', array('route' => '#top'));
-        $menu->addChild('Flashs', array('route' => '#flashs'));
-        $menu->addChild('Session Flashs', array('route' => '#session-flashes'));
-        $menu->addChild('Labels & Badges', array('route' => '#labels-badges'));
-        // ... add more children
         return $menu;
     }
 }

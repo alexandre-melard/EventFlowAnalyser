@@ -75,7 +75,7 @@ assetic:
 
         base_scss:
             inputs:
-                - 'http://fonts.googleapis.com/css?family=PT+Sans:700'
+#                - 'http://fonts.googleapis.com/css?family=PT+Sans:700'
                 - '@UcsEventFlowAnalyser/Resources/assets/sass/base.scss'
             output: 'bundles/ucseventflowanalyser/css/base.css'
             filters:

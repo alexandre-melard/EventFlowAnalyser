@@ -31,3 +31,10 @@ body {
 .center {
   text-align: center;
 }
+
+body .modal {
+	//new custom width
+	width: 660px;
+	//must be half of the width, minus scrollbar on the left (30px)
+	margin: -250px 0 0 -300px;
+}

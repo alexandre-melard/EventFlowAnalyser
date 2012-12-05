@@ -117,7 +117,16 @@ class ProjectService extends CacheAware
             '/' . 
             $project->getUser()->getSalt() . 
             '/' . 
-            $project->getName();
+            $project->getKey();
+    }
+    
+    public function getTmpDir(Project $project, $uploadDir)
+    {
+        return
+            $uploadDir .
+            '/tmp/' .
+            $project->getKey() .
+            '/originals';
     }
     
 }

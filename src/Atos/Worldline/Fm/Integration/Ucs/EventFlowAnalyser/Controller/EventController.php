@@ -35,14 +35,14 @@ class EventController extends Controller
     }
 
     /**
-     * @Route("/{visibility}/{soft}/all", name="events_all")
+     * @Route("/{visibility}/{name}/all", name="events_all")
      * @Template
      */
-    public function allAction($visibility, $soft)
+    public function allAction($visibility, $name)
     {
         /* @var $projectDao ProjectDao */
         $projectDao = $this->get('app.project_dao');
-        $project = $projectDao->get($this->getUser(), $visibility, $soft);
+        $project = $projectDao->get($this->getUser(), $visibility, $name);
         $documents = $project->getDocuments();
         $parsers = array();
         foreach ($documents as $document) {
@@ -50,27 +50,27 @@ class EventController extends Controller
             $parsers[] = $document->getParser();
         }
         
-        $events = $this->get('app.event_flow')->uniqueEvents($soft, $parsers);
+        $events = $this->get('app.event_flow')->uniqueEvents($name, $parsers);
         
         return array(
             'title' => 'Display All Events',
             'visibility' => $visibility,
-            'soft' => $soft,
+            'name' => $name,
             'events' => $events
         );
     }
 
     /**
-     * @Route("/event/{visibility}/{soft}/{id}", name="events_event")
+     * @Route("/event/{visibility}/{name}/{type}", name="events_event")
      * @Template
      */
-    public function eventAction($visibility, $soft, $id)
+    public function eventAction($visibility, $name, $type)
     {
         $logger = $this->get('logger');
         
         /* @var $projectDao ProjectDao */
         $projectDao = $this->get('app.project_dao');
-        $project = $projectDao->get($this->getUser(), $visibility, $soft);
+        $project = $projectDao->get($this->getUser(), $visibility, $name);
         $documents = $project->getDocuments();
         $parsers = array();
         foreach ($documents as $document) {
@@ -78,7 +78,8 @@ class EventController extends Controller
             $parsers[] = $document->getParser();
         }
                 
-        $event = new Event($id);
+        $event = new Event($type);
+        /* $eventFlowService EventFlowService */
         $eventFlowService = $this->get('app.event_flow');
         $parents = $eventFlowService->parents($parsers, $event);
         $children = $eventFlowService->children($parsers, $event);
@@ -86,9 +87,9 @@ class EventController extends Controller
         $filesRes = $eventFlowService->files($parsers, $event);
         
         return array(
-            'title' => $eventFlowService->getShortEvent($event->getType()),
+            'title' => $event->getShortEvent(),
             'visibility' => $visibility,
-            'soft' => $soft,
+            'name' => $name,
             'event' => $eventFlow->getEvent()->getType(),
             'parents' => $eventFlow->getParents(),
             'children' => $eventFlow->getChildren(),

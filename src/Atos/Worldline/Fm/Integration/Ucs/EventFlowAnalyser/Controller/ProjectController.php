@@ -2,6 +2,8 @@
 
 namespace Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Controller;
 
+use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Ext\Uploader\UploadHandler;
+
 use Doctrine\ORM\NoResultException;
 
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Uploader\XmlUploadHandlerFactory;
@@ -33,6 +35,7 @@ use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\EventIn;
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\EventOut;
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Form\ProjectType;
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Form\ProjectEditType;
+use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Uploader\XmlUploadHandler;
 
 
 /**
@@ -59,7 +62,7 @@ class ProjectController extends Controller
         if ($key === null) {
             do {
                 // Build unique ID
-                $key = sprintf('%09d', mt_rand(0, 1999999999));
+                $key = sha1(uniqid(mt_rand(), true));
             } while ($fs->exists($uploadDir . '/tmp/' . $key));
         }
 
@@ -111,12 +114,12 @@ class ProjectController extends Controller
             /* @var $uploader FileUploader */
             $uploader = $this->get('mylen.file_uploader');
             $uploadDir = $uploader->getFileBasePath();
-            $webDir = $uploader->getWebBasePath();
             
+            $project->setKey($key);
             $project->setPath($projectService->getDataDir($project, $uploadDir));
-            $project->setWebPath($projectService->getDataDir($project, $webDir));
-            $project->setTmp($uploadDir . '/tmp/' . $key . '/originals');
-
+            $project->setWebPath($projectService->getDataDir($project, $uploader->getWebBasePath()));
+            $project->setTmp($projectService->getTmpDir($project, $uploader->getFileBasePath()));
+            
             // Populate project with documents and so forth
             $project = $projectService->populate($project);
     
@@ -124,10 +127,13 @@ class ProjectController extends Controller
             $projectDao = $this->get('app.project_dao');
             $projectDao->persist($project);
             $projectDao->flush();
-    
-            $this->get('session')->getFlashBag()->add('success', "Project $project->getName() ($project->getVisibility()) creation as been completed!");
+            
+            // clean up tmp dir
+            $projectService->removeDir($project->getTmp());
+            
+            $this->get('session')->getFlashBag()->add('success', 'Project ' . $project->getName() . ' (' . $project->getVisibility() . ') creation as been completed!');
         } else {
-            $this->get('session')->getFlashBag()->add('error', 'Project $project->getName() ($project->getVisibility()) could not be completed... Please check form values and retry');
+            $this->get('session')->getFlashBag()->add('error', 'Project ' . $project->getName() . ' (' . $project->getVisibility() . ') could not be completed... Please check form values and retry');
         }
     
         return $this->redirect($this->generateUrl('projects_edit', array('visibility' => $project->getVisibility(), 'name' => $project->getName())));
@@ -193,11 +199,11 @@ class ProjectController extends Controller
             
             /* @var $uploader FileUploader */
             $uploader = $this->get('mylen.file_uploader');
-            $uploadDir = $uploader->getFileBasePath();
             
-            $project->setPath($projectService->getDataDir($project, $uploadDir));
+            $project->setKey($key);
+            $project->setPath($projectService->getDataDir($project, $uploader->getFileBasePath()));
             $project->setWebPath($projectService->getDataDir($project, $uploader->getWebBasePath()));
-            $project->setTmp($uploadDir . '/tmp/' . $key . '/originals');
+            $project->setTmp($projectService->getTmpDir($project, $uploader->getFileBasePath()));
             
             // Populate project with documents and so forth
             $project = $projectService->populate($project);
@@ -213,6 +219,9 @@ class ProjectController extends Controller
             $projectDao->remove($project_old);
             
             $projectDao->flush();
+            
+            // clean up tmp dir
+            $projectService->removeDir($project->getTmp());
             
             $this->get('session')->getFlashBag()->add('success', 'Project ' . $project->getName() . ' (' . $project->getVisibility() . ') creation as been completed!');
             $this->get('session')->getFlashBag()->add('success', 'Project ' . $project_old->getName() . '(' . $project_old->getVisibility() . ') removal as been completed!');
@@ -294,10 +303,6 @@ class ProjectController extends Controller
      */
     protected function handleRequest($key)
     {
-        if (!preg_match('/^\d+$/', $key)) {
-            throw new \Exception("Bad edit id");
-        }
-        
         /* @var $uploader FileUploader */
         $uploader = $this->get('mylen.file_uploader');
         $uploader->setUploadHandlerFactory(new XmlUploadHandlerFactory($this->container->getParameter('app.event_xsd')));        
@@ -311,7 +316,7 @@ class ProjectController extends Controller
      */
     public function putAction($key)
     {
-        /* @var $uploader IResponseContainer */
+        /* @var $uploader XmlUploadHandler */
         $uploader = $this->handleRequest($key);
         $uploader->post();
         
@@ -342,7 +347,16 @@ class ProjectController extends Controller
         /* @var $uploader IResponseContainer */
         $uploader = $this->handleRequest($key);
         $uploader->get();
-
+        
+        /* @var $projectDao ProjectDao */
+        $documentDao = $this->get('app.document_dao');
+        $files = json_decode($uploader->getBody());
+        foreach ($files as $file) {
+            $document = $documentDao->getByKey($this->getUser(), str_replace('.xml', '', $file->name));
+            $file->name = $document->getName();           
+        }
+        $uploader->setBody(json_encode($files));
+        
         return new Response($uploader->getBody(), $uploader->getType(), $uploader->getHeader());
     }
 

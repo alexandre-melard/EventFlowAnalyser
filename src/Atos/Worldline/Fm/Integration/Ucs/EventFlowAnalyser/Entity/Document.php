@@ -39,6 +39,12 @@ class Document implements VisitorHost, Entity
     private $name;
 
     /**
+     * @ORM\Column(type="string", length=255)
+     * @Assert\NotBlank
+     */
+    private $shaKey;
+
+    /**
      * @ORM\Column(type="string", length=255, nullable=true)
      */
     private $path;
@@ -84,12 +90,40 @@ class Document implements VisitorHost, Entity
      * @ORM\PrePersist()
      * @ORM\PreUpdate()
      */
-    public function commit()
+    public function preUpload()
     {
+        // do whatever you want to generate a unique name
+        $this->setKey(sha1(uniqid(mt_rand(), true)));
+        $filename = $this->getKey() . '.' . pathinfo($this->path, PATHINFO_EXTENSION);
+        
         // set the path right as the tmp folder will be remove after persist.
-        $this->path = $this->tmp;
+        $tmp = $this->path;
+        $this->setPath(dirname($this->tmp) . '/' . $filename);
+        $this->setUri(dirname($this->uri) . '/' . $filename);
+        $this->setTmp($tmp);
     }
 
+    /**
+     * @ORM\PostPersist()
+     * @ORM\PostUpdate()
+     */
+    public function upload()
+    {
+        // if there is an error when moving the file, an exception will
+        // be automatically thrown by move(). This will properly prevent
+        // the entity from being persisted to the database on error
+        $fs = new Filesystem();
+        $fs->rename($this->getTmp(), $this->getPath());
+    }
+
+    /**
+     * @ORM\PostRemove()
+     */
+    public function removeUpload()
+    {
+        $fs = new Filesystem();
+        $fs->remove($this->getPath());
+    }
     /**
      * @return IntegerType
      */
@@ -97,6 +131,7 @@ class Document implements VisitorHost, Entity
     {
         return $this->id;
     }
+
     /**
      *
      * @param IntegerType $id
@@ -105,7 +140,7 @@ class Document implements VisitorHost, Entity
     {
         $this->id = $id;
     }
-    
+
     /**
      * Get document's name
      * @return string
@@ -204,6 +239,16 @@ class Document implements VisitorHost, Entity
     public function setUri($uri)
     {
         $this->uri = $uri;
+    }
+
+    public function getKey()
+    {
+        return $this->shaKey;
+    }
+
+    public function setKey($key)
+    {
+        $this->shaKey = $key;
     }
 
 }

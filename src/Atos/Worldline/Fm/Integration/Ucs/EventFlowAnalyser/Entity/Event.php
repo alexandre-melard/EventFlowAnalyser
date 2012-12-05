@@ -85,5 +85,9 @@ class Event  implements VisitorHost, Entity
     {
         $this->project = $project;
     }
-
+    
+    public function getShortEvent()
+    {
+        return str_replace("CORE_MSG_TYPE_", "", $this->getType());
+    }
 }

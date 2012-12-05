@@ -90,12 +90,12 @@ class EventFlowService extends CacheAware
             foreach ($parser->getEventIns() as $eventIn) {
                 /* @var $eventIn EventIn */
                 if ($eventIn->getType() === $event->getType()) {
-                    array_push($files, array("direction" => "in", "name" => basename($parser->getDocument()->getPath(), '.xml')));
+                    array_push($files, array("direction" => "input", "document" => $parser->getDocument()));
                 }
                 foreach ($eventIn->getEventOuts() as $eventOut) {
                     /* @var $eventOut EventOut */
                     if ($eventOut->getType() === $event->getType()) {
-                        array_push($files, array("direction" => "out", "name" => basename($parser->getDocument()->getPath(), '.xml')));
+                        array_push($files, array("direction" => "output", "document" => $parser->getDocument()));
                     }
                 }
             }
@@ -156,10 +156,4 @@ class EventFlowService extends CacheAware
 
         return $resParsers;
     }
-
-    public function getShortEvent($event)
-    {
-        return str_replace("CORE_MSG_TYPE_", "", $event);
-    }
-
 }

@@ -37,6 +37,11 @@ class Project implements Entity, VisitorHost
     private $name;
 
     /**
+     * @ORM\Column(type="string", length=255)
+     */
+    private $shaKey;
+
+    /**
      * @ORM\Column(type="string", length=8)
      * @Assert\NotBlank
      */
@@ -109,15 +114,6 @@ class Project implements Entity, VisitorHost
     public function preUpload()
     {
         $this->projectService->createDir($this->getPath(), true);
-    }
-
-    /**
-     * @ORM\PostPersist()
-     * @ORM\PostUpdate()
-     */
-    public function upload()
-    {
-        $this->projectService->mirror($this->getTmp(), $this->getPath(), true);
     }
 
     /**
@@ -325,6 +321,16 @@ class Project implements Entity, VisitorHost
     public function setWebPath($webPath)
     {
         $this->webPath = $webPath;
+    }
+
+    public function getKey()
+    {
+        return $this->shaKey;
+    }
+
+    public function setKey($key)
+    {
+        $this->shaKey = $key;
     }
 
 }
