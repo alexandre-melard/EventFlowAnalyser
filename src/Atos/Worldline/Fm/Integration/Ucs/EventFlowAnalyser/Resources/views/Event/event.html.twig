@@ -1,52 +1,37 @@
+{% import "UcsEventFlowAnalyser:Tools:macros.html.twig" as macros %}
 {% extends "UcsEventFlowAnalyser::layout.html.twig" %}
 
-{% macro display_events(events, title, visibility, name) %}
-    <div class="span5 offset1">
-        <h4 class="center">{{ title }} ({{ events|length|e }})</h4>
-        <ul class="unstyled">
-            {% if events|length > 0 %}
-                {% for event in events %}
-                    <li>
-                        <a  rel="tooltip-left" 
-                            title="See Event Flow" 
-                            href="{{ asset('/events/event/' ~ visibility ~ '/' ~ name ~ '/' ~ event.event.type) }}">
-                            <i class="icon-chevron-right"></i> {{ event.event.type|slice(14)|e }}
-                        </a>
-                    </li>
-                {% endfor %}
-            {% else %}
-                none
-            {% endif %}
-        </ul>
-    </div>
-{% endmacro display_events %}
+{% block title "UCS Event Flow Analyser: Event {{ name }}" %}
 
-{% block title "UCS Event Flow Analyser: All Events" %}
+{% macro display_documents(title, documents) %}
+        <div class="span5 offset1">
+            <h4 class="center">{{ title|title }}</h4>
+            <ul class="unstyled">
+            {% for document in documents %}
+                <li>
+                    <i class="icon-chevron-right"></i> 
+                        <a  rel="popup" 
+                            title="{{ document.name|title }}"  
+                            href="{{ asset(document.uri) }}">
+                            {{ document.name|title }}
+                        </a>
+                </li>
+            {% endfor %}
+            </ul>
+        </div>
+{% endmacro display_documents %}
 
 {% block article %}
 <article xmlns="http://www.w3.org/1999/html">
     <div class="row-fluid">
-        {{ _self.display_events(parents, "parent", visibility, name) }}
-        {{ _self.display_events(children, "children", visibility, name) }}
+        {{ macros.display_events(parents, "parent", visibility, name) }}
+        {{ macros.display_events(children, "children", visibility, name) }}
     </div>
     <hr/>
     <div class="row-fluid">
-        {% for dir in ["output", "input"] %}
-        <div class="span5 offset1">
-            <h4 class="center">{{ dir|title }}</h4>
-            <ul class="unstyled">
-            {% for file in files %}
-                {% if ( dir == file.direction ) %}
-                <li>
-                    <i class="icon-chevron-right"></i> 
-                    <a href="{{ asset(file.document.uri) }}" >{{ file.document.name|title }}</a>
-                </li>
-                {% endif %}
-            {% endfor %}
-            </ul>
-        </div>
-        {% endfor %}
-    </div>
+        {{ _self.display_documents("input", input) }}
+        {{ _self.display_documents("output", output) }}
     <hr/>
+    {{ macros.modal_xml() }}
 </article>
 {% endblock %}

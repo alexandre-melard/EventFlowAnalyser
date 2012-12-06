@@ -3,24 +3,11 @@ imports:
 services:
   app.parser:
     class: Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Service\ParserService
-    arguments: ['@cache', '@logger']
-    calls:
-        - [ setEventDao, [ '@app.event_dao' ] ]
-        - [ setEventInDao, [ '@app.event_in_dao' ] ]
-        - [ setEventOutDao, [ '@app.event_out_dao' ] ]
-        - [ setParserDao, [ '@app.parser_dao' ] ]
+    arguments: ['@logger']
 
   app.project:
     class: Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Service\ProjectService
-    arguments: ['@cache', '@logger']
+    arguments: ['@logger']
     calls:
         - [ setParserService, [ '@app.parser' ] ]
-
-  app.file:
-    class: Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Service\FileService
-    arguments: ['@cache', '@logger']
-
-  app.event_flow:
-    class: Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Service\EventFlowService
-    arguments: ['@cache', '@logger']
    

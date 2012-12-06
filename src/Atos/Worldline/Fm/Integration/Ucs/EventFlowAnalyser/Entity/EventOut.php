@@ -39,11 +39,6 @@ class EventOut implements Entity, VisitorHost
      */
     private $eventIn;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\EventFlow", inversedBy="parents")
-     */
-    private $eventFlow;
-
     public function accept(VisitorGuest $guest)
     {
         $guest->visit($this);
@@ -95,16 +90,6 @@ class EventOut implements Entity, VisitorHost
     public function setEventIn(EventIn $eventIn)
     {
         $this->eventIn = $eventIn;
-    }
-
-    public function getEventFlow()
-    {
-        return $this->eventFlow;
-    }
-
-    public function setEventFlow(EventFlow $eventFlow)
-    {
-        $this->eventFlow = $eventFlow;
     }
 
 }

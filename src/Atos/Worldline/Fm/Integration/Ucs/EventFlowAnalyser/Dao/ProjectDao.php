@@ -20,9 +20,10 @@ class ProjectDao extends AbstractDao
 
         $qb = $this->em->createQueryBuilder();
         return $qb
-            ->select('Project', 'documents')
+            ->select('Project', 'documents', 'events')
             ->from('UcsEventFlowAnalyser:Project', 'Project')
             ->leftJoin('Project.documents', 'documents')
+            ->leftJoin('Project.events', 'events')
             ->where($qb->expr()->andx(
                     $qb->expr()->eq('Project.name', ':name'),
                     $qb->expr()->eq('Project.visibility', ':visibility'),

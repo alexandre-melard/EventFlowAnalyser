@@ -2,6 +2,8 @@
 
 namespace Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Controller;
 
+use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Service\EventFlowService;
+
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Ext\Uploader\UploadHandler;
 
 use Doctrine\ORM\NoResultException;
@@ -27,7 +29,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Mylen\JQueryFileUploadBundle\Services\FileUploader;
 
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Service\ProjectService;
-use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Service\FileService;
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Service\ParserService;
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Project;
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Document;
@@ -122,7 +123,7 @@ class ProjectController extends Controller
             
             // Populate project with documents and so forth
             $project = $projectService->populate($project);
-    
+                
             /* @var $projectDao ProjectDao */
             $projectDao = $this->get('app.project_dao');
             $projectDao->persist($project);

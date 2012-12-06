@@ -44,11 +44,6 @@ class EventIn implements Entity, VisitorHost
      */
     private $parser;
 
-    /**
-     * @ORM\ManyToOne(targetEntity="Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\EventFlow", inversedBy="children")
-     */
-    private $eventFlow;
-
     public function accept(VisitorGuest $guest)
     {
         if(isset($this->eventOuts)) {
@@ -109,6 +104,9 @@ class EventIn implements Entity, VisitorHost
         $this->eventOuts = $eventOuts;
     }
 
+    /**
+     * @return Event
+     */
     public function getEvent()
     {
         return $this->event;
@@ -132,16 +130,6 @@ class EventIn implements Entity, VisitorHost
     public function setParser(Parser $parser)
     {
         $this->parser = $parser;
-    }
-
-    public function getEventFlow()
-    {
-        return $this->eventFlow;
-    }
-
-    public function setEventFlow(EventFlow $eventFlow)
-    {
-        $this->eventFlow = $eventFlow;
     }
 
 }

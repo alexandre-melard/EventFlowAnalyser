@@ -35,7 +35,17 @@ class Event  implements VisitorHost, Entity
      * @ORM\ManyToOne(targetEntity="Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Project", inversedBy="events")
      */
     private $project;
-
+    
+    /**
+     * @ORM\ManyToMany(targetEntity="Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\EventIn")
+     */
+    private $parents;
+    
+    /**
+     * @ORM\ManyToMany(targetEntity="Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\EventOut")
+     */
+    private $children;
+    
     public function __construct($type)
     {
         $this->type = $type;
@@ -73,9 +83,17 @@ class Event  implements VisitorHost, Entity
      */
     public function accept(VisitorGuest $guest)
     {
+        if (isset($this->eventFlow)) {
+            $this->eventFlow->accept($guest);
+        }
         $guest->visit($this);
     }
-
+    
+    public function getShortEvent()
+    {
+        return str_replace("CORE_MSG_TYPE_", "", $this->getType());
+    }
+    
     public function getProject()
     {
         return $this->project;
@@ -86,8 +104,56 @@ class Event  implements VisitorHost, Entity
         $this->project = $project;
     }
     
-    public function getShortEvent()
+    /**
+     *
+     * @return EventIn
+     */
+    public function getParents()
     {
-        return str_replace("CORE_MSG_TYPE_", "", $this->getType());
+        return $this->parents;
     }
+    
+    public function setParents($parents)
+    {
+        $this->parents = $parents;
+    }
+    
+    public function addParent(EventIn $parent) {
+        $this->parents[$parent->getType()] = $parent;
+    }
+    
+    public function removeParent(EventIn $parent) {
+        unset($this->parents[$parent->getType()]);
+    }
+    
+    public function getParent(EventIn $parent) {
+        return $this->parents[$parent->getType()];
+    }
+    
+    /**
+     *
+     * @return EventOut[]
+     */
+    public function getChildren()
+    {
+        return $this->children;
+    }
+    
+    public function setChildren($children)
+    {
+        $this->children = $children;
+    }
+    
+    public function addChild(EventOut $child) {
+        $this->children[$child->getType()] = $child;
+    }
+    
+    public function removeChild(EventOut $child) {
+        unset($this->children[$child->getType()]);
+    }
+    
+    public function getChild(EventOut $child) {
+        return $this->children[$child->getType()];
+    }
+    
 }

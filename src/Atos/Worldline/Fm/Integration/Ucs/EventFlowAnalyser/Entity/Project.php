@@ -279,18 +279,6 @@ class Project implements Entity, VisitorHost
     }
 
     /**
-     * return associated event
-     * @param string $type
-     */
-    public function getEvent($type)
-    {
-        if (!isset($this->events)) {
-            throw new \Exception("need to instanciate events first");
-        }
-        return $this->events[$type];
-    }
-
-    /**
      * add event to associated array event
      * @param Event $event
      * @return Event

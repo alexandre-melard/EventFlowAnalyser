@@ -2,7 +2,7 @@
 
 <script type="text/javascript">
     <!-- Bootstrap JS -->
-    $('a[rel="popup"]').live('click', function(e) {
+    $('*[rel="popup"]').live('click', function(e) {
         e.preventDefault();
         $('#modal-process').find('h3').html($(this).attr("title"));
         $('#modal-link').attr("href", $(this).attr("href"));
@@ -18,16 +18,16 @@
             $('#modal-process').modal('show');
         });
     });
-    $("a[rel=tooltip-right]").tooltip( {
+    $("*[rel=tooltip-right]").tooltip( {
         animation:true,
         placement: "right"
         });
-    $("a[rel=tooltip-left]").tooltip( {
+    $("*[rel=tooltip-left]").tooltip( {
         animation:true,
         placement: "left"
         });
-    $("a[rel=tooltip-top]").tooltip( {
+    $("*[rel=tooltip-top]").tooltip( {
         animation:true,
-        placement: "top"
+        placement: 'top'
         });
 </script>

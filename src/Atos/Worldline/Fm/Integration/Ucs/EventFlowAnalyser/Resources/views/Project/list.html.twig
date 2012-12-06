@@ -1,95 +1,11 @@
+{% import "UcsEventFlowAnalyser:Tools:macros.html.twig" as macros %}
 {% extends "UcsEventFlowAnalyser::layout.html.twig" %}
 
 {% block title "UCS Event Flow Analyser: All Events" %}
 
-{% macro display_projects(projects, visibility) %}
-    <div class="bs-docs-grid">
-        <div class="row-fluid show-grid">
-            <div class="span12"><h1>{{ visibility|title }}</h1></div>
-        </div>
-        {% if projects|length == 0 %}
-        <div class="span12"><p class="text-info"><i class="icon-warning-sign"></i> No project to show.</p></div>
-        {% else %}                
-            {% for project in projects %}
-                {% if loop.first %}
-        <div class="row-fluid show-grid">
-                {% endif %}
-            <div class="span6">
-                <div class="row-fluid show-grid">
-                    <div class="span12">
-                        <h2>
-                            <a    class="btn btn-small btn-warning"
-                                  rel="tooltip-top"         
-                                  title="Edit project"
-                                  href="{{ asset('/projects/edit/' ~ visibility ~ '/' ~ project.name) }}">
-                                <i class="icon-pencil icon-white"></i>
-                            </a>
-                            <a    class="btn btn-small btn-danger" 
-                                  rel="tooltip-top"         
-                                  title="Remove project"
-                                  href="{{ asset('/projects/delete/' ~ visibility ~ '/' ~ project.name) }}">
-                                <i class="icon-trash icon-white"></i>
-                            </a>
-                            <a    class="btn btn-small btn-primary" 
-                                  rel="tooltip-top"         
-                                  title="Show events"
-                                  href="{{ asset('/events/' ~ visibility ~ '/' ~ project.name ~ '/all') }}">
-                                <i class="icon-list icon-white"></i>
-                            </a>
-                            {{ project.name|title }}
-                        </h2>
-                    </div>
-                </div>
-                {% if project.documents|length == 0 %}
-                <div class="span12"><p class="text-info"><i class="icon-warning-sign"></i> No documents imported yet.</p></div>
-                {% else %}
-                <div class="row-fluid show-grid">
-                    {% set docsLength = project.documents|length %}
-                    {% set firsts = project.documents|slice(0,docsLength/2) %}                    
-                    {% set lasts = project.documents|slice(docsLength/2, docsLength) %}                    
-                    {% for docs in [firsts, lasts] %}
-                    <div class="span6">
-                        {% for  document in docs %}
-                        <a href="{{ asset(document.uri) }}" rel="tooltip-left" title="Download {{ document.name|e }}" download="{{ document.name|e }}">
-                            <i class="icon-download"></i>
-                        </a>
-                        <a rel="popup" title="{{ document.name|e }}" href="{{ asset(document.uri) }}">{{ document.name|e }}</a>
-                        <br>
-                        {% endfor %}
-                    </div>
-                    {% endfor %}
-                </div>
-                {% endif %}
-            </div>
-                {% if loop.last or (loop.index % 2 == 0 ) %}
-        </div>
-        <div class="row-fluid show-grid">
-            <div class="span12"><hr></div>
-        </div>
-                {% endif %}
-                {% if not loop.last and (loop.index % 2 == 0 ) %}
-        <div class="row-fluid show-grid">
-                {% endif %}
-            {% endfor %}
-        {% endif %}
-    </div>
-    <div class="modal fade" id="modal-process">
-      <div class="modal-header">
-        <a class="close" data-dismiss="modal">&times;</a>
-        <h3>Modal header</h3>
-      </div>
-      <div class="modal-body" id="modal-body" style="white-space:pre">
-        <pre id="modal-content" class="prettyprint lang-xml">One fine body&hellip;</pre>
-      </div>
-      <div class="modal-footer">
-        <a id="modal-link" href="#" class="btn btn-primary" download="">Download</a>
-        <a href="#" class="btn" data-dismiss="modal">Close</a>
-      </div>
-    </div>
-{% endmacro display_projects %}
-
 {% block article %}
     <article>
-        {{ _self.display_projects(projects, visibility) }}
-    </article>
+        {{ macros.display_projects(projects, visibility) }}
+        {{ macros.modal_xml() }}
+        </article>
 {% endblock %}

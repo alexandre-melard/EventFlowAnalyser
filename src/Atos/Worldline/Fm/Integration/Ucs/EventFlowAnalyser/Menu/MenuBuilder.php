@@ -2,27 +2,17 @@
 
 namespace Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Menu;
 
-use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Event;
-
-use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Project;
-
-use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Dao\ProjectDao;
-
-use Symfony\Component\Filesystem\Filesystem;
-
-use Symfony\Component\Finder\SplFileInfo;
-
-use Symfony\Component\Finder\Finder;
-
-use Liip\ThemeBundle\ActiveTheme;
-use Knp\Menu\FactoryInterface;
 use Symfony\Component\Security\Core\SecurityContextInterface;
-use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\HttpFoundation\Request;
+
+use Knp\Menu\FactoryInterface;
 use Mopa\Bundle\BootstrapBundle\Navbar\AbstractNavbarMenuBuilder;
-use Atos\Worldline\Fm\UserBundle\Entity\User;
 use Monolog\Logger;
-use Doctrine\Common\Cache\Cache;
+
+use Atos\Worldline\Fm\UserBundle\Entity\User;
+use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Event;
+use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Project;
+use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Dao\ProjectDao;
 
 /**
  * An example howto inject a default KnpMenu to the Navbar
@@ -41,14 +31,6 @@ class MenuBuilder extends AbstractNavbarMenuBuilder
     /* @var $logger Logger */
     protected $logger;
     
-    protected $data_dir;
-
-    /* @var $file FileService*/
-    protected $file;
-    
-    /* @var $request Request */
-    protected $request;
-
     /* @var $projectDao ProjectDao */
     protected $projectDao;        
     
@@ -56,7 +38,6 @@ class MenuBuilder extends AbstractNavbarMenuBuilder
             FactoryInterface $factory, 
             Logger $logger, 
             SecurityContextInterface $securityContext,
-            $data_dir,
             ProjectDao $projectDao
             )
     {
@@ -65,7 +46,6 @@ class MenuBuilder extends AbstractNavbarMenuBuilder
         $this->logger = $logger;
         $this->isLoggedIn = $securityContext->isGranted('IS_AUTHENTICATED_FULLY');
         $this->user = $securityContext->getToken()->getUser();
-        $this->data_dir = $data_dir;
         $this->projectDao = $projectDao;        
     }
 

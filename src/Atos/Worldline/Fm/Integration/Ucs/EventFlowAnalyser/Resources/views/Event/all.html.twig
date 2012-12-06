@@ -1,3 +1,4 @@
+{% import "UcsEventFlowAnalyser:Tools:macros.html.twig" as macros %}
 {% extends "UcsEventFlowAnalyser::layout.html.twig" %}
 
 {% block title "UCS Event Flow Analyser: All Events" %}
@@ -7,8 +8,8 @@
         <ul class="unstyled">
             {% for event in events|slice(start,end) %}
                 <li>
-                    <a href="{{ asset('/events/event/' ~ visibility ~ '/' ~ name ~ '/' ~ event) }}">
-                        <i class="icon-chevron-right"></i> {{ event|slice(14)|e }}
+                    <a href="{{ asset('/events/event/' ~ visibility ~ '/' ~ name ~ '/' ~ event.type) }}">
+                        <i class="icon-chevron-right"></i> {{ event.type|slice(14)|e }}
                     </a>
                 </li>
             {% endfor %}

@@ -5,7 +5,6 @@ services:
       - '@knp_menu.factory'
       - "@logger"
       - '@security.context'
-      - '%app.data_dir%'
       - '@app.project_dao'
     tags:
         - { name: monolog.logger, channel: app }

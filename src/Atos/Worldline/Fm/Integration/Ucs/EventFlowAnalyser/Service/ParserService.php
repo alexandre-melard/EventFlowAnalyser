@@ -8,61 +8,29 @@
  */
 namespace Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Service;
 
-use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Project;
-
-use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Dao\ParserDao;
-use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Dao\EventOutDao;
-use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Dao\EventInDao;
-use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Dao\EventDao;
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Event;
-use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Document;
-use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\DependencyInjection\CacheAware;
-
-use Doctrine\Common\Cache\ApcCache;
-use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Parser;
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\EventIn;
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\EventOut;
-use Monolog\Logger;
-use Doctrine\Common\Cache\Cache;
-use Doctrine\ORM\NoResultException;
+use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Document;
+use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Parser;
+use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Project;
 
-class ParserService extends CacheAware
+use Monolog\Logger;
+
+class ParserService
 {
     /**
      * @var Logger
      */
     protected $logger;
-
-    /**
-     * @var ParserDao
-     */
-    protected $parserDao;
-
-    /**
-     * @var EventDao
-     */
-    protected $eventDao;
-
-    /**
-     * @var EventInDao
-     */
-    protected $eventInDao;
-
-    /**
-     * @var EventOutDao
-     */
-    protected $eventOutDao;
-    
    
     /**
      * 
-     * @param Cache $c
      * @param Logger $l
      * @param string $x
      */
-    public function __construct(Cache $c, Logger $l)
+    public function __construct(Logger $l)
     {
-        parent::__construct($c);
         $this->logger = $l;
         $this->events = array();
     }
@@ -75,7 +43,8 @@ class ParserService extends CacheAware
      */
     protected function getEvent(Project $project, $type) {
         try {
-            $event = $project->getEvent($type);
+            $events = $project->getEvents();
+            $event = $events[$type];
         } catch ( \Exception $e ) {
             $event = new Event($type);
             $event->setProject($project);
@@ -97,17 +66,19 @@ class ParserService extends CacheAware
         $parser->getDocument()->setName($xml->header->process);
         if (null != $xml->events->in) {
             foreach ($xml->events->in as $in) {
-                $event = $this->getEvent($parser->getDocument()->getProject(), (string) $in->event);
+                $eventInEvent = $this->getEvent($parser->getDocument()->getProject(), (string) $in->event);
                 $eventIn = new EventIn();
-                $eventIn->setEvent($event);
+                $eventIn->setEvent($eventInEvent);
                 $eventIn->setParser($parser);
                 if (null !== $in->out->event) {
                     foreach ($in->out->event as $eventType) {
-                        $event = $this->getEvent($parser->getDocument()->getProject(), (string) $eventType);
+                        $eventOutEvent = $this->getEvent($parser->getDocument()->getProject(), (string) $eventType);
                         $eventOut = new EventOut();
-                        $eventOut->setEvent($event);
+                        $eventOut->setEvent($eventOutEvent);
                         $eventOut->setEventIn($eventIn);
                         $eventIn->addEventOut($eventOut);
+                        $eventInEvent->addChild($eventOut);
+                        $eventOutEvent->addParent($eventIn);
                     }
                 }
                 $parser->addEventIn($eventIn);
@@ -136,42 +107,6 @@ class ParserService extends CacheAware
         }
 
         return $documents;
-    }
-
-    /**
-     * 
-     * @param EventDao $dao
-     */
-    public function setEventDao(EventDao $dao)
-    {
-        $this->eventDao = $dao;
-    }
-
-    /**
-     * 
-     * @param EventInDao $dao
-     */
-    public function setEventInDao(EventInDao $dao)
-    {
-        $this->eventInDao = $dao;
-    }
-
-    /**
-     * 
-     * @param EventOutDao $dao
-     */
-    public function setEventOutDao(EventOutDao $dao)
-    {
-        $this->eventOutDao = $dao;
-    }
-
-    /**
-     * 
-     * @param ParserDao $parserDao
-     */
-    public function setParserDao(ParserDao $parserDao)
-    {
-        $this->parserDao = $parserDao;
     }
 
 }

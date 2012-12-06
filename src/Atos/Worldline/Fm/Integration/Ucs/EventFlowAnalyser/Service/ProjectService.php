@@ -1,16 +1,12 @@
 <?php
 namespace Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Service;
 
-use Doctrine\Common\Cache\Cache;
-
-use Doctrine\Common\Cache\ApcCache;
 use Monolog\Logger;
 
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 
-use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\DependencyInjection\CacheAware;
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\EventIn;
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\EventOut;
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Document;
@@ -18,7 +14,7 @@ use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Parser;
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Project;
 
 
-class ProjectService extends CacheAware
+class ProjectService
 {
     /**
      * @var Logger
@@ -37,13 +33,11 @@ class ProjectService extends CacheAware
     
     /**
      *
-     * @param Cache $c
      * @param Logger $l
      * @param string $x
      */
-    public function __construct(Cache $c, Logger $l)
+    public function __construct(Logger $l)
     {
-        parent::__construct($c);
         $this->logger = $l;
         $this->fs = new Filesystem();
     }
