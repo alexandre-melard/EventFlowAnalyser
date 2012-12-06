@@ -2,18 +2,9 @@
 
 namespace Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Controller;
 
-use Symfony\Component\Finder\Finder;
-
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Project;
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Event;
-use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\EventIn;
-use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\EventOut;
-use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\EventFlow;
-use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Document;
-use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Service\ParserService;
-use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Service\EventFlowService;
-use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Dao\ProjectDao;
-use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Dao\EventFlowDao;
+use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Service\EventService;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -21,87 +12,70 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 /**
  * @Route("/events")
+ *
  */
 class EventController extends Controller
 {
     /**
-     * @Route("/", name="events_default")
+     * @Route("/{projectName}", name="events_default")
      * @Template
      */
-    public function indexAction()
+    public function indexAction($projectName)
     {
+        /* @var $eventService EventService */
+        $eventService = $this->get('app.event');
+        
+        /* @var $project Project */
+        $project = $eventService->getProject($this->getUser(), $projectName);
+        
         return array(
-            "title" => "Events",
+            "title" => "Events related to " . $project->getName()
         );
     }
 
     /**
-     * @Route("/{visibility}/{name}/all", name="events_all")
+     * @Route("/{projectName}/all", name="events_all")
      * @Template
      */
-    public function allAction($visibility, $name)
+    public function allAction($projectName)
     {
-        /* @var $projectDao ProjectDao */
-        $projectDao = $this->get('app.project_dao');
-        
+        /* @var $eventService EventService */
+        $eventService = $this->get('app.event');
+                
         /* @var $project Project */
-        $project = $projectDao->get($this->getUser(), $visibility, $name);
-        
+        $project = $eventService->getProject($this->getUser(), $projectName);
+                
         return array(
             'title' => 'Display All Events',
-            'visibility' => $visibility,
-            'name' => $name,
+            'name' => $project->getName(),
             'events' => $project->getEvents()
         );
     }
 
     /**
-     * @Route("/event/{visibility}/{name}/{type}", name="events_event")
+     * @Route("/event/{projectName}/{type}", name="events_event")
      * @Template
      */
-    public function eventAction($visibility, $name, $type)
+    public function eventAction($projectName, $type)
     {
         $logger = $this->get('logger');
         
-        /* @var $projectDao ProjectDao */
-        $projectDao = $this->get('app.project_dao');
+        /* @var $eventService EventService */
+        $eventService = $this->get('app.event');
         
         /* @var $project Project */
-        $project = $projectDao->get($this->getUser(), $visibility, $name);
-
+        $project = $eventService->getProject($this->getUser(), $projectName);
+        
         /* @var $event Event */
-        foreach ($project->getEvents() as $current) {
-            if ( $current->getType() == $type ) {
-                $event = $current;        
-                break;        
-            }
-        }
-        $in = array();
-        $out = array();
-        foreach ($project->getDocuments() as $document) {
-            /* @var $document Document */
-            foreach ($document->getParser()->getEventIns() as $eventIn) {
-                /* @var $eventIn EventIn */
-                if($eventIn->getEvent()->getType() == $type) {
-                    $in[] = $document;
-                }
-                foreach ($eventIn->getEventOuts() as $eventOut) {
-                    /* @var $eventOut EventOut */
-                    if($eventOut->getEvent()->getType() == $type) {
-                        $out[] = $document;
-                    }
-                }
-            }
-        }
-//         $filesRes = $eventFlowService->files($parsers, $event);
+        $event = $eventService->getEventByType($project, $type);
+
+        list($in, $out) = $eventService->getDocumentsByEvent($event); 
         
         return array(
             'title' => $event->getShortEvent(),
-            'visibility' => $visibility,
-            'name' => $name,
-            'event' => $type,
-            'parents' => $event->getParents(),
-            'children' => $event->getChildren(),
+            'visibility' => $project->getVisibility(),
+            'name' => $project->getName(),
+            'event' => $event,
             'input' => $in,
             'output' => $out    
         );

@@ -2,6 +2,8 @@
 
 <script type="text/javascript">
     <!-- Bootstrap JS -->
+    prettyPrint();
+    
     $('*[rel="popup"]').live('click', function(e) {
         e.preventDefault();
         $('#modal-process').find('h3').html($(this).attr("title"));

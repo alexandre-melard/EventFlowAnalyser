@@ -14,9 +14,9 @@ class ProjectDao extends AbstractDao
      * @param User $user
      * @param string $visibility
      * @param string $name
-     * @return object
+     * @return Project
      */
-    function get(User $user, $visibility, $name) {
+    function get(User $user, $name) {
 
         $qb = $this->em->createQueryBuilder();
         return $qb
@@ -26,13 +26,11 @@ class ProjectDao extends AbstractDao
             ->leftJoin('Project.events', 'events')
             ->where($qb->expr()->andx(
                     $qb->expr()->eq('Project.name', ':name'),
-                    $qb->expr()->eq('Project.visibility', ':visibility'),
                     $qb->expr()->eq('Project.user', ':user')
                     )
             )
             ->setParameters( array (
                                     'name' => $name,
-                                    'visibility' => $visibility,
                                     'user' => $user->getId()
                                     )
                             )

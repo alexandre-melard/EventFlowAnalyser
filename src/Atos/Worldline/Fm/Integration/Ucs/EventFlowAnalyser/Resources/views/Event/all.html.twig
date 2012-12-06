@@ -3,25 +3,19 @@
 
 {% block title "UCS Event Flow Analyser: All Events" %}
 
-{% macro display_events(events, visibility, name, start, end) %}
-    <div class="span6">
-        <ul class="unstyled">
-            {% for event in events|slice(start,end) %}
-                <li>
-                    <a href="{{ asset('/events/event/' ~ visibility ~ '/' ~ name ~ '/' ~ event.type) }}">
-                        <i class="icon-chevron-right"></i> {{ event.type|slice(14)|e }}
-                    </a>
-                </li>
-            {% endfor %}
-        </ul>
-    </div>
-{% endmacro display_events %}
-
 {% block article %}
-    <article>
-        {{ _self.display_events(events, visibility, name, 0,(events|length)/2) }}
-        {% if ((events|length) >= 2) %}
-            {{ _self.display_events(events, visibility, name, (events|length)/2, events|length) }}
+<article>
+    <div class="row-fluid">
+        <div class="span5 offset1">
+        {% if ((events|length) > 10) %}
+            {{ macros.display_events(events, name, 0,(events|length)/2) }}
+        </div>
+        <div class="span5">
+            {{ macros.display_events(events, name, (events|length)/2, events|length) }}
+        {% else %}
+            {{ macros.display_events(events, name, 0, events|length) }}
         {% endif %}
-    </article>
+        </div>
+    </div>
+</article>
 {% endblock %}

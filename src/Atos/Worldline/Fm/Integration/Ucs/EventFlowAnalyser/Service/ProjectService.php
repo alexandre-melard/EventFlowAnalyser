@@ -1,11 +1,18 @@
 <?php
 namespace Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Service;
 
+
+use Atos\Worldline\Fm\UserBundle\Entity\User;
+
+use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Dao\ProjectDao;
+
 use Monolog\Logger;
 
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
+
+use Mylen\JQueryFileUploadBundle\Services\FileUploaderService;
 
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\EventIn;
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\EventOut;
@@ -25,11 +32,23 @@ class ProjectService
      *  @var ParserService 
      */
     private $parserService;
-
+    
+    /**
+     *  @var FileUploaderService
+     */
+    private $fileUploaderService;
+    
+    /**
+     *  @var ProjectDao
+     */
+    private $projectDao;
+    
     /**
      * @var Filesystem
      */
     private $fs;
+    
+    private $tmpDir;
     
     /**
      *
@@ -41,10 +60,40 @@ class ProjectService
         $this->logger = $l;
         $this->fs = new Filesystem();
     }
-    
+
+    /**
+     * @param ParserService $parserService
+     */
     public function setParserService(ParserService $parserService)
     {
         $this->parserService = $parserService;
+    }
+
+    /**
+     * @param FileUploaderService $fileUploader
+     */
+    public function setFileUploaderService(FileUploaderService $fileUploader)
+    {
+        $this->fileUploaderService = $fileUploader;
+    }
+    
+    /**
+     * @param ProjectDao $projectDao
+     */
+    public function setProjectDao(ProjectDao $projectDao)
+    {
+        $this->projectDao = $projectDao;
+    }
+    
+    /**
+     * Get project from context
+     * @param User $user
+     * @param string $visibility
+     * @param string $name
+     */
+    public function getProject(User $user, $name)
+    {
+        return $this->projectDao->get($user, $name);
     }
     
     /**
@@ -58,6 +107,10 @@ class ProjectService
         if ($this->parserService === null) {
             throw new Exception("parserService must be set");
         }
+        
+        /* initialize project */
+        $project = $this->init($project);
+        
         $finder = new Finder();
         $finder->in($project->getTmp());
         foreach ($finder as $file) {
@@ -70,6 +123,12 @@ class ProjectService
             $project->addDocument($document);
         }
         $project->setDocuments($this->parserService->parseDocuments($project->getDocuments()));
+        
+        $this->projectDao->persist($project);
+        $this->projectDao->flush();
+        
+        // clean up tmp dir
+        $this->removeDir($project->getTmp());
         
         return $project;
     }
@@ -90,35 +149,57 @@ class ProjectService
         $this->fs->remove($path);
     }
     
-    public function mirror($from, $to, $delete) 
+    public function init(Project $project) 
     {
-        $this->fs->mirror($from, $to);
-        if ($delete) {
-            $this->fs->remove($from);
-        }
+        $project->setProjectService($this);
+        $project->setPath($this->getDataDir($project));
+        $project->setWebPath($this->getWebDataDir($project));
+        $project->setTmp($this->getTmpDir($project));
+        
+        return $project;
     }
     
     /**
      * Copy documents from projects data dir to $to dir.
      * The documents are renamed to their origin value during the copy.
      * @param Project $project
-     * @param string $from
-     * @param string $to
      */
-    public function dataToTmp(Project $project, $from, $to)
+    public function dataToTmp(Project $project)
     {
         foreach ($project->getDocuments() as $document) {
             /* @var $document Document */
             $this->fs->copy(
                     $document->getPath(), 
-                    $to . DIRECTORY_SEPARATOR . $document->getOriginalName(),
+                    $this->tmpDir . DIRECTORY_SEPARATOR . $document->getOriginalName(),
                     true
                     );
         }
     }
     
-    public function getDataDir(Project $project, $uploadDir)
+    public function createTmp(Project $project)
     {
+        $uploadDir = $this->fileUploaderService->getFileBasePath();
+    
+        $fs = new Filesystem();
+        if ($project->getKey() === null) {
+            do {
+                // Build unique ID
+                $project->setKey(sha1(uniqid(mt_rand(), true)));
+            } while ($fs->exists($uploadDir . '/tmp/' . $project->getKey()));
+        }
+    
+        // Create temporary directory where the user will be able to play with the files
+        $project->setTmp($uploadDir . '/tmp/' . $project->getKey());
+        $fs->mkdir($project->getTmp());
+        $project->setTmp('/originals');
+        $fs->mkdir($project->getTmp());
+    
+        return $project;
+    }
+    
+    public function getDataDir(Project $project)
+    {
+        $uploadDir = $this->fileUploaderService->getFileBasePath();
         return 
             $uploadDir . 
             '/data/' . 
@@ -129,8 +210,22 @@ class ProjectService
             $project->getKey();
     }
     
-    public function getTmpDir(Project $project, $uploadDir)
+    public function getWebDataDir(Project $project)
     {
+        $uploadDir = $this->fileUploaderService->getWebBasePath();
+        return
+        $uploadDir .
+        '/data/' .
+        $project->getVisibility() .
+        '/' .
+        $project->getUser()->getSalt() .
+        '/' .
+        $project->getKey();
+    }
+    
+    public function getTmpDir(Project $project)
+    {
+        $uploadDir = $this->fileUploaderService->getFileBasePath();
         return
             $uploadDir .
             '/tmp/' .

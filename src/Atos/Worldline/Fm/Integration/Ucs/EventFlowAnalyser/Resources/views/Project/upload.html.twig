@@ -9,7 +9,7 @@
 
 {% block article %}
     {% block js_blueimp_form %}
-    <form id="fileupload" action="{{ asset('projects/' ~ actionTarget ~ '/' ~ key ) }}" method="POST" {{ form_enctype(form) }}>
+    <form id="fileupload" action="{{ asset('projects/' ~ actionTarget ) }}" method="POST" {{ form_enctype(form) }}>
         <div class="span12">
             {{ form_errors(form) }}
         
@@ -44,6 +44,6 @@
 {% block foot_script %}
     {% include "UcsEventFlowAnalyser::javascripts.html.twig" %}
     <script type="text/javascript">
-        $(blueimpUploader('{{ path('projects_put', { 'key': key }) }}'));
+        $(blueimpUploader('{{ path('projects_put', { 'key': form.key }) }}'));
     </script>
 {% endblock foot_script %}

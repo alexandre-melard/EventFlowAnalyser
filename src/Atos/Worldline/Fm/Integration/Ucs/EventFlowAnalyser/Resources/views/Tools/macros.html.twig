@@ -15,7 +15,42 @@
       </div>
     </div>
 {% endmacro modal_xml %}
-    
+
+{% macro display_events(events, name, start, end) %}
+    {% if events|length > 0 %}
+    <ul class="unstyled">
+        {% for event in events|slice(start,end) %}
+        <li>
+            <a href="{{ asset('/events/event/' ~ name ~ '/' ~ event.type) }}">
+                <i class="icon-chevron-right"></i> {{ event.type|slice(14)|e }}
+            </a>
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+        <p class="alert alert-info"><i class="icon-info-sign"></i> No event to display</p>
+    {% endif %}    
+{% endmacro display_events %}
+
+{% macro display_documents(documents) %}
+    {% if documents|length > 0 %}
+    <ul class="unstyled">
+    {% for document in documents %}
+        <li>
+            <i class="icon-chevron-right"></i> 
+                <a  rel="popup" 
+                    title="{{ document.name|title }}"  
+                    href="{{ asset(document.uri) }}">
+                    {{ document.name|title }}
+                </a>
+        </li>
+    {% endfor %}
+    </ul>
+    {% else %}
+        <p class="alert alert-info"><i class="icon-info-sign"></i> No document to display</p>
+    {% endif %}    
+{% endmacro display_documents %}
+
 {% macro display_projects(projects, visibility) %}
     <div class="bs-docs-grid">
         <div class="row-fluid show-grid">
@@ -35,19 +70,19 @@
                             <a    class="btn btn-small btn-warning"
                                   rel="tooltip-top"         
                                   title="Edit project"
-                                  href="{{ asset('/projects/edit/' ~ visibility ~ '/' ~ project.name) }}">
+                                  href="{{ asset('/projects/edit/' ~ project.name) }}">
                                 <i class="icon-pencil icon-white"></i>
                             </a>
                             <a    class="btn btn-small btn-danger" 
                                   rel="tooltip-top"         
                                   title="Remove project"
-                                  href="{{ asset('/projects/delete/' ~ visibility ~ '/' ~ project.name) }}">
+                                  href="{{ asset('/projects/delete/' ~ project.name) }}">
                                 <i class="icon-trash icon-white"></i>
                             </a>
                             <a    class="btn btn-small btn-primary" 
                                   rel="tooltip-top"         
                                   title="Show events"
-                                  href="{{ asset('/events/' ~ visibility ~ '/' ~ project.name ~ '/all') }}">
+                                  href="{{ asset('/events/' ~ project.name ~ '/all') }}">
                                 <i class="icon-list icon-white"></i>
                             </a>
                             {{ project.name|title }}
@@ -88,24 +123,3 @@
         {% endif %}
     </div>
 {% endmacro display_projects %}
-
-{% macro display_events(events, title, visibility, name) %}
-    <div class="span5 offset1">
-        <h4 class="center">{{ title }} ({{ events|length|e }})</h4>
-        <ul class="unstyled">
-            {% if events|length > 0 %}
-                {% for event in events %}
-                    <li>
-                        <a  rel="tooltip-left" 
-                            title="See Event Flow" 
-                            href="{{ asset('/events/event/' ~ visibility ~ '/' ~ name ~ '/' ~ event.event.type) }}">
-                            <i class="icon-chevron-right"></i> {{ event.event.type|slice(14)|e }}
-                        </a>
-                    </li>
-                {% endfor %}
-            {% else %}
-                none
-            {% endif %}
-        </ul>
-    </div>
-{% endmacro display_events %}
