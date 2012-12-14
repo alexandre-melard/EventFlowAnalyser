@@ -10,21 +10,10 @@
 {% block article %}
     {% block js_blueimp_form %}
     <form id="fileupload" action="{{ asset('projects/' ~ actionTarget ) }}" method="POST" {{ form_enctype(form) }}>
-        <div class="span12">
-            {{ form_errors(form) }}
-        
-            {{ form_label(form.name) }}
-            {{ form_widget(form.name) }}
-            {{ form_widget(form.visibility) }}
-        
-            {{ form_rest(form) }}
-        </div>
-        <h3>projects</h3>
+        {{ form_widget(form) }}
         <hr>
         {% include "JQueryFileUploadBundle::form.html.twig" %}
-        <div class="span12">
-            <button type="submit" class="btn btn-large btn-block">Save</button>
-        </div>
+        <button type="submit" class="btn btn-large btn-block">Save</button>
     </form>
     {% endblock js_blueimp_form %}
     <!-- modal-gallery is the modal dialog used for the image gallery -->
@@ -44,6 +33,6 @@
 {% block foot_script %}
     {% include "UcsEventFlowAnalyser::javascripts.html.twig" %}
     <script type="text/javascript">
-        $(blueimpUploader('{{ path('projects_put', { 'key': form.key }) }}'));
+        $(blueimpUploader('{{ path('projects_put', { 'key': key }) }}'));
     </script>
 {% endblock foot_script %}

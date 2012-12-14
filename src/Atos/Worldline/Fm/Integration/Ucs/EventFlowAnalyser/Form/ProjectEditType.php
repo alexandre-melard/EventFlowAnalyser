@@ -12,4 +12,10 @@ class ProjectEditType extends ProjectType
         $builder->add('original_name', 'hidden', array('mapped' => false));
         $builder->add('original_visibility', 'hidden', array('mapped' => false));
     }
+    
+    public function getName()
+    {
+        return 'edit_project';
+    }
+    
 }

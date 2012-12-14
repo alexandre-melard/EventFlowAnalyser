@@ -48,8 +48,6 @@ class ProjectService
      */
     private $fs;
     
-    private $tmpDir;
-    
     /**
      *
      * @param Logger $l
@@ -88,8 +86,8 @@ class ProjectService
     /**
      * Get project from context
      * @param User $user
-     * @param string $visibility
      * @param string $name
+     * @return Project
      */
     public function getProject(User $user, $name)
     {
@@ -102,7 +100,7 @@ class ProjectService
      * The definitive path will be set during the upload process.
      * @throws Exception
      */
-    public function populate(Project $project)
+    public function populate(Project $project, Finder $finder)
     {
         if ($this->parserService === null) {
             throw new Exception("parserService must be set");
@@ -111,7 +109,6 @@ class ProjectService
         /* initialize project */
         $project = $this->init($project);
         
-        $finder = new Finder();
         $finder->in($project->getTmp());
         foreach ($finder as $file) {
             /* @var $file SplFileInfo */
@@ -170,7 +167,7 @@ class ProjectService
             /* @var $document Document */
             $this->fs->copy(
                     $document->getPath(), 
-                    $this->tmpDir . DIRECTORY_SEPARATOR . $document->getOriginalName(),
+                    $project->getTmp() . DIRECTORY_SEPARATOR . $document->getOriginalName(),
                     true
                     );
         }
@@ -191,7 +188,7 @@ class ProjectService
         // Create temporary directory where the user will be able to play with the files
         $project->setTmp($uploadDir . '/tmp/' . $project->getKey());
         $fs->mkdir($project->getTmp());
-        $project->setTmp('/originals');
+        $project->setTmp($project->getTmp() . '/originals');
         $fs->mkdir($project->getTmp());
     
         return $project;

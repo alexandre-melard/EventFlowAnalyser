@@ -4,11 +4,12 @@ services:
   app.parser:
     class: Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Service\ParserService
     arguments: ['@logger']
+    scope: container
 
   app.project:
     class: Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Service\ProjectService
     arguments: ['@logger']
-    scope: request
+    scope: container
     calls:
         - [ setParserService, [ '@app.parser' ] ]
         - [ setFileUploaderService, [ '@mylen.file_uploader' ] ]
@@ -17,7 +18,7 @@ services:
   app.event:
     class: Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Service\EventService
     arguments: ['@logger']
-    scope: request
+    scope: container
     calls:
         - [ setProjectService, [ '@app.project' ] ]
         - [ setEventDao, [ '@app.event_dao' ] ]

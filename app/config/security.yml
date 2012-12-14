@@ -6,12 +6,19 @@ security:
     providers:
         fos_userbundle:
             id: fos_user.user_provider.username
+        in_memory:
+            memory:
+                users:
+                    test:  { password: sXMD1eRWhPVDkmOodLnT, roles: [ 'ROLE_USER' ] }
+                    admin: { password: sXMD1eRWhPVDkmOodLnT, roles: [ 'ROLE_ADMIN' ] }
 
     encoders:
         FOS\UserBundle\Model\UserInterface: sha512
+        Symfony\Component\Security\Core\User\User: plaintext
 
     firewalls:
         main:
+            http_basic:
             pattern: ^/
             form_login:
                 provider: fos_userbundle

@@ -28,10 +28,13 @@
         "mopa/bootstrap-bundle":"dev-master",
         "mopa/bootstrap-sandbox-bundle":"dev-master",
         "twitter/bootstrap":"master-dev",
-        "thomas-mcdonald/bootstrap-sass":"dev-master",
         "leafo/lessphp":"dev-master",
         "leafo/scssphp":"dev-master",
         "liip/theme-bundle":"dev-master",
+        "mockery/mockery": ">=0.7.2",
+        "davedevelopment/hamcrest-php": "dev-master",
+        "alom/graphviz": "dev-master",
+        "yethee/enum-bundle": "*",
         "mylen/jquery-file-upload-bundle":"*"
     },
     "scripts":{
@@ -40,16 +43,14 @@
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::clearCache",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installAssets",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installRequirementsFile",
-            "Mopa\\Bundle\\BootstrapBundle\\Composer\\ScriptHandler::postInstallSymlinkTwitterBootstrap",
-            "Mopa\\Bundle\\BootstrapBundle\\Composer\\ScriptHandler::postInstallSymlinkTwitterBootstrapSass"
+            "Mopa\\Bundle\\BootstrapBundle\\Composer\\ScriptHandler::postInstallSymlinkTwitterBootstrap"
         ],
         "post-update-cmd":[
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::buildBootstrap",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::clearCache",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installAssets",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installRequirementsFile",
-            "Mopa\\Bundle\\BootstrapBundle\\Composer\\ScriptHandler::postInstallSymlinkTwitterBootstrap",
-            "Mopa\\Bundle\\BootstrapBundle\\Composer\\ScriptHandler::postInstallSymlinkTwitterBootstrapSass"
+            "Mopa\\Bundle\\BootstrapBundle\\Composer\\ScriptHandler::postInstallSymlinkTwitterBootstrap"
         ]
     },
     "minimum-stability":"dev",

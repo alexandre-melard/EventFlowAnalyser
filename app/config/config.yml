@@ -13,7 +13,9 @@ imports:
 
 mopa_bootstrap:
     navbar: ~
-
+    # Prevent Fos User Forms to show legends with the 'Fos... title" 
+    form:
+        show_legend: false # default is true
 liip_theme:
     themes: ['bootstrap', 'initializr']
     active_theme: 'bootstrap'

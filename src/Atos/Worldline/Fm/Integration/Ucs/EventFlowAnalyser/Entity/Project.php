@@ -321,4 +321,14 @@ class Project implements Entity, VisitorHost
         $this->shaKey = $key;
     }
 
+    public function getShaKey()
+    {
+        return $this->shaKey;
+    }
+
+    public function setShaKey($shaKey)
+    {
+        $this->shaKey = $shaKey;
+    }
+
 }

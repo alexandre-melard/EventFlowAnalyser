@@ -14,7 +14,7 @@ class ProjectType extends AbstractType
         $builder->add('name', 'text', array('label' => 'Name'));
         $builder->add('path', 'hidden');
         $builder->add('tmp', 'hidden');
-        $builder->add('key', 'hidden');
+        $builder->add('shaKey', 'hidden');
         $builder->add(
                 'visibility', 
                 'choice',

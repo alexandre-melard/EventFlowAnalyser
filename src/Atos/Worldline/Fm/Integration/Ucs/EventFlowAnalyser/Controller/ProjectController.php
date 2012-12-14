@@ -50,7 +50,9 @@ class ProjectController extends Controller
      */
     public function indexAction()
     {
-        return array();
+        return array(
+                'title' => 'Accueil',
+                    );
     }
     
     /**
@@ -69,7 +71,12 @@ class ProjectController extends Controller
         
         $form = $this->createForm(new ProjectType(), $project);
         
-        return array('form' => $form->createView(), 'actionTarget' => 'create');
+        return array(
+                'title' => 'Create new project',
+                'form' => $form->createView(), 
+                'actionTarget' => 'create',
+                'key' => $project->getKey()
+                );
     }
 
     /**
@@ -92,7 +99,7 @@ class ProjectController extends Controller
             $projectService = $this->get('app.project');
             
             /* Populate project with documents and so forth */
-            $project = $projectService->populate($project);
+            $project = $projectService->populate($project, new Finder());
                 
             $this->get('session')->getFlashBag()->add('success', 'Project ' . $project->getName() . ' (' . $project->getVisibility() . ') creation as been completed!');
         } else {
@@ -127,7 +134,12 @@ class ProjectController extends Controller
         // mirror data_dir so that the user can edit current files
         $projectService->dataToTmp($project);
 
-        return array('form' => $form->createView(), 'actionTarget' => 'edit');
+        return array(
+                'title' => 'Edit ' . $project->getName(),
+                'form' => $form->createView(), 
+                'actionTarget' => 'edit',
+                'key' => $project->getKey()
+                );
     }
     
     /**
@@ -180,7 +192,7 @@ class ProjectController extends Controller
      * @Method({"GET"})
      * @Template
      */
-    public function deleteAction($name)
+    public function deleteProjectAction($name)
     {
         /* @var $projectDao ProjectDao */
         $projectDao = $this->get('app.project_dao');
@@ -201,7 +213,7 @@ class ProjectController extends Controller
         }
         $this->get('session')->getFlashBag()->add('success', 'Project ' . $name . '(' . $project->getVisibility() . ' has been removed successfully');
     
-        return $this->redirect($this->container->get('request')->getReferer());
+        return $this->redirect($this->container->get('request')->server->get("HTTP_REFERER"));
     }
     
     /**
@@ -218,6 +230,7 @@ class ProjectController extends Controller
         $private = $projectDao->getAllByVisibility($this->getUser(), 'private');
         
         return array(
+                'title' => 'List all projects',
                 'public' => $public,
                 'private' => $private
                 );
@@ -234,6 +247,7 @@ class ProjectController extends Controller
         $projectDao = $this->get('app.project_dao');
     
         return array(
+                'title' => 'List all ' . $visibility  . ' projects',
                 'projects'   => $projectDao->getAllByVisibility($this->getUser(), $visibility),
                 'visibility' => $visibility);
     }
@@ -327,7 +341,7 @@ class ProjectController extends Controller
      * @Route("/upload/{key}", name="projects_delete_file")
      * @Method("DELETE")
      */
-    public function deleteProjectAction($key)
+    public function deleteFileAction($key)
     {
         /* @var $uploader IResponseContainer */
         $uploader = $this->handleRequest($key);
