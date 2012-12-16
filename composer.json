@@ -35,7 +35,7 @@
         "davedevelopment/hamcrest-php": "dev-master",
         "yethee/enum-bundle": "*",
         "mylen/jquery-file-upload-bundle":"*",
-        "mylen/graphviz":"*"
+        "mylen/graphviz":"0.1.0"
     },
     "scripts":{
         "post-install-cmd":[
