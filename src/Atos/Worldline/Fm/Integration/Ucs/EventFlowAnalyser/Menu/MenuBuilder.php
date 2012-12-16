@@ -103,10 +103,16 @@ class MenuBuilder extends AbstractNavbarMenuBuilder
     public function createEventsMenu(Project $project, ItemInterface $menu)
     {
         $eventsMenu = $this->createDropdownMenuItem($menu, "Events", false, array('icon' => 'caret'));
+        $eventsMenu->addChild('All',
+                        array(
+                                'route' => 'events_all', 
+                                'routeParameters' => array('projectName' => $project->getName()),
+                                'extras' => array('icon' => 'cog')
+                                )
+                );
         foreach ($project->getEvents() as $event) {
             /* @var $event Event */
-            $eventsMenu
-                    ->addChild($event->getShortEvent(),
+            $eventsMenu->addChild($event->getShortEvent(),
                             array('route' => 'events_event', 'routeParameters' => array('projectName' => $project->getName(), 'type' => $event->getType(),),
                                     'extras' => array('icon' => 'cog')));
         }

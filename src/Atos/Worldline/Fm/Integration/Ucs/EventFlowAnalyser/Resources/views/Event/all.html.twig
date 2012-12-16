@@ -6,15 +6,40 @@
 {% block article %}
 <article>
     <div class="row-fluid">
-        <div class="span5 offset1">
-        {% if ((events|length) > 10) %}
-            {{ macros.display_events(events, name, 0,(events|length)/2) }}
-        </div>
-        <div class="span5">
-            {{ macros.display_events(events, name, (events|length)/2, events|length) }}
-        {% else %}
-            {{ macros.display_events(events, name, 0, events|length) }}
-        {% endif %}
+        <div class="accordion" id="accordion1">
+            <div class="accordion-group">
+                <div class="accordion-heading">
+                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion1" href="#events">
+                        Events
+                    </a>
+                </div>
+                <div id="events" class="accordion-body collapse out">
+                    <div class="accordion-inner">
+                        <div class="span5 offset1">
+                        {% if ((events|length) > 10) %}
+                            {{ macros.display_events(events, name, 0,(events|length)/2) }}
+                        </div>
+                        <div class="span5">
+                            {{ macros.display_events(events, name, (events|length)/2, events|length) }}
+                        {% else %}
+                            {{ macros.display_events(events, name, 0, events|length) }}
+                        {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-group">
+                <div class="accordion-heading">
+                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion1" href="#graph">
+                        Graph
+                    </a>
+                </div>
+                <div id="graph" class="accordion-body collapse in">
+                    <div class="accordion-inner center">
+                        {{ graph|raw }}
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </article>

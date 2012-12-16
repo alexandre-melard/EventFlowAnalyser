@@ -226,8 +226,8 @@ class ProjectController extends Controller
         /* @var $projectDao ProjectDao */
         $projectDao = $this->get('app.project_dao');
 
-        $public = $projectDao->getAllByVisibility($this->getUser(), 'public');
-        $private = $projectDao->getAllByVisibility($this->getUser(), 'private');
+        $public = $projectDao->getAllByUserByVisibility($this->getUser(), 'public');
+        $private = $projectDao->getAllByUserByVisibility($this->getUser(), 'private');
         
         return array(
                 'title' => 'List all projects',
@@ -248,7 +248,7 @@ class ProjectController extends Controller
     
         return array(
                 'title' => 'List all ' . $visibility  . ' projects',
-                'projects'   => $projectDao->getAllByVisibility($this->getUser(), $visibility),
+                'projects'   => $projectDao->getAllByUserByVisibility($this->getUser(), $visibility),
                 'visibility' => $visibility);
     }
     

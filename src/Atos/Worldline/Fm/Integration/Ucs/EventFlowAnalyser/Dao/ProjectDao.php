@@ -74,7 +74,7 @@ class ProjectDao extends AbstractDao
      * @param User $user
      * @return object
      */
-    function getAllByVisibility(User $user, $visibility) {
+    function getAllByUserByVisibility(User $user, $visibility) {
     
         $qb = $this->em->createQueryBuilder();
         return $qb
@@ -92,6 +92,23 @@ class ProjectDao extends AbstractDao
                         'user' => $user->getId()
                 )
         )
+        ->getQuery()
+        ->getResult();
+    }
+    
+    /**
+     * @param string $visibility
+     * @return array Project[]
+     */
+    function getAllByVisibility($visibility) {
+    
+        $qb = $this->em->createQueryBuilder();
+        return $qb
+        ->select('Project', 'documents')
+        ->from('UcsEventFlowAnalyser:Project', 'Project')
+        ->leftJoin('Project.documents', 'documents')
+        ->where($qb->expr()->eq('Project.visibility', ':visibility'))
+        ->setParameter('visibility', $visibility)
         ->getQuery()
         ->getResult();
     }

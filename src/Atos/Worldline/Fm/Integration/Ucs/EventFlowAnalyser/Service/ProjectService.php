@@ -95,6 +95,34 @@ class ProjectService
     }
     
     /**
+     * Get all project from context
+     * @param User $user
+     * @return array Project[]
+     */
+    public function getAllProject(User $user)
+    {
+        return $this->projectDao->getAllByUser($user);
+    }
+    
+    /**
+     * Get all public projects from context
+     * @return array Project[]
+     */
+    public function getAllPublic()
+    {
+        return $this->projectDao->getAllByVisibility('public');
+    }
+    
+    /**
+     * Get all private projects from context
+     * @return array Project[]
+     */
+    public function getAllPrivate()
+    {
+        return $this->projectDao->getAllByVisibility('private');
+    }
+    
+    /**
      * Populate the even tree with file data.
      * The documents are setup with tmp file path.
      * The definitive path will be set during the upload process.

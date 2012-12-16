@@ -11,6 +11,7 @@ namespace Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity;
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Patterns\VisitorHost;
 
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Patterns\VisitorGuest;
+use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\EventIn;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -82,6 +83,9 @@ class EventOut implements Entity, VisitorHost
         return $this->event->getType();
     }
 
+    /**
+     * @return EventIn
+     */
     public function getEventIn()
     {
         return $this->eventIn;

@@ -5,46 +5,78 @@
 {% block title "UCS Event Flow Analyser: Event {{ title }}" %}
 
 {% block article %}
-<article xmlns="http://www.w3.org/1999/html">
+<article>
     <div class="row-fluid">
-        <div class="span5 offset1">
-            <h3>Parents</h3>
-            {% if ((event.parents|length) > 10) %}
-            <div class="span6">
-                {{ macros.display_events(event.parents, name, 0,(event.parents|length)/2) }}
+        <div class="accordion" id="accordion1">
+            <div class="accordion-group">
+                <div class="accordion-heading">
+                    <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion1" href="#collapseOne">
+                        Events
+                    </a>
+                </div>
+                <div id="collapseOne" class="accordion-body collapse out">
+                    <div class="accordion-inner">
+                        <div class="span5 offset1">
+                            <h3>Parents</h3>
+                            {% if ((event.parents|length) > 10) %}
+                            <div class="span6">
+                                {{ macros.display_events(event.parents, name, 0,(event.parents|length)/2) }}
+                            </div>
+                            <div class="span6">
+                                {{ macros.display_events(event.parents, name, (event.parents|length)/2, event.parents|length) }}
+                            {% else %}
+                            <div class="span12">
+                                {{ macros.display_events(event.parents, name, 0, event.parents|length) }}
+                            {% endif %}
+                            </div>
+                        </div>
+                        <div class="span6">
+                            <h3>Children</h3>
+                            {% if ((event.children|length) > 10) %}
+                            <div class="span3">
+                                {{ macros.display_events(event.children, name, 0,(event.children|length)/2) }}
+                            </div>
+                            <div class="span3">
+                                {{ macros.display_events(event.children, name, (event.children|length)/2, event.children|length) }}
+                            {% else %}
+                            <div class="span12">
+                                {{ macros.display_events(event.children, name, 0, event.children|length) }}
+                            {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="span6">
-                {{ macros.display_events(event.parents, name, (event.parents|length)/2, event.parents|length) }}
-                {% else %}
-            <div class="span12">
-                {{ macros.display_events(event.parents, name, 0, event.parents|length) }}
-                {% endif %}
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion1" href="#collapseTwo">
+                    Files
+                </a>
+            </div>
+            <div id="collapseTwo" class="accordion-body collapse out">
+                <div class="accordion-inner center">    
+                    <div class="span5 offset1 box">
+                        <h3>Output</h3>
+                        {{ macros.display_documents(output) }}
+                    </div>
+                    <div class="span6">
+                        <h3>Input</h3>
+                        {{ macros.display_documents(input) }}
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="span6">
-            <h3>Children</h3>
-            {% if ((event.children|length) > 10) %}
-            <div class="span3">
-                {{ macros.display_events(event.children, name, 0,(event.children|length)/2) }}
+        <div class="accordion-group">
+            <div class="accordion-heading">
+                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordion1" href="#collapseThree">
+                    Graph
+                </a>
             </div>
-            <div class="span3">
-                {{ macros.display_events(event.children, name, (event.children|length)/2, event.children|length) }}
-                {% else %}
-            <div class="span12">
-                {{ macros.display_events(event.children, name, 0, event.children|length) }}
-                {% endif %}
+            <div id="collapseThree" class="accordion-body collapse in">
+                <div class="accordion-inner center">
+                    {{ graphProcess|raw }}
+                </div>
             </div>
-        </div>
-    </div>
-    <hr/>
-    <div class="row-fluid">
-        <div class="span5 offset1 box">
-            <h3>Input</h3>
-            {{ macros.display_documents(input) }}
-        </div>
-        <div class="span6">
-            <h3>Output</h3>
-            {{ macros.display_documents(output) }}
         </div>
     </div>
     <hr/>

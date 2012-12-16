@@ -2,6 +2,8 @@
 
 namespace Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Controller;
 
+use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Service\GraphVizService;
+
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Project;
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Event;
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Service\EventService;
@@ -45,10 +47,15 @@ class EventController extends Controller
         /* @var $project Project */
         $project = $eventService->getProject($this->getUser(), $projectName);
                 
+        /* @var $graphVizService GraphVizService */
+        $graphVizService = $this->get('app.graph');
+        $graph = $graphVizService->generateProjectGraph($project);
+        
         return array(
             'title' => 'Display All Events',
             'name' => $project->getName(),
-            'events' => $project->getEvents()
+            'events' => $project->getEvents(),
+            'graph' => $graph    
         );
     }
 
@@ -71,13 +78,20 @@ class EventController extends Controller
 
         list($in, $out) = $eventService->getDocumentsByEvent($event); 
         
+        /* @var $graphVizService GraphVizService */
+        $graphVizService = $this->get('app.graph');
+        $graphEvent = $graphVizService->generateEventGraph($event);
+        $graphProcess = $graphVizService->generateProcessGraph($event);
+        
         return array(
             'title' => $event->getShortEvent(),
             'visibility' => $project->getVisibility(),
             'name' => $project->getName(),
             'event' => $event,
             'input' => $in,
-            'output' => $out    
+            'output' => $out,
+            'graphEvent' => $graphEvent,
+            'graphProcess' => $graphProcess        
         );
     }
 }

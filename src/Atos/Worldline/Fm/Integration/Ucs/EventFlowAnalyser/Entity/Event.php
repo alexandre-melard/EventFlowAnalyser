@@ -94,6 +94,9 @@ class Event  implements VisitorHost, Entity
         return str_replace("CORE_MSG_TYPE_", "", $this->getType());
     }
     
+    /**
+     * @return Project
+     */
     public function getProject()
     {
         return $this->project;

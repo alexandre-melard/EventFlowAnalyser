@@ -3,6 +3,10 @@
 <script type="text/javascript">
     <!-- Bootstrap JS -->
     prettyPrint();
+    <!-- change the svg width for graphs-->
+    shape = document.getElementsByTagName("svg")[0];
+    shape.removeAttribute('viewBox');
+    $('svg').svgPan('viewport');
     
     $('*[rel="popup"]').live('click', function(e) {
         e.preventDefault();

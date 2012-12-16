@@ -119,6 +119,10 @@ assetic:
                 - '@UcsEventFlowAnalyser/Resources/assets/js/jquery-1.7.2.min.js'
                 - '@UcsEventFlowAnalyser/Resources/assets/js/jquery-ui-1.8.22.min.js'
 
+        svg_js:
+            inputs:
+                - '@UcsEventFlowAnalyser/Resources/assets/js/jquery-svgpan.js'
+
         prettify_js:
             inputs:
                 - '@UcsEventFlowAnalyser/Resources/assets/prettify/prettify.js'
@@ -140,6 +144,7 @@ assetic:
                 - '@monabootstrap'
                 - '@jqueryfileupload_blueimp_js'
                 - '@prettify_js'
+                - '@svg_js'
             output: 'js/app.min.js'
             filters:
                 - yui_js

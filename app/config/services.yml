@@ -22,4 +22,9 @@ services:
     calls:
         - [ setProjectService, [ '@app.project' ] ]
         - [ setEventDao, [ '@app.event_dao' ] ]
+   
+  app.graph:
+    class: Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Service\GraphVizService
+    arguments: ['@logger']
+    scope: container
       

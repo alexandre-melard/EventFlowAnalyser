@@ -33,9 +33,9 @@
         "liip/theme-bundle":"dev-master",
         "mockery/mockery": ">=0.7.2",
         "davedevelopment/hamcrest-php": "dev-master",
-        "alom/graphviz": "dev-master",
         "yethee/enum-bundle": "*",
-        "mylen/jquery-file-upload-bundle":"*"
+        "mylen/jquery-file-upload-bundle":"*",
+        "mylen/graphviz":"*"
     },
     "scripts":{
         "post-install-cmd":[
