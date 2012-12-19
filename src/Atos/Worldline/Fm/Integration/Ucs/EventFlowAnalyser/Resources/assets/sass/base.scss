@@ -33,6 +33,13 @@ body {
   text-align: center;
 }
 
+body .modal-header {
+	text-align:right;
+	a {
+		margin-left: 5px;
+	}
+}
+
 body .modal {
 	//new custom width
 	width: 660px;
@@ -44,3 +51,15 @@ pre {
     font-size: 0.8em;
     line-height: 13px;    
 }
+
+.event-graph {
+    height:600px;
+}
+
+.graph {
+    height:100%;
+    width:100%;
+}
+
+//fix problem with icons in buttons being to low
+.navbar-form .input-prepend .btn { margin-top: 0px; }

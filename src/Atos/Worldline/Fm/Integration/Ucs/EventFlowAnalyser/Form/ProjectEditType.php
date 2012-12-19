@@ -1,7 +1,6 @@
 <?php
 namespace Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Form;
 
-use Symfony\Component\Form\AbstractExtensiontType;
 use Symfony\Component\Form\FormBuilderInterface;
 
 class ProjectEditType extends ProjectType

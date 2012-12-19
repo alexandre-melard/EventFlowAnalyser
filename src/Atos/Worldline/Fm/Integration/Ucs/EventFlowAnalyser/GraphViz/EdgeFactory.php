@@ -7,8 +7,6 @@ namespace Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\GraphViz;
 
 use Mylen\GraphViz\Factory\EdgeFactory as f;
 
-use Mylen\GraphViz\Factory\Format;
-
 class EdgeFactory
 {
 

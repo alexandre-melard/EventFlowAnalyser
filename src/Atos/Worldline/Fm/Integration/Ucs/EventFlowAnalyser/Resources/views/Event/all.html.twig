@@ -17,12 +17,12 @@
                     <div class="accordion-inner">
                         <div class="span5 offset1">
                         {% if ((events|length) > 10) %}
-                            {{ macros.display_events(events, name, 0,(events|length)/2) }}
+                            {{ macros.display_events(events, project.name, 0,(events|length)/2) }}
                         </div>
                         <div class="span5">
-                            {{ macros.display_events(events, name, (events|length)/2, events|length) }}
+                            {{ macros.display_events(events, project.name, (events|length)/2, events|length) }}
                         {% else %}
-                            {{ macros.display_events(events, name, 0, events|length) }}
+                            {{ macros.display_events(events, project.name, 0, events|length) }}
                         {% endif %}
                         </div>
                     </div>
@@ -35,8 +35,14 @@
                     </a>
                 </div>
                 <div id="graph" class="accordion-body collapse in">
-                    <div class="accordion-inner center">
-                        {{ graph|raw }}
+                    <div class="accordion-inner" style="height:300px">
+                    <a
+                        rel="tooltip-left" 
+                        title="open {{ project.name|title }} with Zoom and Pan"  
+                        href="graph/{{ project.name }}"
+                        class="btn btn-mini btn-primary" 
+                        style="float:right"><i class="icon-fullscreen icon-white"></i></a>
+                    <img src="{{ graph }}"/>
                     </div>
                 </div>
             </div>

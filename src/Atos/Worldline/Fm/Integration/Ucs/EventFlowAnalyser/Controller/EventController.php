@@ -2,6 +2,8 @@
 
 namespace Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Controller;
 
+use Symfony\Component\HttpFoundation\Response;
+
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Service\GraphVizService;
 
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Project;
@@ -34,7 +36,7 @@ class EventController extends Controller
             "title" => "Events related to " . $project->getName()
         );
     }
-
+    
     /**
      * @Route("/{projectName}/all", name="events_all")
      * @Template
@@ -47,15 +49,37 @@ class EventController extends Controller
         /* @var $project Project */
         $project = $eventService->getProject($this->getUser(), $projectName);
                 
-        /* @var $graphVizService GraphVizService */
-        $graphVizService = $this->get('app.graph');
-        $graph = $graphVizService->generateProjectGraph($project);
-        
+        $graph = $project->getWebPath() . '/graphs/' . $project->getName() . '.png';
+        if (!$graph) {
+            $this->get('session')->getFlashBag()->add('error', 'Project ' . $project->getName() . ' (' . $project->getVisibility() . ') has not been generated yet... Please check again later.');
+        }
+
         return array(
             'title' => 'Display All Events',
-            'name' => $project->getName(),
+            'project' => $project,
             'events' => $project->getEvents(),
             'graph' => $graph    
+        );
+    }
+
+    /**
+     * @Route("/{projectName}/graph/{name}", name="events_graph")
+     * @Template
+     */
+    public function graphAction($projectName, $name)
+    {
+        /* @var $eventService EventService */
+        $eventService = $this->get('app.event');
+    
+        /* @var $project Project */
+        $project = $eventService->getProject($this->getUser(), $projectName);
+    
+        /* @var $graphVizService GraphVizService */
+        $graphVizService = $this->get('app.graph');
+        $graph = $graphVizService->getGraph($project, $name);
+    
+        return array(
+                'graph' => $graph
         );
     }
 
@@ -78,11 +102,11 @@ class EventController extends Controller
 
         list($in, $out) = $eventService->getDocumentsByEvent($event); 
         
-        /* @var $graphVizService GraphVizService */
-        $graphVizService = $this->get('app.graph');
-        $graphEvent = $graphVizService->generateEventGraph($event);
-        $graphProcess = $graphVizService->generateProcessGraph($event);
-        
+                
+        $graph = $project->getWebPath() . '/graphs/' . $event->getType() . '.png';
+        if (!$graph) {
+            $this->get('session')->getFlashBag()->add('error', 'Project ' . $project->getName() . ' (' . $project->getVisibility() . ') '. $event->getType() .'has not been generated yet... Please check again later.');
+        }
         return array(
             'title' => $event->getShortEvent(),
             'visibility' => $project->getVisibility(),
@@ -90,8 +114,7 @@ class EventController extends Controller
             'event' => $event,
             'input' => $in,
             'output' => $out,
-            'graphEvent' => $graphEvent,
-            'graphProcess' => $graphProcess        
+            'graph' => $graph        
         );
     }
 }

@@ -1,0 +1,14 @@
+<html>
+    <head>
+        <title>
+            {% block title %} UCS EventFlow Analyser {% endblock %}
+        </title>
+    </head>
+    <body>
+        <p>use zoom an pan to visualize the graph</p>
+    {{ graph|raw }}
+    {% block foot_script %}
+        {% include "UcsEventFlowAnalyser::javascripts.html.twig" %}
+    {% endblock foot_script %}
+    </body>
+</html>

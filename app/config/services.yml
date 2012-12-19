@@ -1,19 +1,16 @@
 imports:
     - { resource: 'services_dao.yml' }
 services:
+
+  generate_project_all_graph_command:
+    class: Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Command\GenerateProjectAllGraphCommand
+    calls:
+        - [setContainer, ["@service_container"] ]
+
   app.parser:
     class: Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Service\ParserService
     arguments: ['@logger']
     scope: container
-
-  app.project:
-    class: Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Service\ProjectService
-    arguments: ['@logger']
-    scope: container
-    calls:
-        - [ setParserService, [ '@app.parser' ] ]
-        - [ setFileUploaderService, [ '@mylen.file_uploader' ] ]
-        - [ setProjectDao, [ '@app.project_dao' ] ]
    
   app.event:
     class: Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Service\EventService
@@ -27,4 +24,19 @@ services:
     class: Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Service\GraphVizService
     arguments: ['@logger']
     scope: container
-      
+    calls:
+        - [ setCommand, [ '%app.graph.command%' ] ]
+
+
+  app.project:
+    class: Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Service\ProjectService
+    arguments: ['@logger']
+    scope: container
+    calls:
+        - [ setParserService, [ '@app.parser' ] ]
+        - [ setFileUploaderService, [ '@mylen.file_uploader' ] ]
+        - [ setProjectDao, [ '@app.project_dao' ] ]
+        - [ setGraphService, [ '@app.graph' ] ]
+        - [ setUserManager, [ '@fos_user.user_manager' ] ]
+        
+        

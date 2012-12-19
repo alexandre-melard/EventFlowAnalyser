@@ -53,7 +53,7 @@ class ProjectController extends Controller
         return array(
                 'title' => 'Accueil',
                     );
-    }
+    }   
     
     /**
      * @Route("/create", name="projects_create")
@@ -92,20 +92,23 @@ class ProjectController extends Controller
         $form = $this->createForm(new ProjectType(), $project);
 
         $form->bind($this->getRequest());
-
-        if ($form->isValid()) {
-
-            /* @var $projectService ProjectService */
-            $projectService = $this->get('app.project');
+        
+        /* @var $projectService ProjectService */
+        $projectService = $this->get('app.project');
             
-            /* Populate project with documents and so forth */
-            $project = $projectService->populate($project, new Finder());
-                
-            $this->get('session')->getFlashBag()->add('success', 'Project ' . $project->getName() . ' (' . $project->getVisibility() . ') creation as been completed!');
+        if (null !== $projectService->getProject($this->getUser(), $project->getName())) {
+            $this->get('session')->getFlashBag()->add('error', 'Project ' . $project->getName() . ' exists, please chosse another name');
         } else {
-            $this->get('session')->getFlashBag()->add('error', 'Project ' . $project->getName() . ' (' . $project->getVisibility() . ') could not be completed... Please check form values and retry');
+            if ($form->isValid()) {
+                /* Populate project with documents and so forth */
+                $project = $projectService->populate($project, new Finder());
+
+                $this->get('session')->getFlashBag()->add('success', 'Project ' . $project->getName() . ' (' . $project->getVisibility() . ') creation as been completed!');
+            } else {
+                $this->get('session')->getFlashBag()->add('error', 'Project ' . $project->getName() . ' (' . $project->getVisibility() . ') could not be completed... Please check form values and retry');
+            }
         }
-    
+        
         return $this->redirect($this->generateUrl('projects_edit', array('name' => $project->getName())));
     }
     /**
@@ -146,7 +149,7 @@ class ProjectController extends Controller
      * @Route("/edit", name="projects_edit_save")
      * @Method({"POST", "PUT", "PATCH"})
      */
-    public function editSaveAction($key)
+    public function editSaveAction()
     {
         /* @var $project Project */
         $project = new Project($this->getUser());
@@ -185,6 +188,38 @@ class ProjectController extends Controller
         }
 
         return $this->redirect($this->generateUrl('projects_edit', array('name' => $project->getName())));
+    }
+    /**
+     * @Route("/edit/error/{key}", name="projects_edit_error")
+     * @Method({"GET"})
+     * @Template
+     */
+    public function errorAction($key)
+    {
+        /* @var $projectDao ProjectDao */
+        $projectDao = $this->get('app.project_dao');
+        $project = $projectDao->get($this->getUser(), $name);
+        
+        /* @var $projectService ProjectService */
+        $projectService = $this->get('app.project');
+        $project->setProjectService($projectService);
+
+        $project = $projectService->createTmp($project);
+
+        /* Create from with extra edit fixtures */
+        $form = $this->createForm(new ProjectEditType(), $project);
+        $form->get('original_name')->setData($project->getName());
+        $form->get('original_visibility')->setData($project->getVisibility());
+
+        // mirror data_dir so that the user can edit current files
+        $projectService->dataToTmp($project);
+
+        return array(
+                'title' => 'Edit ' . $project->getName(),
+                'form' => $form->createView(), 
+                'actionTarget' => 'edit',
+                'key' => $project->getKey()
+                );
     }
     
     /**

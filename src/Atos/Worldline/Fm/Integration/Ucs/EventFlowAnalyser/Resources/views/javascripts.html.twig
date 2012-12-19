@@ -4,9 +4,18 @@
     <!-- Bootstrap JS -->
     prettyPrint();
     <!-- change the svg width for graphs-->
-    shape = document.getElementsByTagName("svg")[0];
-    shape.removeAttribute('viewBox');
-    $('svg').svgPan('viewport');
+    
+    if (shape = document.getElementsByTagName("svg")[0]) {
+        shape.removeAttribute('viewBox');
+        $('svg').svgPan('viewport');
+        $('svg').width('100%');
+        $('svg').height('100%');
+    }
+    
+    $('*[rel="svg"]').live('click', function(e) {
+        e.preventDefault();
+        win = window.open($(this).attr("href"), '_blank', 'location=no, menubar=no, resizable=no, scrollbars=no, status=no, titlebar=no, toolbar=no, top=0, left=0, width=' + screen.width + ', height=' + screen.height);
+    });
     
     $('*[rel="popup"]').live('click', function(e) {
         e.preventDefault();
@@ -35,5 +44,9 @@
     $("*[rel=tooltip-top]").tooltip( {
         animation:true,
         placement: 'top'
+        });
+    $("*[rel=tooltip-bottom]").tooltip( {
+        animation:true,
+        placement: 'bottom'
         });
 </script>

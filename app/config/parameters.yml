@@ -4,7 +4,7 @@ parameters:
   database_port:     ~
   database_name:     symfony
   database_user:     root
-  database_password: helloroot
+  database_password: 
 
   mailer_transport:  smtp
   mailer_host:       localhost
@@ -15,10 +15,11 @@ parameters:
   secret:            AZD1RFZ4F
 
   assetic.filter.compass.images_dir: '%kernel.root_dir%/../web/images'
-  assetic.filter.compass.http_path:  /images
+  assetic.filter.compass.http_path:  "/images"
 
-  app.data_dir: %kernel.root_dir%/../web/uploads/data
-  app.event_xsd: %kernel.root_dir%/config/eventflow.xsd
+  app.data_dir: "%kernel.root_dir%/../web/uploads/data"
+  app.event_xsd: "%kernel.root_dir%/config/eventflow.xsd"
+  app.graph.command: "D:\\utils\\Graphviz\\bin\\dot.exe"
   
 # Nav bar
   knp_menu.renderer.twig.template: MopaBootstrapBundle:Menu:menu.html.twig

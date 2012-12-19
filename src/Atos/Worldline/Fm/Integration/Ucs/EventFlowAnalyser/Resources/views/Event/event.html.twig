@@ -74,7 +74,14 @@
             </div>
             <div id="collapseThree" class="accordion-body collapse in">
                 <div class="accordion-inner center">
-                    {{ graphProcess|raw }}
+                    <a
+                        rel="tooltip-left" 
+                        title="open SVG with Zoom and Pan"  
+                        href="{{asset('/events/' ~ name ~ '/graph/' ~ event.type)}}"
+                        class="btn btn-mini btn-primary" 
+                        style="float:right"><i class="icon-resize-full icon-white"></i></a>
+                    <img class="event-graph" src="{{ graph }}"/>
+                    </div>
                 </div>
             </div>
         </div>

@@ -94,6 +94,7 @@ assetic:
                 - '@prettify_css'
                 - '@jqueryfileupload_blueimp_css'
                 - '@base_css'
+                - '@UcsEventFlowAnalyser/Resources/assets/css/bootstrap-image-gallery.css'
             output: 'css/app.min.css'
             filters:
                 - yui_css

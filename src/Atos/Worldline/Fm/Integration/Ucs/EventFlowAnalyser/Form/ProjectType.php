@@ -1,8 +1,6 @@
 <?php
 namespace Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Form;
 
-use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Project;
-
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 

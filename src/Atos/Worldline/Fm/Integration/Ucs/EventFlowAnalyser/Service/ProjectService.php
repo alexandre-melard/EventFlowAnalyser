@@ -11,6 +11,7 @@ use Monolog\Logger;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
+use FOS\UserBundle\Model\UserManagerInterface;
 
 use Mylen\JQueryFileUploadBundle\Services\FileUploaderService;
 
@@ -47,7 +48,17 @@ class ProjectService
      * @var Filesystem
      */
     private $fs;
-    
+
+    /**
+     * @var GraphVizService
+     */
+    private $graphService = null;
+
+    /**
+     * @var UserManagerInterface 
+     */
+    private $userManager = null;
+
     /**
      *
      * @param Logger $l
@@ -122,13 +133,43 @@ class ProjectService
         return $this->projectDao->getAllByVisibility('private');
     }
     
+    public function generateProjectAllGraph($userName, $projectName, $console=false, $format='dot', $outputFormat='dot', $dir=null)
+    {
+        $user = $this->userManager->findUserByUsername($userName);
+
+        $project = $this->getProject($user, $projectName);
+        
+        if (null == $dir) {
+            if($console)call_user_func($console, "dir not provided, will write to project directory");
+            $dir = $project->getPath() . DIRECTORY_SEPARATOR . 'graphs';
+            $fs = new Filesystem();
+            if (!$fs->exists($dir)) {
+                $fs->mkdir($dir);
+            }
+            if($console)call_user_func($console, "writing to dir: $dir");
+        }
+        
+        $file = $dir . DIRECTORY_SEPARATOR . $project->getName() . '.' . $outputFormat;
+        $out = $this->graphService->generateProjectGraph($project, $format, $outputFormat, $file);
+        
+        $file = $dir . DIRECTORY_SEPARATOR . $project->getName() . '.' . $outputFormat;
+        $total = count($project->getEvents())+1;
+        $curr = 0;
+        foreach ($project->getEvents() as $event) {
+            $file = $dir . DIRECTORY_SEPARATOR . $event->getType() . '.' . $outputFormat;
+            $out = $this->graphService->generateProcessGraph($event, $format, $outputFormat, $file);
+            if($console)call_user_func($console, '[' . ++$curr . "/$total]\twriting to file: ". basename($file));
+        }
+        if($console)call_user_func($console, 'done');
+    }
+
     /**
      * Populate the even tree with file data.
      * The documents are setup with tmp file path.
      * The definitive path will be set during the upload process.
      * @throws Exception
      */
-    public function populate(Project $project, Finder $finder)
+    public function populate(Project $project)
     {
         if ($this->parserService === null) {
             throw new Exception("parserService must be set");
@@ -137,6 +178,7 @@ class ProjectService
         /* initialize project */
         $project = $this->init($project);
         
+        $finder = Finder::create();
         $finder->in($project->getTmp());
         foreach ($finder as $file) {
             /* @var $file SplFileInfo */
@@ -154,6 +196,16 @@ class ProjectService
         
         // clean up tmp dir
         $this->removeDir($project->getTmp());
+
+        // Generate Graphs
+        foreach (array('svg', 'png') as $output) {
+            $this->generateProjectAllGraph(
+                    $project->getUser()->getUsername(),
+                    $project->getName(),
+                    false,
+                    'dot',
+                    $output);            
+        }
         
         return $project;
     }
@@ -257,5 +309,17 @@ class ProjectService
             $project->getKey() .
             '/originals';
     }
-    
+
+    public function setGraphService($graphService) {
+        $this->graphService = $graphService;
+    }
+
+    /**
+     * @param UserManagerInterface $userManager
+     */
+    public function setUserManager(UserManagerInterface $userManager) {
+        $this->userManager = $userManager;
+    }
+
+
 }

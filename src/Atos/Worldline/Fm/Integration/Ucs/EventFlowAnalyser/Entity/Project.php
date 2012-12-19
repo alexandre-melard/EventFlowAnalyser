@@ -15,6 +15,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Service\ProjectService;
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Patterns\VisitorGuest;
 use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Patterns\VisitorHost;
+use Atos\Worldline\Fm\UserBundle\Entity\User;
 
 /**
  * @ORM\Entity
