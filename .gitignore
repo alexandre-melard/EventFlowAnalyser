@@ -16,3 +16,4 @@ composer.lock
 /vagrant
 /tmp
 /nbproject/private/
+/nbproject
