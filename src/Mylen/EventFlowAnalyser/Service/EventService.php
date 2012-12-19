@@ -1,7 +1,7 @@
 <?php
 namespace Mylen\EventFlowAnalyser\Service;
 
-use Atos\Worldline\Fm\UserBundle\Entity\User;
+use Mylen\UserBundle\Entity\User;
 
 use Mylen\EventFlowAnalyser\Dao\EventDao;
 use Mylen\EventFlowAnalyser\Entity\Event;

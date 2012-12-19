@@ -3,7 +3,7 @@ namespace Mylen\EventFlowAnalyser\Dao;
 
 use Doctrine\ORM\QueryBuilder;
 
-use Atos\Worldline\Fm\UserBundle\Entity\User;
+use Mylen\UserBundle\Entity\User;
 use Mylen\EventFlowAnalyser\Entity\Project;
 use Mylen\EventFlowAnalyser\Dao\AbstractDao;
 
@@ -21,7 +21,7 @@ class ProjectDao extends AbstractDao
         $qb = $this->em->createQueryBuilder();
         return $qb
             ->select('Project', 'documents', 'events')
-            ->from('UcsEventFlowAnalyser:Project', 'Project')
+            ->from('EventFlowAnalyser:Project', 'Project')
             ->leftJoin('Project.documents', 'documents')
             ->leftJoin('Project.events', 'events')
             ->where($qb->expr()->andx(
@@ -48,7 +48,7 @@ class ProjectDao extends AbstractDao
         $qb = $this->em->createQueryBuilder();
         return $qb
         ->select('Project', 'documents')
-        ->from('UcsEventFlowAnalyser:Project', 'Project')
+        ->from('EventFlowAnalyser:Project', 'Project')
         ->leftJoin('Project.documents', 'documents')
         ->where($qb->expr()->orx(
                     $qb->expr()->eq('Project.visibility', ':public'),
@@ -79,7 +79,7 @@ class ProjectDao extends AbstractDao
         $qb = $this->em->createQueryBuilder();
         return $qb
         ->select('Project', 'documents')
-        ->from('UcsEventFlowAnalyser:Project', 'Project')
+        ->from('EventFlowAnalyser:Project', 'Project')
         ->leftJoin('Project.documents', 'documents')
         ->where($qb->expr()->andx(
                     $qb->expr()->eq('Project.visibility', ':visibility'),
@@ -105,7 +105,7 @@ class ProjectDao extends AbstractDao
         $qb = $this->em->createQueryBuilder();
         return $qb
         ->select('Project', 'documents')
-        ->from('UcsEventFlowAnalyser:Project', 'Project')
+        ->from('EventFlowAnalyser:Project', 'Project')
         ->leftJoin('Project.documents', 'documents')
         ->where($qb->expr()->eq('Project.visibility', ':visibility'))
         ->setParameter('visibility', $visibility)

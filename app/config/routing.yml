@@ -6,12 +6,12 @@ liip_theme:
     prefix: /theme
 
 event_flow_analyser:
-    resource: "@UcsEventFlowAnalyser/Controller/"
+    resource: "@EventFlowAnalyser/Controller/"
     type:     annotation
     prefix:   /
 
 atos_worldline_fm_user:
-    resource: "@AtosWorldlineFmUserBundle/Controller/"
+    resource: "@MylenUserBundle/Controller/"
     type:     annotation
     prefix:   /
 

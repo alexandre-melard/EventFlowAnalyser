@@ -15,7 +15,7 @@ use Knp\Menu\FactoryInterface;
 use Mopa\Bundle\BootstrapBundle\Navbar\AbstractNavbarMenuBuilder;
 use Monolog\Logger;
 
-use Atos\Worldline\Fm\UserBundle\Entity\User;
+use Mylen\UserBundle\Entity\User;
 use Mylen\EventFlowAnalyser\Entity\Document;
 use Mylen\EventFlowAnalyser\Entity\Event;
 use Mylen\EventFlowAnalyser\Entity\Project;
@@ -46,7 +46,7 @@ class MenuBuilder extends AbstractNavbarMenuBuilder
 
     public function createMainMenu(Request $request)
     {
-        $this->logger->debug('UcsEventFlowAnalyser::MenuBuilder:: createMainMenu');
+        $this->logger->debug('EventFlowAnalyser::MenuBuilder:: createMainMenu');
         $menu = $this->createNavbarMenuItem('root', true);
         $menu->addChild('Home', array('route' => 'default', 'extras' => array('icon' => 'home')));
         $this->createUserMenu($menu);

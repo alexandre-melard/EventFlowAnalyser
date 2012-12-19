@@ -12,7 +12,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Validator\Constraints as Assert;
 
-use Atos\Worldline\Fm\UserBundle\Entity\User;
+use Mylen\UserBundle\Entity\User;
 
 use Mylen\EventFlowAnalyser\Entity\Parser;
 use Mylen\EventFlowAnalyser\Patterns\VisitorGuest;

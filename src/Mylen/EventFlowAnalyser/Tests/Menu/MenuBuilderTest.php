@@ -6,7 +6,7 @@ namespace Mylen\EventFlowAnalyser\Tests\Menu;
 
 use Mylen\EventFlowAnalyser\Tests\ContainerAwareUnit;
 use Mylen\EventFlowAnalyser\Menu\MenuBuilder;
-use Atos\Worldline\Fm\UserBundle\Entity\User;
+use Mylen\UserBundle\Entity\User;
 
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 use Symfony\Component\HttpFoundation\Request;
@@ -32,7 +32,7 @@ class MenuBuilderTest extends ContainerAwareUnit
         ->andReturn(true);
 
         
-        $user = m::mock('Atos\Worldline\Fm\UserBundle\Entity\User');
+        $user = m::mock('Mylen\UserBundle\Entity\User');
         
         $securityContext->shouldReceive('getToken->getUser')
         ->withNoArgs()

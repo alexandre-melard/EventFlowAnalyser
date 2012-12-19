@@ -15,7 +15,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 use Mylen\EventFlowAnalyser\Service\ProjectService;
 use Mylen\EventFlowAnalyser\Patterns\VisitorGuest;
 use Mylen\EventFlowAnalyser\Patterns\VisitorHost;
-use Atos\Worldline\Fm\UserBundle\Entity\User;
+use Mylen\UserBundle\Entity\User;
 
 /**
  * @ORM\Entity
@@ -49,7 +49,7 @@ class Project implements Entity, VisitorHost
     private $visibility;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Atos\Worldline\Fm\UserBundle\Entity\User")
+     * @ORM\ManyToOne(targetEntity="Mylen\UserBundle\Entity\User")
      */
     private $user;
 

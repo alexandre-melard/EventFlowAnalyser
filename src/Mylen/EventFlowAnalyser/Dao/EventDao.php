@@ -21,7 +21,7 @@ class EventDao extends AbstractDao
         $qb = $this->em->createQueryBuilder();
         return $qb
         ->select('event')
-        ->from('UcsEventFlowAnalyser:Event', 'event')
+        ->from('EventFlowAnalyser:Event', 'event')
         ->where(
                 $qb->expr()->andx(
                     $qb->expr()->eq('event.type', ':type'),

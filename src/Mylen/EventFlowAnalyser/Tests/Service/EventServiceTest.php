@@ -17,7 +17,7 @@ use Mylen\JQueryFileUploadBundle\Services\FileUploaderService;
 use Mylen\EventFlowAnalyser\Service\ProjectService;
 
 use Mylen\EventFlowAnalyser\Entity\Document;
-use Atos\Worldline\Fm\UserBundle\Entity\User;
+use Mylen\UserBundle\Entity\User;
 use Mylen\EventFlowAnalyser\Entity\Project;
 use Mylen\EventFlowAnalyser\Entity\Event;
 use Mylen\EventFlowAnalyser\Service\EventService;

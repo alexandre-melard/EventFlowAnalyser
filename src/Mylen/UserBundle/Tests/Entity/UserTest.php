@@ -1,8 +1,8 @@
 <?php
 
-namespace Atos\Worldline\Fm\UserBundle\Tests\Controller;
+namespace Mylen\UserBundle\Tests\Controller;
 
-use Atos\Worldline\Fm\UserBundle\Entity\User;
+use Mylen\UserBundle\Entity\User;
 
 class UserTest extends \PHPUnit_Framework_TestCase
 {

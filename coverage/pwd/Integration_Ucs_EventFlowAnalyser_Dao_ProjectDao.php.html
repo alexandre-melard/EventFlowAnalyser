@@ -2,7 +2,7 @@
 <html lang="en">
  <head>
   <meta charset="UTF-8">
-  <title>Code Coverage for D:\perso\workspace\EventFlowAnalyser\src\Atos\Worldline\Fm/Integration/Ucs/EventFlowAnalyser/Dao/ProjectDao.php</title>
+  <title>Code Coverage for D:\perso\workspace\EventFlowAnalyser\src\Mylen/Integration/Ucs/EventFlowAnalyser/Dao/ProjectDao.php</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="css/bootstrap.min.css" rel="stylesheet">
   <link href="css/bootstrap-responsive.min.css" rel="stylesheet">
@@ -17,7 +17,7 @@
     <div class="row">
      <div class="span12">
       <ul class="breadcrumb">
-        <li><a href="index.html">D:\perso\workspace\EventFlowAnalyser\src\Atos\Worldline\Fm</a> <span class="divider">/</span></li>
+        <li><a href="index.html">D:\perso\workspace\EventFlowAnalyser\src\Mylen</a> <span class="divider">/</span></li>
         <li><a href="Integration.html">Integration</a> <span class="divider">/</span></li>
         <li><a href="Integration_Ucs.html">Ucs</a> <span class="divider">/</span></li>
         <li><a href="Integration_Ucs_EventFlowAnalyser.html">EventFlowAnalyser</a> <span class="divider">/</span></li>
@@ -151,7 +151,7 @@
      <tr><td><div align="right"><a name="3"></a><a href="#3">3</a></div></td><td class="codeLine"></td></tr>
      <tr><td><div align="right"><a name="4"></a><a href="#4">4</a></div></td><td class="codeLine">use Doctrine\ORM\QueryBuilder;</td></tr>
      <tr><td><div align="right"><a name="5"></a><a href="#5">5</a></div></td><td class="codeLine"></td></tr>
-     <tr><td><div align="right"><a name="6"></a><a href="#6">6</a></div></td><td class="codeLine">use Atos\Worldline\Fm\UserBundle\Entity\User;</td></tr>
+     <tr><td><div align="right"><a name="6"></a><a href="#6">6</a></div></td><td class="codeLine">use Mylen\UserBundle\Entity\User;</td></tr>
      <tr><td><div align="right"><a name="7"></a><a href="#7">7</a></div></td><td class="codeLine">use Mylen\EventFlowAnalyser\Entity\Project;</td></tr>
      <tr><td><div align="right"><a name="8"></a><a href="#8">8</a></div></td><td class="codeLine">use Mylen\EventFlowAnalyser\Dao\AbstractDao;</td></tr>
      <tr><td><div align="right"><a name="9"></a><a href="#9">9</a></div></td><td class="codeLine"></td></tr>
@@ -169,7 +169,7 @@
      <tr class="danger"><td><div align="right"><a name="21"></a><a href="#21">21</a></div></td><td class="codeLine">        $qb = $this-&gt;em-&gt;createQueryBuilder();</td></tr>
      <tr><td><div align="right"><a name="22"></a><a href="#22">22</a></div></td><td class="codeLine">        return $qb</td></tr>
      <tr class="danger"><td><div align="right"><a name="23"></a><a href="#23">23</a></div></td><td class="codeLine">            -&gt;select('Project', 'documents', 'events')</td></tr>
-     <tr class="danger"><td><div align="right"><a name="24"></a><a href="#24">24</a></div></td><td class="codeLine">            -&gt;from('UcsEventFlowAnalyser:Project', 'Project')</td></tr>
+     <tr class="danger"><td><div align="right"><a name="24"></a><a href="#24">24</a></div></td><td class="codeLine">            -&gt;from('EventFlowAnalyser:Project', 'Project')</td></tr>
      <tr class="danger"><td><div align="right"><a name="25"></a><a href="#25">25</a></div></td><td class="codeLine">            -&gt;leftJoin('Project.documents', 'documents')</td></tr>
      <tr class="danger"><td><div align="right"><a name="26"></a><a href="#26">26</a></div></td><td class="codeLine">            -&gt;leftJoin('Project.events', 'events')</td></tr>
      <tr class="danger"><td><div align="right"><a name="27"></a><a href="#27">27</a></div></td><td class="codeLine">            -&gt;where($qb-&gt;expr()-&gt;andx(</td></tr>
@@ -196,7 +196,7 @@
      <tr class="danger"><td><div align="right"><a name="48"></a><a href="#48">48</a></div></td><td class="codeLine">        $qb = $this-&gt;em-&gt;createQueryBuilder();</td></tr>
      <tr><td><div align="right"><a name="49"></a><a href="#49">49</a></div></td><td class="codeLine">        return $qb</td></tr>
      <tr class="danger"><td><div align="right"><a name="50"></a><a href="#50">50</a></div></td><td class="codeLine">        -&gt;select('Project', 'documents')</td></tr>
-     <tr class="danger"><td><div align="right"><a name="51"></a><a href="#51">51</a></div></td><td class="codeLine">        -&gt;from('UcsEventFlowAnalyser:Project', 'Project')</td></tr>
+     <tr class="danger"><td><div align="right"><a name="51"></a><a href="#51">51</a></div></td><td class="codeLine">        -&gt;from('EventFlowAnalyser:Project', 'Project')</td></tr>
      <tr class="danger"><td><div align="right"><a name="52"></a><a href="#52">52</a></div></td><td class="codeLine">        -&gt;leftJoin('Project.documents', 'documents')</td></tr>
      <tr class="danger"><td><div align="right"><a name="53"></a><a href="#53">53</a></div></td><td class="codeLine">        -&gt;where($qb-&gt;expr()-&gt;orx(</td></tr>
      <tr class="danger"><td><div align="right"><a name="54"></a><a href="#54">54</a></div></td><td class="codeLine">                    $qb-&gt;expr()-&gt;eq('Project.visibility', ':public'),</td></tr>
@@ -227,7 +227,7 @@
      <tr class="danger"><td><div align="right"><a name="79"></a><a href="#79">79</a></div></td><td class="codeLine">        $qb = $this-&gt;em-&gt;createQueryBuilder();</td></tr>
      <tr><td><div align="right"><a name="80"></a><a href="#80">80</a></div></td><td class="codeLine">        return $qb</td></tr>
      <tr class="danger"><td><div align="right"><a name="81"></a><a href="#81">81</a></div></td><td class="codeLine">        -&gt;select('Project', 'documents')</td></tr>
-     <tr class="danger"><td><div align="right"><a name="82"></a><a href="#82">82</a></div></td><td class="codeLine">        -&gt;from('UcsEventFlowAnalyser:Project', 'Project')</td></tr>
+     <tr class="danger"><td><div align="right"><a name="82"></a><a href="#82">82</a></div></td><td class="codeLine">        -&gt;from('EventFlowAnalyser:Project', 'Project')</td></tr>
      <tr class="danger"><td><div align="right"><a name="83"></a><a href="#83">83</a></div></td><td class="codeLine">        -&gt;leftJoin('Project.documents', 'documents')</td></tr>
      <tr class="danger"><td><div align="right"><a name="84"></a><a href="#84">84</a></div></td><td class="codeLine">        -&gt;where($qb-&gt;expr()-&gt;andx(</td></tr>
      <tr class="danger"><td><div align="right"><a name="85"></a><a href="#85">85</a></div></td><td class="codeLine">                    $qb-&gt;expr()-&gt;eq('Project.visibility', ':visibility'),</td></tr>

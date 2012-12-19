@@ -19,7 +19,7 @@ use Mylen\JQueryFileUploadBundle\Services\FileUploaderService;
 use Mylen\EventFlowAnalyser\Service\ProjectService;
 
 use Mylen\EventFlowAnalyser\Entity\Document;
-use Atos\Worldline\Fm\UserBundle\Entity\User;
+use Mylen\UserBundle\Entity\User;
 use Mylen\EventFlowAnalyser\Entity\Project;
 use Mylen\EventFlowAnalyser\Entity\Event;
 use Mylen\EventFlowAnalyser\Service\EventService;
@@ -46,7 +46,7 @@ class ProjectServiceTest extends ContainerAwareUnit
      */
     public function testProjectInit(ProjectService $projectService) 
     {
-        $user = m::mock('Atos\Worldline\Fm\UserBundle\Entity\User');
+        $user = m::mock('Mylen\UserBundle\Entity\User');
         $user->shouldReceive('getSalt')->andReturn('1234EZA');
         $project = new Project($user);
         $projectService->init($project);

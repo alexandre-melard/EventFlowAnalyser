@@ -1,7 +1,7 @@
-{% extends "UcsEventFlowAnalyser::layout.html.twig" %}
+{% extends "EventFlowAnalyser::layout.html.twig" %}
 
 {% block head_style %}
-    {% include "UcsEventFlowAnalyser::stylesheets.html.twig" %}
+    {% include "EventFlowAnalyser::stylesheets.html.twig" %}
     {% block js_blueimp_stylesheets %}
 {#         {% include "JQueryFileUploadBundle::stylesheets.html.twig" %}#}
     {% endblock js_blueimp_stylesheets %}
@@ -31,7 +31,7 @@
 {% endblock %}
 
 {% block foot_script %}
-    {% include "UcsEventFlowAnalyser::javascripts.html.twig" %}
+    {% include "EventFlowAnalyser::javascripts.html.twig" %}
     <script type="text/javascript">
         $(blueimpUploader('{{ path('projects_put', { 'key': key }) }}'));
     </script>
