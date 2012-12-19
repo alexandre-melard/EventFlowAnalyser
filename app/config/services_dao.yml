@@ -1,21 +1,21 @@
 services:
   app.persist_visitor:
-    class: Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Dao\Visitor\PersistVisitor
+    class: Mylen\EventFlowAnalyser\Dao\Visitor\PersistVisitor
     arguments: ['@doctrine.orm.entity_manager', '@logger']
 
   app.remove_visitor:
-    class: Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Dao\Visitor\RemoveVisitor
+    class: Mylen\EventFlowAnalyser\Dao\Visitor\RemoveVisitor
     arguments: ['@doctrine.orm.entity_manager', '@logger']
 
   app.event_dao:
-    class: Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Dao\EventDao
+    class: Mylen\EventFlowAnalyser\Dao\EventDao
     arguments: ['@doctrine.orm.entity_manager', '@logger']
     calls:
         - [ setPersistVisitor, [ '@app.persist_visitor' ] ]
         - [ setRemoveVisitor, [ '@app.remove_visitor' ] ]
 
   app.project_dao:
-    class: Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Dao\ProjectDao
+    class: Mylen\EventFlowAnalyser\Dao\ProjectDao
     arguments: ['@doctrine.orm.entity_manager', '@logger']
     calls:
         - [ setPersistVisitor, [ '@app.persist_visitor' ] ]

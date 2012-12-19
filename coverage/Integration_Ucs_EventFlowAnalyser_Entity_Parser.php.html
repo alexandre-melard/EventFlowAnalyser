@@ -273,14 +273,14 @@
      <tr><td><div align="right"><a name="6"></a><a href="#6">6</a></div></td><td class="codeLine"> * Time: 17:27</td></tr>
      <tr><td><div align="right"><a name="7"></a><a href="#7">7</a></div></td><td class="codeLine"> * Parser Type. A parser represent the parser xml output.</td></tr>
      <tr><td><div align="right"><a name="8"></a><a href="#8">8</a></div></td><td class="codeLine"> */</td></tr>
-     <tr><td><div align="right"><a name="9"></a><a href="#9">9</a></div></td><td class="codeLine">namespace Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity;</td></tr>
+     <tr><td><div align="right"><a name="9"></a><a href="#9">9</a></div></td><td class="codeLine">namespace Mylen\EventFlowAnalyser\Entity;</td></tr>
      <tr><td><div align="right"><a name="10"></a><a href="#10">10</a></div></td><td class="codeLine"></td></tr>
-     <tr><td><div align="right"><a name="11"></a><a href="#11">11</a></div></td><td class="codeLine">use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Patterns\VisitorGuest;</td></tr>
+     <tr><td><div align="right"><a name="11"></a><a href="#11">11</a></div></td><td class="codeLine">use Mylen\EventFlowAnalyser\Patterns\VisitorGuest;</td></tr>
      <tr><td><div align="right"><a name="12"></a><a href="#12">12</a></div></td><td class="codeLine"></td></tr>
-     <tr><td><div align="right"><a name="13"></a><a href="#13">13</a></div></td><td class="codeLine">use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Patterns\VisitorHost;</td></tr>
-     <tr><td><div align="right"><a name="14"></a><a href="#14">14</a></div></td><td class="codeLine">use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Document;</td></tr>
-     <tr><td><div align="right"><a name="15"></a><a href="#15">15</a></div></td><td class="codeLine">use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\EventIn;</td></tr>
-     <tr><td><div align="right"><a name="16"></a><a href="#16">16</a></div></td><td class="codeLine">use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Entity;</td></tr>
+     <tr><td><div align="right"><a name="13"></a><a href="#13">13</a></div></td><td class="codeLine">use Mylen\EventFlowAnalyser\Patterns\VisitorHost;</td></tr>
+     <tr><td><div align="right"><a name="14"></a><a href="#14">14</a></div></td><td class="codeLine">use Mylen\EventFlowAnalyser\Entity\Document;</td></tr>
+     <tr><td><div align="right"><a name="15"></a><a href="#15">15</a></div></td><td class="codeLine">use Mylen\EventFlowAnalyser\Entity\EventIn;</td></tr>
+     <tr><td><div align="right"><a name="16"></a><a href="#16">16</a></div></td><td class="codeLine">use Mylen\EventFlowAnalyser\Entity\Entity;</td></tr>
      <tr><td><div align="right"><a name="17"></a><a href="#17">17</a></div></td><td class="codeLine">use Doctrine\ORM\Mapping as ORM;</td></tr>
      <tr><td><div align="right"><a name="18"></a><a href="#18">18</a></div></td><td class="codeLine"></td></tr>
      <tr><td><div align="right"><a name="19"></a><a href="#19">19</a></div></td><td class="codeLine">/**</td></tr>
@@ -298,13 +298,13 @@
      <tr><td><div align="right"><a name="31"></a><a href="#31">31</a></div></td><td class="codeLine">    private $id;</td></tr>
      <tr><td><div align="right"><a name="32"></a><a href="#32">32</a></div></td><td class="codeLine"></td></tr>
      <tr><td><div align="right"><a name="33"></a><a href="#33">33</a></div></td><td class="codeLine">    /**</td></tr>
-     <tr><td><div align="right"><a name="34"></a><a href="#34">34</a></div></td><td class="codeLine">     * @ORM\OneToOne(targetEntity=&quot;Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Document&quot;, mappedBy=&quot;parser&quot;)</td></tr>
+     <tr><td><div align="right"><a name="34"></a><a href="#34">34</a></div></td><td class="codeLine">     * @ORM\OneToOne(targetEntity=&quot;Mylen\EventFlowAnalyser\Entity\Document&quot;, mappedBy=&quot;parser&quot;)</td></tr>
      <tr><td><div align="right"><a name="35"></a><a href="#35">35</a></div></td><td class="codeLine">     */</td></tr>
      <tr><td><div align="right"><a name="36"></a><a href="#36">36</a></div></td><td class="codeLine">    private $document;</td></tr>
      <tr><td><div align="right"><a name="37"></a><a href="#37">37</a></div></td><td class="codeLine"></td></tr>
      <tr><td><div align="right"><a name="38"></a><a href="#38">38</a></div></td><td class="codeLine">    /**</td></tr>
      <tr><td><div align="right"><a name="39"></a><a href="#39">39</a></div></td><td class="codeLine">     * One to Many</td></tr>
-     <tr><td><div align="right"><a name="40"></a><a href="#40">40</a></div></td><td class="codeLine">     * @ORM\OneToMany(targetEntity=&quot;Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\EventIn&quot;, mappedBy=&quot;parser&quot;)</td></tr>
+     <tr><td><div align="right"><a name="40"></a><a href="#40">40</a></div></td><td class="codeLine">     * @ORM\OneToMany(targetEntity=&quot;Mylen\EventFlowAnalyser\Entity\EventIn&quot;, mappedBy=&quot;parser&quot;)</td></tr>
      <tr><td><div align="right"><a name="41"></a><a href="#41">41</a></div></td><td class="codeLine">     * @var array</td></tr>
      <tr><td><div align="right"><a name="42"></a><a href="#42">42</a></div></td><td class="codeLine">     */</td></tr>
      <tr><td><div align="right"><a name="43"></a><a href="#43">43</a></div></td><td class="codeLine">    private $eventIns;</td></tr>
@@ -319,7 +319,7 @@
      <tr><td><div align="right"><a name="52"></a><a href="#52">52</a></div></td><td class="codeLine"></td></tr>
      <tr><td><div align="right"><a name="53"></a><a href="#53">53</a></div></td><td class="codeLine">    /**</td></tr>
      <tr><td><div align="right"><a name="54"></a><a href="#54">54</a></div></td><td class="codeLine">     * (non-PHPdoc)</td></tr>
-     <tr><td><div align="right"><a name="55"></a><a href="#55">55</a></div></td><td class="codeLine">     * @see Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Patterns.VisitorHost::accept()</td></tr>
+     <tr><td><div align="right"><a name="55"></a><a href="#55">55</a></div></td><td class="codeLine">     * @see Mylen\EventFlowAnalyser\Patterns.VisitorHost::accept()</td></tr>
      <tr><td><div align="right"><a name="56"></a><a href="#56">56</a></div></td><td class="codeLine">     */</td></tr>
      <tr class="danger"><td><div align="right"><a name="57"></a><a href="#57">57</a></div></td><td class="codeLine">    public function accept(VisitorGuest $guest)</td></tr>
      <tr class="danger"><td><div align="right"><a name="58"></a><a href="#58">58</a></div></td><td class="codeLine">    {</td></tr>

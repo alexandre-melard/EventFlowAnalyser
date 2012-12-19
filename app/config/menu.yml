@@ -1,6 +1,6 @@
 services:
   event_flow_analyser.menu_builder:
-    class: Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Menu\MenuBuilder
+    class: Mylen\EventFlowAnalyser\Menu\MenuBuilder
     arguments:
       - '@knp_menu.factory'
     calls:

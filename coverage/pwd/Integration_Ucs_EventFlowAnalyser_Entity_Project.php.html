@@ -612,16 +612,16 @@
      <tr><td><div align="right"><a name="5"></a><a href="#5">5</a></div></td><td class="codeLine"> * Time: 10:07</td></tr>
      <tr><td><div align="right"><a name="6"></a><a href="#6">6</a></div></td><td class="codeLine"> * Project entity</td></tr>
      <tr><td><div align="right"><a name="7"></a><a href="#7">7</a></div></td><td class="codeLine"> */</td></tr>
-     <tr><td><div align="right"><a name="8"></a><a href="#8">8</a></div></td><td class="codeLine">namespace Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity;</td></tr>
+     <tr><td><div align="right"><a name="8"></a><a href="#8">8</a></div></td><td class="codeLine">namespace Mylen\EventFlowAnalyser\Entity;</td></tr>
      <tr><td><div align="right"><a name="9"></a><a href="#9">9</a></div></td><td class="codeLine"></td></tr>
      <tr><td><div align="right"><a name="10"></a><a href="#10">10</a></div></td><td class="codeLine">use Doctrine\ORM\Mapping as ORM;</td></tr>
      <tr><td><div align="right"><a name="11"></a><a href="#11">11</a></div></td><td class="codeLine">use Doctrine\ORM\NoResultException;</td></tr>
      <tr><td><div align="right"><a name="12"></a><a href="#12">12</a></div></td><td class="codeLine"></td></tr>
      <tr><td><div align="right"><a name="13"></a><a href="#13">13</a></div></td><td class="codeLine">use Symfony\Component\Validator\Constraints as Assert;</td></tr>
      <tr><td><div align="right"><a name="14"></a><a href="#14">14</a></div></td><td class="codeLine"></td></tr>
-     <tr><td><div align="right"><a name="15"></a><a href="#15">15</a></div></td><td class="codeLine">use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Service\ProjectService;</td></tr>
-     <tr><td><div align="right"><a name="16"></a><a href="#16">16</a></div></td><td class="codeLine">use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Patterns\VisitorGuest;</td></tr>
-     <tr><td><div align="right"><a name="17"></a><a href="#17">17</a></div></td><td class="codeLine">use Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Patterns\VisitorHost;</td></tr>
+     <tr><td><div align="right"><a name="15"></a><a href="#15">15</a></div></td><td class="codeLine">use Mylen\EventFlowAnalyser\Service\ProjectService;</td></tr>
+     <tr><td><div align="right"><a name="16"></a><a href="#16">16</a></div></td><td class="codeLine">use Mylen\EventFlowAnalyser\Patterns\VisitorGuest;</td></tr>
+     <tr><td><div align="right"><a name="17"></a><a href="#17">17</a></div></td><td class="codeLine">use Mylen\EventFlowAnalyser\Patterns\VisitorHost;</td></tr>
      <tr><td><div align="right"><a name="18"></a><a href="#18">18</a></div></td><td class="codeLine"></td></tr>
      <tr><td><div align="right"><a name="19"></a><a href="#19">19</a></div></td><td class="codeLine">/**</td></tr>
      <tr><td><div align="right"><a name="20"></a><a href="#20">20</a></div></td><td class="codeLine"> * @ORM\Entity</td></tr>
@@ -660,12 +660,12 @@
      <tr><td><div align="right"><a name="53"></a><a href="#53">53</a></div></td><td class="codeLine">    private $user;</td></tr>
      <tr><td><div align="right"><a name="54"></a><a href="#54">54</a></div></td><td class="codeLine"></td></tr>
      <tr><td><div align="right"><a name="55"></a><a href="#55">55</a></div></td><td class="codeLine">    /**</td></tr>
-     <tr><td><div align="right"><a name="56"></a><a href="#56">56</a></div></td><td class="codeLine">     * @ORM\OneToMany(targetEntity=&quot;Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Document&quot;, mappedBy=&quot;project&quot;)</td></tr>
+     <tr><td><div align="right"><a name="56"></a><a href="#56">56</a></div></td><td class="codeLine">     * @ORM\OneToMany(targetEntity=&quot;Mylen\EventFlowAnalyser\Entity\Document&quot;, mappedBy=&quot;project&quot;)</td></tr>
      <tr><td><div align="right"><a name="57"></a><a href="#57">57</a></div></td><td class="codeLine">     */</td></tr>
      <tr><td><div align="right"><a name="58"></a><a href="#58">58</a></div></td><td class="codeLine">    private $documents;</td></tr>
      <tr><td><div align="right"><a name="59"></a><a href="#59">59</a></div></td><td class="codeLine"></td></tr>
      <tr><td><div align="right"><a name="60"></a><a href="#60">60</a></div></td><td class="codeLine">    /**</td></tr>
-     <tr><td><div align="right"><a name="61"></a><a href="#61">61</a></div></td><td class="codeLine">     * @ORM\OneToMany(targetEntity=&quot;Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Entity\Event&quot;, mappedBy=&quot;project&quot;)</td></tr>
+     <tr><td><div align="right"><a name="61"></a><a href="#61">61</a></div></td><td class="codeLine">     * @ORM\OneToMany(targetEntity=&quot;Mylen\EventFlowAnalyser\Entity\Event&quot;, mappedBy=&quot;project&quot;)</td></tr>
      <tr><td><div align="right"><a name="62"></a><a href="#62">62</a></div></td><td class="codeLine">     */</td></tr>
      <tr><td><div align="right"><a name="63"></a><a href="#63">63</a></div></td><td class="codeLine">    private $events;</td></tr>
      <tr><td><div align="right"><a name="64"></a><a href="#64">64</a></div></td><td class="codeLine"></td></tr>
@@ -699,7 +699,7 @@
      <tr><td><div align="right"><a name="92"></a><a href="#92">92</a></div></td><td class="codeLine"></td></tr>
      <tr><td><div align="right"><a name="93"></a><a href="#93">93</a></div></td><td class="codeLine">    /**</td></tr>
      <tr><td><div align="right"><a name="94"></a><a href="#94">94</a></div></td><td class="codeLine">     * (non-PHPdoc)</td></tr>
-     <tr><td><div align="right"><a name="95"></a><a href="#95">95</a></div></td><td class="codeLine">     * @see Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Patterns.VisitorHost::accept()</td></tr>
+     <tr><td><div align="right"><a name="95"></a><a href="#95">95</a></div></td><td class="codeLine">     * @see Mylen\EventFlowAnalyser\Patterns.VisitorHost::accept()</td></tr>
      <tr><td><div align="right"><a name="96"></a><a href="#96">96</a></div></td><td class="codeLine">     */</td></tr>
      <tr class="danger"><td><div align="right"><a name="97"></a><a href="#97">97</a></div></td><td class="codeLine">    public function accept(VisitorGuest $guest)</td></tr>
      <tr class="danger"><td><div align="right"><a name="98"></a><a href="#98">98</a></div></td><td class="codeLine">    {</td></tr>

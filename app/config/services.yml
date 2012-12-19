@@ -3,17 +3,17 @@ imports:
 services:
 
   generate_project_all_graph_command:
-    class: Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Command\GenerateProjectAllGraphCommand
+    class: Mylen\EventFlowAnalyser\Command\GenerateProjectAllGraphCommand
     calls:
         - [setContainer, ["@service_container"] ]
 
   app.parser:
-    class: Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Service\ParserService
+    class: Mylen\EventFlowAnalyser\Service\ParserService
     arguments: ['@logger']
     scope: container
    
   app.event:
-    class: Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Service\EventService
+    class: Mylen\EventFlowAnalyser\Service\EventService
     arguments: ['@logger']
     scope: container
     calls:
@@ -21,7 +21,7 @@ services:
         - [ setEventDao, [ '@app.event_dao' ] ]
    
   app.graph:
-    class: Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Service\GraphVizService
+    class: Mylen\EventFlowAnalyser\Service\GraphVizService
     arguments: ['@logger']
     scope: container
     calls:
@@ -29,7 +29,7 @@ services:
 
 
   app.project:
-    class: Atos\Worldline\Fm\Integration\Ucs\EventFlowAnalyser\Service\ProjectService
+    class: Mylen\EventFlowAnalyser\Service\ProjectService
     arguments: ['@logger']
     scope: container
     calls:
